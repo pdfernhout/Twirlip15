@@ -9,10 +9,14 @@ const host = "127.0.0.1"
 const port = 8080
 
 const app = express();
-app.use(express.static(__dirname))
+app.use(express.static(process.cwd()))
 
+/*
 app.get("/", function(request, response) {
     response.send("Hello!!")
 })
+*/
 
 app.listen(port, host)
+
+console.log("cwd", process.cwd())
