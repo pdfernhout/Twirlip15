@@ -13,11 +13,9 @@ const app = express();
 app.use(express.static(process.cwd()))
 app.use(serveIndex(".", {'icons': true}))
 
-/*
-app.get("/", function(request, response) {
-    response.send("Hello!!")
+app.get("/twirlip15-api/hello", function(request, response) {
+    response.json({data: "Hello!!"})
 })
-*/
 
 app.listen(port, host)
 
