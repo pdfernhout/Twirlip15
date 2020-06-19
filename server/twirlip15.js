@@ -39,6 +39,21 @@ app.post("/twirlip15-api/file-contents", function(request, response) {
     })
 })
 
+app.post("/twirlip15-api/file-directory", function(request, response) {
+    console.log("POST file-directory", request.body)
+    // Very unsafe!
+    const filePath = path.join(__dirname, request.body.fileName)
+    console.log("POST file-directory filePath", filePath)
+    fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, files) {
+        if (err) {
+            console.log(err)
+            response.json({ok: false, message: "Problem reading directory"})
+        } else {
+            response.json({ok: true, files: files})
+        }
+    })
+})
+
 app.use(express.static(process.cwd()))
 app.use(serveIndex(".", {"icons": true}))
 
