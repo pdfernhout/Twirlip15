@@ -6,6 +6,9 @@ let directoryFiles = null
 let errorMessage = ""
 let chosenFileName = ""
 let chosenFileContents = ""
+let editing = false
+let editedContents = ""
+let fileSaveInProgress = false
 
 window.onpopstate = function(event) {
     if (event.state) {
@@ -34,6 +37,7 @@ async function loadDirectory(newPath, saveState) {
     errorMessage = ""
     chosenFileName = ""
     chosenFileContents = null
+    editing = false
     const response = await fetch("/twirlip15-api", {
         method: "POST",
         headers: {
@@ -60,6 +64,7 @@ async function loadDirectory(newPath, saveState) {
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
+    editing = false
     const response = await fetch("/twirlip15-api", {
         method: "POST",
         headers: {
@@ -82,23 +87,67 @@ async function loadFileContents(newFileName) {
     m.redraw()
 }
 
+async function saveFile(fileName, contents, successCallback) {
+    if (fileSaveInProgress) return
+    fileSaveInProgress = true
+    const response = await fetch("/twirlip15-api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify({request: "file-save", fileName, contents})
+    })
+    if (response.ok) {
+        const json = await response.json()
+        console.log("response", response)
+        if (json.ok) {
+            successCallback()
+        } else {
+            errorMessage = json.errorMessage
+        }   
+    } else {
+        console.log("HTTP-Error: " + response.status, response)
+        errorMessage = "API request failed for file save: " + response.status
+    }
+    fileSaveInProgress = false
+    m.redraw()
+}
+
 function fileEntryView(fileInfo) {
     return fileInfo.isDirectory
         ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name))
-        : m("div", m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, "📄 " + fileInfo.name))
+        : m("div",
+            m("a", {href: directoryPath + fileInfo.name}, "📄 "), 
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name)
+        )
 }
 
 const Filer = {
     view: () => {
         return m("div", 
+            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             m("div", "Files in: ", directoryPath),
             directoryFiles
                 ? m("div", directoryFiles.map(fileInfo => fileEntryView(fileInfo)))
                 : "Loading file data...",
             chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
             (chosenFileName && (chosenFileContents === null)) && m("div", "Loading file contents..."),
-            (chosenFileContents !== null) && m("pre.ml2", {style: "white-space: pre-wrap;"}, chosenFileContents),
-            errorMessage && m("div.red", errorMessage) 
+            (chosenFileContents !== null) && m("div",
+                m("div",
+                    m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
+                    m("button", {onclick: () => {
+                        editing = true
+                        editedContents = chosenFileContents
+                    }, disabled:  editing}, "Edit"),
+                    m("button", {onclick: () => { 
+                        saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
+                    }, disabled: !editing || fileSaveInProgress}, "Save"),
+                    fileSaveInProgress && m("div.yellow", "Saving...")
+                ),
+                editing
+                    ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
+                    : m("pre.ml2", {style: "white-space: pre-wrap;"}, chosenFileContents)
+            )
         )
     }
 }

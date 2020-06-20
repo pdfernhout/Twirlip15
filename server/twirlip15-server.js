@@ -26,6 +26,7 @@ app.get("/twirlip15-api", function(request, response) {
         supportedCommands: {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
+            "file-save": "save contents of a file given a fileName", 
             "file-directory": "return list of files in a directory given a directoryPath"
         }
     })
@@ -36,6 +37,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestEcho(request, response)
     } else if (request.body.request === "file-contents") {
         requestFileContents(request, response)
+    } else if (request.body.request === "file-save") {
+        requestFileSave(request, response)
     } else if (request.body.request === "file-directory") {
         requestFileDirectory(request, response)
     } else {
@@ -58,6 +61,21 @@ function requestFileContents(request, response) {
             response.json({ok: false, errorMessage: "Problem reading file"})
         } else {
             response.json({ok: true, contents: contents})
+        }
+    })
+}
+
+function requestFileSave(request, response) {
+    console.log("POST file-contents", request.body)
+    // Very unsafe!
+    const filePath = path.join(__dirname, request.body.fileName)
+    const fileContents = request.body.contents
+    fs.writeFile(filePath, fileContents, function (err, contents) {
+        if (err) {
+            console.log(err)
+            response.json({ok: false, errorMessage: "Problem writing file"})
+        } else {
+            response.json({ok: true})
         }
     })
 }
