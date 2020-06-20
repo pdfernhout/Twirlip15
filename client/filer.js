@@ -152,7 +152,7 @@ function viewFileContents() {
 
 const Filer = {
     view: () => {
-        return m("div", 
+        return m("div.ma2", 
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             m("div", "Files in: ", directoryPath),
             viewDirectoryFiles(),
