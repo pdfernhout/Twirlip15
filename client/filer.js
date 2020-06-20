@@ -7,13 +7,26 @@ let errorMessage = ""
 let chosenFileName = ""
 let chosenFileContents = ""
 
-async function loadDirectory(newPath) {
-    if (newPath.endsWith("../")) {
+window.onpopstate = function(event) {
+    if (event.state) {
+        loadDirectory(event.state.directoryPath, false)
+    } else {
+        loadDirectory("/", false)
+    }
+}
+
+async function loadDirectory(newPath, saveState) {
+    if (newPath.endsWith("/../")) {
         const newPathParts = newPath.split("/")
         newPathParts.pop()
         newPathParts.pop()
         newPathParts.pop()
         newPath = newPathParts.join("/") + "/"
+        history.back()
+        return
+    }
+    if (saveState) {
+        history.pushState({directoryPath: newPath}, newPath)
     }
     console.log("loadDirectory", newPath)
     directoryPath = newPath
@@ -71,7 +84,7 @@ async function loadFileContents(newFileName) {
 
 function fileEntryView(fileInfo) {
     return fileInfo.isDirectory
-        ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/")}, fileInfo.name + " 📂"))
+        ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, fileInfo.name + " 📂"))
         : m("div", m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name))
 }
 
@@ -92,4 +105,4 @@ const Filer = {
 
 m.mount(document.body, Filer)
 
-loadDirectory("/")
+loadDirectory("/", false)
