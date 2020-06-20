@@ -117,7 +117,7 @@ function fileEntryView(fileInfo) {
     return fileInfo.isDirectory
         ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name))
         : m("div",
-            m("a", {href: directoryPath + fileInfo.name}, "📄 "), 
+            m("a.link", {href: directoryPath + fileInfo.name}, "📄 "), 
             m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name)
         )
 }
