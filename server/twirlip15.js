@@ -16,8 +16,17 @@ import bodyParser from "body-parser"
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.get("/twirlip15-api/hello", function(request, response) {
-    response.json({data: "Hello!"})
+app.get("/twirlip15-api", function(request, response) {
+    response.json({
+        ok: true, 
+        hello: "Hello from Twirlip15! Use POST to access the api.",
+        time: new Date().toISOString(),
+        supportedCommands: {
+            "echo": "Echo the post data",
+            "file-contents": "return contents of a file given a fileName", 
+            "file-directory": "return list of files in a directory given a directoryName"
+        }
+    })
 })
 
 app.post("/twirlip15-api", function(request, response) {
@@ -54,7 +63,7 @@ function requestFileContents(request, response) {
 function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.fileName)
+    const filePath = path.join(__dirname, request.body.directoryName)
     console.log("POST file-directory filePath", filePath)
     fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, files) {
         if (err) {

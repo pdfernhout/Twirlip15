@@ -4,7 +4,7 @@ async function test() {
         headers: {
           "Content-Type": "application/json;charset=utf-8"
         },
-        body: JSON.stringify({request: "file-directory", fileName: "/server"})
+        body: JSON.stringify({request: "file-directory", directoryName: "/"})
     })
     document.body.appendChild(document.createElement("br"))
     if (response.ok) {
