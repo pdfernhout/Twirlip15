@@ -84,8 +84,8 @@ async function loadFileContents(newFileName) {
 
 function fileEntryView(fileInfo) {
     return fileInfo.isDirectory
-        ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, fileInfo.name + " 📂"))
-        : m("div", m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name))
+        ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name))
+        : m("div", m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, "📄 " + fileInfo.name))
 }
 
 const Filer = {
