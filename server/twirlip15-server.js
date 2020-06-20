@@ -1,5 +1,7 @@
 console.log("Twirlip15")
 
+/* global process */
+
 import path from "path"
 import express from "express"
 import serveIndex from "serve-index"
@@ -65,11 +67,19 @@ function requestFileDirectory(request, response) {
     // Very unsafe!
     const filePath = path.join(__dirname, request.body.directoryPath)
     console.log("POST file-directory filePath", filePath)
-    fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, files) {
+    fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, entries) {
         if (err) {
             console.log(err)
             response.json({ok: false, errorMessage: "Problem reading directory"})
         } else {
+            const files = []
+            for (let entry of entries) {
+                files.push({
+                    name: entry.name,
+                    isDirectory: entry.isDirectory()
+                })
+
+            }
             response.json({ok: true, files: files})
         }
     })

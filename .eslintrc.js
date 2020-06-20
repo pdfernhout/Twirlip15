@@ -1,3 +1,4 @@
+/* global module */
 module.exports = {
     "env": {
         "browser": true,
@@ -8,6 +9,8 @@ module.exports = {
         "ecmaVersion": 11,
         "sourceType": "module"
     },
-    "rules": {
+    rules: {
+        "semi": ["error", "never"],
+        "quotes": ["error", "double"]
     }
-};
+}
