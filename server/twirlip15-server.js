@@ -24,7 +24,7 @@ app.get("/twirlip15-api", function(request, response) {
         supportedCommands: {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
-            "file-directory": "return list of files in a directory given a directoryName"
+            "file-directory": "return list of files in a directory given a directoryPath"
         }
     })
 })
@@ -63,7 +63,7 @@ function requestFileContents(request, response) {
 function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.directoryName)
+    const filePath = path.join(__dirname, request.body.directoryPath)
     console.log("POST file-directory filePath", filePath)
     fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, files) {
         if (err) {
