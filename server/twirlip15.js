@@ -17,29 +17,41 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.get("/twirlip15-api/hello", function(request, response) {
-    response.json({data: "Hello!!"})
+    response.json({data: "Hello!"})
 })
 
-app.post("/twirlip15-api/echo", function(request, response) {
-    console.log("POST file-contents", request.body)
-    response.json(request.body)
+app.post("/twirlip15-api", function(request, response) {
+    if (request.body.request === "echo") {
+        requestEcho(request, response)
+    } else if (request.body.request === "file-contents") {
+        requestFileContents(request, response)
+    } else if (request.body.request === "file-directory") {
+        requestFileDirectory(request, response)
+    } else {
+        response.json({ok: false, errorMessage: "Unsupported request"})
+    }
 })
 
-app.post("/twirlip15-api/file-contents", function(request, response) {
+function requestEcho(request, response) {
+    console.log("POST echo", request.body)
+    response.json({ok: true, echo: request.body})
+}
+
+function requestFileContents(request, response) {
     console.log("POST file-contents", request.body)
     // Very unsafe!
     const filePath = path.join(__dirname, request.body.fileName)
-    fs.readFile(filePath, "utf8", function (err, data) {
+    fs.readFile(filePath, "utf8", function (err, contents) {
         if (err) {
             console.log(err)
-            response.json({ok: false, message: "Problem reading file"})
+            response.json({ok: false, errorMessage: "Problem reading file"})
         } else {
-            response.json({ok: true, data: data})
+            response.json({ok: true, contents: contents})
         }
     })
-})
+}
 
-app.post("/twirlip15-api/file-directory", function(request, response) {
+function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
     // Very unsafe!
     const filePath = path.join(__dirname, request.body.fileName)
@@ -47,12 +59,12 @@ app.post("/twirlip15-api/file-directory", function(request, response) {
     fs.readdir(filePath, {encoding: "utf8", withFileTypes: true}, function (err, files) {
         if (err) {
             console.log(err)
-            response.json({ok: false, message: "Problem reading directory"})
+            response.json({ok: false, errorMessage: "Problem reading directory"})
         } else {
             response.json({ok: true, files: files})
         }
     })
-})
+}
 
 app.use(express.static(process.cwd()))
 app.use(serveIndex(".", {"icons": true}))

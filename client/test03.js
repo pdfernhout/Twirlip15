@@ -1,10 +1,10 @@
 async function test() {
-    const response = await fetch("/twirlip15-api/file-directory", {
+    const response = await fetch("/twirlip15-api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json;charset=utf-8"
         },
-        body: JSON.stringify({fileName: "/server"})
+        body: JSON.stringify({request: "file-directory", fileName: "/server"})
     })
     document.body.appendChild(document.createElement("br"))
     if (response.ok) {
@@ -16,7 +16,7 @@ async function test() {
             console.log("json", json)
             preElement.appendChild(document.createTextNode(JSON.stringify(json.files, null, 4)))
         } else {
-            document.body.appendChild(document.createTextNode("Directory could not be read"))
+            document.body.appendChild(document.createTextNode("Directory could not be read: " + json.errorMessage))
         }   
     } else {
         alert("HTTP-Error: " + response.status)
