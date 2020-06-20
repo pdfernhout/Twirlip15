@@ -113,7 +113,13 @@ async function saveFile(fileName, contents, successCallback) {
     m.redraw()
 }
 
-function fileEntryView(fileInfo) {
+function viewDirectoryFiles() {
+    return directoryFiles
+        ? m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
+        : m("div", "Loading file data...")
+}
+
+function viewFileEntry(fileInfo) {
     return fileInfo.isDirectory
         ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name))
         : m("div",
@@ -122,32 +128,36 @@ function fileEntryView(fileInfo) {
         )
 }
 
+function viewFileContents() {
+    return m("div",
+        (chosenFileName && (chosenFileContents === null)) && m("div", "Loading file contents..."),
+        (chosenFileContents !== null) && m("div",
+            m("div",
+                m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
+                m("button", {onclick: () => {
+                    editing = true
+                    editedContents = chosenFileContents
+                }, disabled:  editing}, "Edit"),
+                m("button", {onclick: () => { 
+                    saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
+                }, disabled: !editing || fileSaveInProgress}, "Save"),
+                fileSaveInProgress && m("span.yellow", "Saving...")
+            ),
+            editing
+                ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
+                : m("pre.ml2", {style: "white-space: pre-wrap;"}, chosenFileContents)
+        )
+    )
+}
+
 const Filer = {
     view: () => {
         return m("div", 
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             m("div", "Files in: ", directoryPath),
-            directoryFiles
-                ? m("div", directoryFiles.map(fileInfo => fileEntryView(fileInfo)))
-                : "Loading file data...",
+            viewDirectoryFiles(),
             chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
-            (chosenFileName && (chosenFileContents === null)) && m("div", "Loading file contents..."),
-            (chosenFileContents !== null) && m("div",
-                m("div",
-                    m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
-                    m("button", {onclick: () => {
-                        editing = true
-                        editedContents = chosenFileContents
-                    }, disabled:  editing}, "Edit"),
-                    m("button", {onclick: () => { 
-                        saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
-                    }, disabled: !editing || fileSaveInProgress}, "Save"),
-                    fileSaveInProgress && m("div.yellow", "Saving...")
-                ),
-                editing
-                    ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
-                    : m("pre.ml2", {style: "white-space: pre-wrap;"}, chosenFileContents)
-            )
+            viewFileContents()
         )
     }
 }
