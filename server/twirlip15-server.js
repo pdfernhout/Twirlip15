@@ -206,7 +206,7 @@ async function requestFileNewDirectory(request, response) {
      }
 }
 
-// app.use(express.static(process.cwd()))
+app.use("/", express.static(process.cwd() + "/client"))
 // app.use(serveIndex(".", {"icons": true}))
 // Very unsafe!
 app.use(express.static("/"))
