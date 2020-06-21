@@ -19,6 +19,31 @@ window.onpopstate = function(event) {
     }
 }
 
+async function apiCall(request) {
+    let result = null
+    const response = await fetch("/twirlip15-api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify(request)
+    })
+    if (response.ok) {
+        const json = await response.json()
+        console.log("response", response)
+        if (json.ok) {
+            result = json
+        } else {
+            errorMessage = json.errorMessage
+        }   
+    } else {
+        console.log("HTTP-Error: " + response.status, response)
+        errorMessage = "API request failed for file contents: " + response.status
+    }
+    setTimeout(() => m.redraw(), 0)
+    return result
+}
+
 async function loadDirectory(newPath, saveState) {
     if (newPath.endsWith("/../")) {
         const newPathParts = newPath.split("/")
@@ -39,79 +64,31 @@ async function loadDirectory(newPath, saveState) {
     chosenFileName = ""
     chosenFileContents = null
     editing = false
-    const response = await fetch("/twirlip15-api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({request: "file-directory", directoryPath: directoryPath})
-    })
-    if (response.ok) {
-        const json = await response.json()
-        console.log("response", response)
-        if (json.ok) {
-            directoryFiles = json.files
-            if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
-        } else {
-            errorMessage = json.errorMessage
-        }   
-    } else {
-        console.log("HTTP-Error: " + response.status, response)
-        errorMessage = "API request failed for file-directory: " + response.status
+    const json = await apiCall({request: "file-directory", directoryPath: directoryPath})
+    if (json) {
+        directoryFiles = json.files
+        if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
     }
-    m.redraw()
 }
 
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
     editing = false
-    const response = await fetch("/twirlip15-api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({request: "file-contents", fileName: chosenFileName})
-    })
-    if (response.ok) {
-        const json = await response.json()
-        console.log("response", response)
-        if (json.ok) {
-            chosenFileContents = json.contents
-        } else {
-            errorMessage = json.errorMessage
-        }   
-    } else {
-        console.log("HTTP-Error: " + response.status, response)
-        errorMessage = "API request failed for file contents: " + response.status
+    const json = await apiCall({request: "file-contents", fileName: chosenFileName})
+    if (json) {
+        chosenFileContents = json.contents
     }
-    m.redraw()
 }
 
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const response = await fetch("/twirlip15-api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({request: "file-save", fileName, contents})
-    })
-    if (response.ok) {
-        const json = await response.json()
-        console.log("response", response)
-        if (json.ok) {
-            successCallback()
-        } else {
-            errorMessage = json.errorMessage
-        }   
-    } else {
-        console.log("HTTP-Error: " + response.status, response)
-        errorMessage = "API request failed for file save: " + response.status
-    }
+    const json = await apiCall({request: "file-save", fileName, contents})
     fileSaveInProgress = false
-    m.redraw()
+    if (json) {
+        successCallback()
+    }
 }
 
 function addFile() {
