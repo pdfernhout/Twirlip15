@@ -69,6 +69,13 @@ async function loadDirectory(newPath, saveState) {
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
+        directoryFiles.sort(
+            function(a, b) {
+              if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+              if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+              return 0
+            }
+          )
     }
 }
 
