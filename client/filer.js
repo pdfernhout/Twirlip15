@@ -10,6 +10,7 @@ let editing = false
 let editedContents = ""
 let fileSaveInProgress = false
 let showMenu = false
+let selectedFiles = {}
 
 window.onpopstate = function(event) {
     if (event.state) {
@@ -132,10 +133,22 @@ function viewDirectoryFiles() {
         : m("div", "Loading file data...")
 }
 
-function viewFileEntry(fileInfo) {
+function viewCheckBox(fileName) {
+    const hidden = fileName === ".."
+    return showMenu && m("input[type=checkbox].mr1" + (hidden ? ".o-0" : ""), {
+        checked: selectedFiles[directoryPath + fileName],
+        disabled: hidden,
+        onclick: () => selectedFiles[directoryPath + fileName] = !selectedFiles[directoryPath + fileName]
+    })
+}
+function viewFileEntry(fileInfo) { // selectedFiles
     return fileInfo.isDirectory
-        ? m("div", m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name))
+        ? m("div",
+            viewCheckBox(fileInfo.name),
+            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name)
+        )
         : m("div",
+            viewCheckBox(fileInfo.name),
             m("a.link", {href: directoryPath + fileInfo.name}, "📄 "), 
             m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name)
         )
@@ -169,6 +182,11 @@ const Filer = {
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
             viewMenu(),
+            showMenu && m("div.ml4",
+                "Selected file count: ",
+                Object.keys(selectedFiles).length,
+                m("button.ml2", {onclick: () => selectedFiles = {}}, "Clear")
+            ),
             viewDirectoryFiles(),
             chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
             viewFileContents()
