@@ -118,11 +118,16 @@ function deleteFile() {
     alert("Delete TODO")
 }
 
+function moveFile() {
+    alert("Move TODO")
+}
+
 function viewMenu() {
     return showMenu && m("div.ml4.bg-light-green",
         m("div", {onclick: () => addFile()}, "+📄 Add file"),
         m("div", {onclick: () => addDirectory()}, "+📂 Add directory"),
         m("div", {onclick: () => renameFile()}, "* Rename"),
+        m("div", {onclick: () => moveFile()}, "* Move"),
         m("div", {onclick: () => deleteFile()}, "* Delete")
     )
 }
