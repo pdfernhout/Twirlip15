@@ -240,7 +240,7 @@ function viewFileContents() {
                 m("button.ml1", {onclick: () => { 
                     chosenFileName = ""
                     chosenFileContents = null
-                }, disabled: editing || fileSaveInProgress}, "Close"),
+                }, disabled: fileSaveInProgress}, "Close"),
                 fileSaveInProgress && m("span.yellow", "Saving...")
             ),
             editing
@@ -252,14 +252,18 @@ function viewFileContents() {
 
 const Filer = {
     view: () => {
-        return m("div.ma2", 
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
-            viewMenu(),
-            viewSelectedFiles(),
-            viewDirectoryFiles(),
-            chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
-            viewFileContents()
+        return m("div.ma2",
+            !chosenFileName && m("div",
+                errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+                m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
+                viewMenu(),
+                viewSelectedFiles(),
+                viewDirectoryFiles()
+            ),
+            chosenFileName && m("div",
+                chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
+                viewFileContents()
+            )
         )
     }
 }
