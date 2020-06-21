@@ -6,7 +6,7 @@ import path from "path"
 import express from "express"
 import serveIndex from "serve-index"
 
-const __dirname = path.resolve()
+const __dirname = "/" // path.resolve()
 
 const host = "127.0.0.1"
 const port = 8080
@@ -206,8 +206,11 @@ async function requestFileNewDirectory(request, response) {
      }
 }
 
-app.use(express.static(process.cwd()))
-app.use(serveIndex(".", {"icons": true}))
+// app.use(express.static(process.cwd()))
+// app.use(serveIndex(".", {"icons": true}))
+// Very unsafe!
+app.use(express.static("/"))
+app.use(serveIndex("/", {"icons": true}))
 
 app.listen(port, host)
 
