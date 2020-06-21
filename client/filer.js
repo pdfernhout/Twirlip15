@@ -64,9 +64,9 @@ async function loadDirectory(newPath, saveState) {
     chosenFileName = ""
     chosenFileContents = null
     editing = false
-    const json = await apiCall({request: "file-directory", directoryPath: directoryPath})
-    if (json) {
-        directoryFiles = json.files
+    const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath})
+    if (apiResult) {
+        directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
     }
 }
@@ -75,18 +75,18 @@ async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
     editing = false
-    const json = await apiCall({request: "file-contents", fileName: chosenFileName})
-    if (json) {
-        chosenFileContents = json.contents
+    const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
+    if (apiResult) {
+        chosenFileContents = apiResult.contents
     }
 }
 
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const json = await apiCall({request: "file-save", fileName, contents})
+    const apiResult = await apiCall({request: "file-save", fileName, contents})
     fileSaveInProgress = false
-    if (json) {
+    if (apiResult) {
         successCallback()
     }
 }
