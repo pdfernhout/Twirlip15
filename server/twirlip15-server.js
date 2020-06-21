@@ -130,7 +130,8 @@ async function requestFileDelete(request, response) {
             if (stat.isFile()) {
                 await fs.promises.unlink(filePath)
             } else {
-                await fs.promises.rmdir(filePath, {recursive: true})
+                // await fs.promises.rmdir(filePath, {recursive: true})
+                await fs.promises.rmdir(filePath)
             }
         } catch (err) {
             console.log(err)
