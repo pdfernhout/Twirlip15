@@ -135,7 +135,7 @@ async function renameFile() {
     }
 }
 
-async function deleteFile() {
+async function deleteFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
     if (!proceed) return
@@ -146,7 +146,7 @@ async function deleteFile() {
     }
 }
 
-async function moveFile() {
+async function moveFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
     if (!proceed) return
@@ -179,8 +179,8 @@ function viewMenu() {
         m("div" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
         m("div" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
-        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFile()}, "* Move"),
-        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFile()}, "* Delete")
+        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
+        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete")
     )
 }
 
