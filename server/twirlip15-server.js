@@ -30,7 +30,7 @@ app.get("/twirlip15-api", function(request, response) {
             "file-save": "save contents of a file given a fileName",
             "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
             "file-move": "moves files given a fileNames array and a newLocation", 
-            "file-delete": "delete a fileNames array of file names", 
+            "file-delete": "delete files in a deleteFiles array of file paths", 
             "file-directory": "return list of files in a directory given a directoryPath",
             "file-new-directory": "make a new directory given a directoryPath"
         }
@@ -83,7 +83,7 @@ function requestFileSave(request, response) {
     // Very unsafe!
     const filePath = path.join(__dirname, request.body.fileName)
     const fileContents = request.body.contents
-    fs.writeFile(filePath, fileContents, function (err, contents) {
+    fs.writeFile(filePath, fileContents, function (err) {
         if (err) {
             console.log(err)
             response.json({ok: false, errorMessage: "Problem writing file"})
@@ -94,7 +94,7 @@ function requestFileSave(request, response) {
 }
 
 async function requestFileRename(request, response) {
-    console.log("POST file-contents", request.body)
+    console.log("POST file-rename", request.body)
     // Very unsafe!
     const renameFiles = request.body.renameFiles
     if (!renameFiles) {
@@ -113,6 +113,27 @@ async function requestFileRename(request, response) {
             await rename(path.join(__dirname, item.oldFileName), path.join(__dirname, item.newFileName))
         } catch {
             return response.json({ok: false, errorMessage: "renameFile failed for: " + JSON.stringify(item)})
+        }
+    }
+
+    response.json({ok: true})
+}
+
+async function requestFileDelete(request, response) {
+    console.log("POST file-delete", request.body)
+    // Very unsafe!
+    const deleteFiles = request.body.deleteFiles
+    if (!deleteFiles) {
+        return response.json({ok: false, errorMessage: "deleteFiles not specified"})
+    }
+
+    const unlink = util.promisify(fs.unlink)
+
+    for (let fileName of deleteFiles) {
+        try {
+            await unlink(path.join(__dirname, fileName))
+        } catch {
+            return response.json({ok: false, errorMessage: "deleteFiles failed for: " + JSON.stringify(fileName)})
         }
     }
 

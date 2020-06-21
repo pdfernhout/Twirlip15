@@ -124,14 +124,19 @@ async function renameFile() {
         if (apiResult) {
             selectedFiles = {}
             loadDirectory(directoryPath, false)
-        } else {
-            alert("api call failed for rename")
         }
     }
 }
 
-function deleteFile() {
-    alert("Delete TODO")
+async function deleteFile() {
+    const sortedSelections = Object.keys(selectedFiles).sort()
+    const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
+    if (!proceed) return
+    const apiResult = await apiCall({request: "file-delete", deleteFiles: Object.keys(selectedFiles)})
+    if (apiResult) {
+        selectedFiles = {}
+        loadDirectory(directoryPath, false)
+    }
 }
 
 function moveFile() {
