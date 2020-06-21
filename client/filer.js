@@ -222,13 +222,17 @@ function viewFileContents() {
         (chosenFileContents !== null) && m("div",
             m("div",
                 m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
-                m("button", {onclick: () => {
+                m("button.ml1", {onclick: () => {
                     editing = true
                     editedContents = chosenFileContents
                 }, disabled:  editing}, "Edit"),
-                m("button", {onclick: () => { 
+                m("button.ml1", {onclick: () => { 
                     saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
                 }, disabled: !editing || fileSaveInProgress}, "Save"),
+                m("button.ml1", {onclick: () => { 
+                    chosenFileName = ""
+                    chosenFileContents = null
+                }, disabled: editing || fileSaveInProgress}, "Close"),
                 fileSaveInProgress && m("span.yellow", "Saving...")
             ),
             editing
