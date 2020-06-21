@@ -122,13 +122,28 @@ function moveFile() {
     alert("Move TODO")
 }
 
+function showSelectedFiles() {
+    const sortedSelections = Object.keys(selectedFiles).sort()
+    alert("Selected files:\n" + sortedSelections.join("\n"))
+}
+
 function viewMenu() {
-    return showMenu && m("div.ml4.bg-light-green",
+    return showMenu && m("div.ml4.bg-light-green.w5",
         m("div", {onclick: () => addFile()}, "+📄 Add file"),
         m("div", {onclick: () => addDirectory()}, "+📂 Add directory"),
         m("div", {onclick: () => renameFile()}, "* Rename"),
         m("div", {onclick: () => moveFile()}, "* Move"),
         m("div", {onclick: () => deleteFile()}, "* Delete")
+    )
+}
+
+function viewSelectedFiles() {
+    const selectedFileCount = Object.keys(selectedFiles).length
+    return showMenu && m("div.ml4",
+        "Selected file count: ",
+        selectedFileCount,
+        m("button.ml2", {onclick: () => selectedFiles = {}, disabled: !selectedFileCount}, "Clear"),
+        m("button.ml2", {onclick: () => showSelectedFiles(), disabled: !selectedFileCount}, "Show")
     )
 }
 
@@ -187,11 +202,7 @@ const Filer = {
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
             viewMenu(),
-            showMenu && m("div.ml4",
-                "Selected file count: ",
-                Object.keys(selectedFiles).length,
-                m("button.ml2", {onclick: () => selectedFiles = {}}, "Clear")
-            ),
+            viewSelectedFiles(),
             viewDirectoryFiles(),
             chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
             viewFileContents()
