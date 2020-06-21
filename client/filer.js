@@ -110,8 +110,24 @@ async function addDirectory() {
     }
 }
 
-function renameFile() {
-    alert("Rename TODO")
+function fileNameFromPath(filePath) {
+    return filePath.split(/(\\|\/)/g).pop()
+}
+
+async function renameFile() {
+    const fileNameBefore = fileNameFromPath(Object.keys(selectedFiles)[0])
+    const fileNameAfter = prompt("New file name after rename?", fileNameBefore)
+    if (fileNameAfter) {
+        const oldFileName = directoryPath + fileNameBefore
+        const newFileName = directoryPath + fileNameAfter
+        const apiResult = await apiCall({request: "file-rename", renameFiles: [{oldFileName, newFileName}]})
+        if (apiResult) {
+            selectedFiles = {}
+            loadDirectory(directoryPath, false)
+        } else {
+            alert("api call failed for rename")
+        }
+    }
 }
 
 function deleteFile() {

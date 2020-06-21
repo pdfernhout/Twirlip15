@@ -5,6 +5,7 @@ console.log("Twirlip15")
 import path from "path"
 import express from "express"
 import serveIndex from "serve-index"
+import util from "util"
 
 const __dirname = path.resolve()
 
@@ -26,7 +27,10 @@ app.get("/twirlip15-api", function(request, response) {
         supportedCommands: {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
-            "file-save": "save contents of a file given a fileName", 
+            "file-save": "save contents of a file given a fileName",
+            "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
+            "file-move": "moves files given a fileNames array and a newLocation", 
+            "file-delete": "delete a fileNames array of file names", 
             "file-directory": "return list of files in a directory given a directoryPath",
             "file-new-directory": "make a new directory given a directoryPath"
         }
@@ -40,6 +44,12 @@ app.post("/twirlip15-api", function(request, response) {
         requestFileContents(request, response)
     } else if (request.body.request === "file-save") {
         requestFileSave(request, response)
+    } else if (request.body.request === "file-rename") {
+        requestFileRename(request, response)
+    } else if (request.body.request === "file-move") {
+        requestFileMove(request, response)
+    } else if (request.body.request === "file-delete") {
+        requestFileDelete(request, response)
     } else if (request.body.request === "file-directory") {
         requestFileDirectory(request, response)
     } else if (request.body.request === "file-new-directory") {
@@ -81,6 +91,32 @@ function requestFileSave(request, response) {
             response.json({ok: true})
         }
     })
+}
+
+async function requestFileRename(request, response) {
+    console.log("POST file-contents", request.body)
+    // Very unsafe!
+    const renameFiles = request.body.renameFiles
+    if (!renameFiles) {
+        return response.json({ok: false, errorMessage: "renameFiles not specified"})
+    }
+    for (let item of renameFiles) {
+        if (!item.oldFileName || !item.newFileName) {
+            return response.json({ok: false, errorMessage: "renameFiles not in proper format: " + JSON.stringify(item)})
+        }
+    }
+
+    const rename = util.promisify(fs.rename)
+
+    for (let item of renameFiles) {
+        try {
+            await rename(path.join(__dirname, item.oldFileName), path.join(__dirname, item.newFileName))
+        } catch {
+            return response.json({ok: false, errorMessage: "renameFile failed for: " + JSON.stringify(item)})
+        }
+    }
+
+    response.json({ok: true})
 }
 
 function requestFileDirectory(request, response) {
