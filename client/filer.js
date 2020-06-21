@@ -9,6 +9,7 @@ let chosenFileContents = ""
 let editing = false
 let editedContents = ""
 let fileSaveInProgress = false
+let showMenu = false
 
 window.onpopstate = function(event) {
     if (event.state) {
@@ -113,6 +114,31 @@ async function saveFile(fileName, contents, successCallback) {
     m.redraw()
 }
 
+function addFile() {
+    alert("Add file TODO")
+}
+
+function addDirectory() {
+    alert("Add directory TODO")
+}
+
+function renameFile() {
+    alert("Rename TODO")
+}
+
+function deleteFile() {
+    alert("Delete TODO")
+}
+
+function viewMenu() {
+    return showMenu && m("div.ml4.bg-light-green",
+        m("div", {onclick: () => addFile()}, "+📄 Add file"),
+        m("div", {onclick: () => addDirectory()}, "+📂 Add directory"),
+        m("div", {onclick: () => renameFile()}, "* Rename"),
+        m("div", {onclick: () => deleteFile()}, "* Delete")
+    )
+}
+
 function viewDirectoryFiles() {
     return directoryFiles
         ? m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
@@ -154,7 +180,8 @@ const Filer = {
     view: () => {
         return m("div.ma2", 
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            m("div", "Files in: ", directoryPath),
+            m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
+            viewMenu(),
             viewDirectoryFiles(),
             chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
             viewFileContents()
