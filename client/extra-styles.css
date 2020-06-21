@@ -1,0 +1,12 @@
+.pre-wrap {
+    white-space: pre-wrap;
+}
+
+.w-12rem {
+    width: 12rem;
+}
+
+.disabled-button {
+    pointer-events: none;
+    opacity: 0.4;
+}
