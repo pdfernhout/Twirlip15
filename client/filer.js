@@ -133,13 +133,18 @@ function selectAll() {
     })
 }
 
+function disabled(flag) {
+    return flag ? ".disabled-button" : ""
+}
+
 function viewMenu() {
-    return showMenu && m("div.ml4.bg-light-green.w5",
+    const selectedFileCount = Object.keys(selectedFiles).length
+    return showMenu && m("div.ml4.bg-light-green.w-12rem",
         m("div", {onclick: () => addFile()}, "+📄 Add file"),
         m("div", {onclick: () => addDirectory()}, "+📂 Add directory"),
-        m("div", {onclick: () => renameFile()}, "* Rename"),
-        m("div", {onclick: () => moveFile()}, "* Move"),
-        m("div", {onclick: () => deleteFile()}, "* Delete")
+        m("div" + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
+        m("div" + disabled(!selectedFileCount), {onclick: () => moveFile()}, "* Move"),
+        m("div" + disabled(!selectedFileCount), {onclick: () => deleteFile()}, "* Delete")
     )
 }
 
@@ -199,7 +204,7 @@ function viewFileContents() {
             ),
             editing
                 ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
-                : m("pre.ml2", {style: "white-space: pre-wrap;"}, chosenFileContents)
+                : m("pre.ml2.pre-wrap", chosenFileContents)
         )
     )
 }
