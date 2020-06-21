@@ -22,6 +22,7 @@ window.onpopstate = function(event) {
 
 async function apiCall(request) {
     let result = null
+    errorMessage = ""
     const response = await fetch("/twirlip15-api", {
         method: "POST",
         headers: {
