@@ -35,7 +35,6 @@ async function apiCall(request) {
     })
     if (response.ok) {
         const json = await response.json()
-        console.log("response", response)
         if (json.ok) {
             result = json
         } else {
