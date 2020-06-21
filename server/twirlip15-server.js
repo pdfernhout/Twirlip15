@@ -27,7 +27,8 @@ app.get("/twirlip15-api", function(request, response) {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
             "file-save": "save contents of a file given a fileName", 
-            "file-directory": "return list of files in a directory given a directoryPath"
+            "file-directory": "return list of files in a directory given a directoryPath",
+            "file-new-directory": "make a new directory given a directoryPath"
         }
     })
 })
@@ -41,6 +42,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestFileSave(request, response)
     } else if (request.body.request === "file-directory") {
         requestFileDirectory(request, response)
+    } else if (request.body.request === "file-new-directory") {
+        requestFileNewDirectory(request, response)
     } else {
         response.json({ok: false, errorMessage: "Unsupported request"})
     }
@@ -99,6 +102,21 @@ function requestFileDirectory(request, response) {
 
             }
             response.json({ok: true, files: files})
+        }
+    })
+}
+
+function requestFileNewDirectory(request, response) {
+    console.log("POST file-new-directory", request.body)
+    // Very unsafe!
+    const filePath = path.join(__dirname, request.body.directoryPath)
+    console.log("POST file-new-directory filePath", filePath)
+    fs.mkdir(filePath, {recursive: true}, function (err) {
+        if (err) {
+            console.log(err)
+            response.json({ok: false, errorMessage: "Problem making new directory"})
+        } else {
+            response.json({ok: true})
         }
     })
 }

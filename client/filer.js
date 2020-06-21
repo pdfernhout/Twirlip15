@@ -100,8 +100,13 @@ async function addFile() {
     }
 }
 
-function addDirectory() {
-    alert("Add directory TODO")
+async function addDirectory() {
+    const newFileName = prompt("New directory name?")
+    if (newFileName) {
+        const fileName = directoryPath + newFileName
+        const apiResult = await apiCall({request: "file-new-directory", directoryPath: fileName, contents: ""})
+        if (apiResult) loadDirectory(directoryPath, false)
+    }
 }
 
 function renameFile() {
