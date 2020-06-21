@@ -114,6 +114,35 @@ async function requestFileRename(request, response) {
     response.json({ok: true})
 }
 
+async function requestFileMove(request, response) {
+    console.log("POST file-move", request.body)
+    // Very unsafe!
+    const moveFiles = request.body.moveFiles
+    if (!moveFiles) {
+        return response.json({ok: false, errorMessage: "moveFiles not specified"})
+    }
+
+    const newLocation = request.body.newLocation
+    if (!newLocation) {
+        return response.json({ok: false, errorMessage: "newLocation not specified"})
+    }
+
+    // TODO: better handling and reporting if some files moved but others are not
+    for (let fileName of moveFiles) {
+        try {
+            const oldFileName = path.join(__dirname, fileName)
+            const shortFileName = path.basename(fileName)
+            const newFileName = path.join(__dirname, newLocation, shortFileName)
+            await fs.promises.rename(oldFileName, newFileName)
+        } catch (err) {
+            console.log(err)
+            return response.json({ok: false, errorMessage: "file move failed for: " + JSON.stringify(fileName)})
+        }
+    }
+
+    response.json({ok: true})
+}
+
 async function requestFileDelete(request, response) {
     console.log("POST file-delete", request.body)
     // Very unsafe!
@@ -135,7 +164,7 @@ async function requestFileDelete(request, response) {
             }
         } catch (err) {
             console.log(err)
-            return response.json({ok: false, errorMessage: "deleteFiles failed for: " + JSON.stringify(fileName)})
+            return response.json({ok: false, errorMessage: "file delete failed for: " + JSON.stringify(fileName)})
         }
     }
 

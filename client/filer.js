@@ -146,8 +146,15 @@ async function deleteFile() {
     }
 }
 
-function moveFile() {
-    alert("Move TODO")
+async function moveFile() {
+    const sortedSelections = Object.keys(selectedFiles).sort()
+    const proceed = confirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
+    if (!proceed) return
+    const apiResult = await apiCall({request: "file-move", moveFiles: Object.keys(selectedFiles), newLocation: directoryPath})
+    if (apiResult) {
+        selectedFiles = {}
+        loadDirectory(directoryPath, false)
+    }
 }
 
 function showSelectedFiles() {
