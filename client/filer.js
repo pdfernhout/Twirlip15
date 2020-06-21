@@ -127,6 +127,12 @@ function showSelectedFiles() {
     alert("Selected files:\n" + sortedSelections.join("\n"))
 }
 
+function selectAll() {
+    directoryFiles.forEach(fileInfo => {
+        if (fileInfo.name !== "..") selectedFiles[directoryPath + fileInfo.name] = true
+    })
+}
+
 function viewMenu() {
     return showMenu && m("div.ml4.bg-light-green.w5",
         m("div", {onclick: () => addFile()}, "+📄 Add file"),
@@ -142,6 +148,7 @@ function viewSelectedFiles() {
     return showMenu && m("div.ml4",
         "Selected file count: ",
         selectedFileCount,
+        m("button.ml2", {onclick: () => selectAll(), }, "Select All"),
         m("button.ml2", {onclick: () => selectedFiles = {}, disabled: !selectedFileCount}, "Clear"),
         m("button.ml2", {onclick: () => showSelectedFiles(), disabled: !selectedFileCount}, "Show")
     )
@@ -161,6 +168,7 @@ function viewCheckBox(fileName) {
         onclick: () => selectedFiles[directoryPath + fileName] = !selectedFiles[directoryPath + fileName]
     })
 }
+
 function viewFileEntry(fileInfo) { // selectedFiles
     return fileInfo.isDirectory
         ? m("div",
