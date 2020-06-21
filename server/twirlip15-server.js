@@ -122,10 +122,18 @@ async function requestFileDelete(request, response) {
         return response.json({ok: false, errorMessage: "deleteFiles not specified"})
     }
 
+    // TODO: better handling and reporting if some files deleted but others are not
     for (let fileName of deleteFiles) {
         try {
-            await fs.promises.unlink(path.join(__dirname, fileName))
-        } catch {
+            const filePath = path.join(__dirname, fileName)
+            const stat = await fs.promises.lstat(filePath)
+            if (stat.isFile()) {
+                await fs.promises.unlink(filePath)
+            } else {
+                await fs.promises.rmdir(filePath, {recursive: true})
+            }
+        } catch (err) {
+            console.log(err)
             return response.json({ok: false, errorMessage: "deleteFiles failed for: " + JSON.stringify(fileName)})
         }
     }
