@@ -12,11 +12,14 @@ let fileSaveInProgress = false
 let showMenu = false
 let selectedFiles = {}
 
-window.onpopstate = function(event) {
+window.onpopstate = async function(event) {
     if (event.state) {
-        loadDirectory(event.state.directoryPath, false)
+        await loadDirectory(event.state.directoryPath, false)
+        if (event.state.chosenFileName) {
+            await loadFileContents(event.state.chosenFileName, false)
+        }
     } else {
-        loadDirectory("/", false)
+        await loadDirectory("/", false)
     }
 }
 
@@ -80,10 +83,13 @@ async function loadDirectory(newPath, saveState) {
     }
 }
 
-async function loadFileContents(newFileName) {
+async function loadFileContents(newFileName, saveState) {
     chosenFileName = newFileName
     chosenFileContents = null
     editing = false
+    if (saveState) {
+        history.pushState({directoryPath, chosenFileName}, directoryPath)
+    }
     const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
     if (apiResult) {
         chosenFileContents = apiResult.contents
@@ -220,7 +226,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
         : m("div",
             viewCheckBox(fileInfo.name),
             m("a.link", {href: directoryPath + fileInfo.name}, "📄 "), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name)}, fileInfo.name)
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true)}, fileInfo.name)
         )
 }
 
@@ -240,6 +246,7 @@ function viewFileContents() {
                 m("button.ml1", {onclick: () => { 
                     chosenFileName = ""
                     chosenFileContents = null
+                    history.back()
                 }, disabled: fileSaveInProgress}, "Close"),
                 fileSaveInProgress && m("span.yellow", "Saving...")
             ),
