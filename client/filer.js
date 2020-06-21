@@ -91,8 +91,13 @@ async function saveFile(fileName, contents, successCallback) {
     }
 }
 
-function addFile() {
-    alert("Add file TODO")
+async function addFile() {
+    const newFileName = prompt("New file name?")
+    if (newFileName) {
+        const fileName = directoryPath + newFileName
+        const apiResult = await apiCall({request: "file-save", fileName, contents: ""})
+        if (apiResult) loadDirectory(directoryPath, false)
+    }
 }
 
 function addDirectory() {
