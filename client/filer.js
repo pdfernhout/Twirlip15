@@ -167,12 +167,13 @@ function disabled(flag) {
 
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
+    const hoverColor = ".hover-bg-orange"
     return showMenu && m("div.ml4.bg-light-green.w-12rem",
-        m("div", {onclick: () => addFile()}, "+📄 Add file"),
-        m("div", {onclick: () => addDirectory()}, "+📂 Add directory"),
-        m("div" + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
-        m("div" + disabled(!selectedFileCount), {onclick: () => moveFile()}, "* Move"),
-        m("div" + disabled(!selectedFileCount), {onclick: () => deleteFile()}, "* Delete")
+        m("div" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
+        m("div" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
+        m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
+        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFile()}, "* Move"),
+        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFile()}, "* Delete")
     )
 }
 
