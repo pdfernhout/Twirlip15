@@ -55,13 +55,17 @@ async function loadDirectory(newPath, saveState) {
         newPathParts.pop()
         newPathParts.pop()
         newPath = newPathParts.join("/") + "/"
-        history.back()
-        return
     }
     if (saveState) {
-        history.pushState({directoryPath: newPath}, newPath)
+        const urlParams = new URLSearchParams(window.location.search)
+        urlParams.set("dir", newPath)
+        // window.location.search = urlParams.toString()
+        if (saveState === "replace") {
+            history.replaceState({directoryPath: newPath}, newPath, "?" + urlParams.toString())
+        } else {
+            history.pushState({directoryPath: newPath}, newPath, "?" + urlParams.toString())
+        }
     }
-    console.log("loadDirectory", newPath)
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
@@ -276,4 +280,7 @@ const Filer = {
 
 m.mount(document.body, Filer)
 
-loadDirectory("/", false)
+const urlParams = new URLSearchParams(window.location.search)
+const startDirectory =  urlParams.get("dir") || "/"
+
+loadDirectory(startDirectory, "replace")
