@@ -237,9 +237,9 @@ function viewFileEntry(fileInfo) { // selectedFiles
             m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name)
         )
         : m("div",
-            viewCheckBox(fileInfo.name),
-            m("a.link", {href: directoryPath + fileInfo.name}, "📄 "), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true)}, fileInfo.name)
+            viewCheckBox(fileInfo.name), 
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true)},"📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name},  fileInfo.name),
         )
 }
 
