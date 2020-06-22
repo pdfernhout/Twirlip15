@@ -206,11 +206,18 @@ async function requestFileNewDirectory(request, response) {
      }
 }
 
-app.use("/", express.static(process.cwd() + "/client"))
-// app.use(serveIndex(".", {"icons": true}))
+app.use("/twirlip15", express.static(process.cwd() + "/client"))
 // Very unsafe!
-app.use(express.static("/"))
-app.use(serveIndex("/", {"icons": true}))
+app.use("/", express.static("/"))
+// app.use(serveIndex("/", {"icons": true}))
+
+app.get("/", (req, res) => {
+    res.status(301).redirect("/twirlip15/filer.html")
+})
+
+app.get("/twirlip15/", (req, res) => {
+    res.status(301).redirect("/twirlip15/filer.html")
+})
 
 app.listen(port, host)
 
