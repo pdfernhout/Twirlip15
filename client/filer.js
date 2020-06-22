@@ -99,6 +99,16 @@ async function loadFileContents(newFileName, saveState) {
     }
 }
 
+async function appendFile(fileName, stringToAppend, successCallback) {
+    if (fileSaveInProgress) return
+    fileSaveInProgress = true
+    const apiResult = await apiCall({request: "file-append", fileName, stringToAppend})
+    fileSaveInProgress = false
+    if (apiResult) {
+        successCallback()
+    }
+}
+
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
@@ -244,6 +254,12 @@ function viewFileContents() {
                     editedContents = chosenFileContents
                 }, disabled:  editing}, "Edit"),
                 m("button.ml1", {onclick: () => { 
+                    appendFile(chosenFileName, editedContents, () => {
+                        chosenFileContents = chosenFileContents + editedContents
+                        editedContents = ""
+                    })
+                }, disabled: !editing || fileSaveInProgress}, "Append"),
+                m("button.ml1", {onclick: () => { 
                     saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
                 }, disabled: !editing || fileSaveInProgress}, "Save"),
                 m("button.ml1", {onclick: () => { 
@@ -263,8 +279,8 @@ function viewFileContents() {
 const Filer = {
     view: () => {
         return m("div.ma2",
+            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileName && m("div",
-                errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
                 viewMenu(),
                 viewSelectedFiles(),

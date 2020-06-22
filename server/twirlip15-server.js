@@ -4,7 +4,6 @@ console.log("Twirlip15")
 
 import path from "path"
 import express from "express"
-import serveIndex from "serve-index"
 
 const __dirname = "/" // path.resolve()
 
@@ -26,7 +25,8 @@ app.get("/twirlip15-api", function(request, response) {
         supportedCommands: {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
-            "file-save": "save contents of a file given a fileName",
+            "file-append": "append stringToAppend to a file given a fileName",
+            "file-save": "save contents to a file given a fileName",
             "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
             "file-move": "moves files given a fileNames array and a newLocation", 
             "file-delete": "delete files in a deleteFiles array of file paths", 
@@ -41,6 +41,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestEcho(request, response)
     } else if (request.body.request === "file-contents") {
         requestFileContents(request, response)
+    } else if (request.body.request === "file-append") {
+        requestFileAppend(request, response)
     } else if (request.body.request === "file-save") {
         requestFileSave(request, response)
     } else if (request.body.request === "file-rename") {
@@ -76,8 +78,22 @@ async function requestFileContents(request, response) {
     }
 }
 
+async function requestFileAppend(request, response) {
+    console.log("POST file-append", request.body)
+    // Very unsafe!
+    const filePath = path.join(__dirname, request.body.fileName)
+    const stringToAppend = request.body.stringToAppend
+    try {
+        await fs.promises.appendFile(filePath, stringToAppend)
+        response.json({ok: true})
+    } catch(err) {
+        console.log(err)
+        response.json({ok: false, errorMessage: "Problem appending to file"})
+    }
+}
+
 async function requestFileSave(request, response) {
-    console.log("POST file-contents", request.body)
+    console.log("POST file-save", request.body)
     // Very unsafe!
     const filePath = path.join(__dirname, request.body.fileName)
     const fileContents = request.body.contents
