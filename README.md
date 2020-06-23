@@ -16,7 +16,7 @@ So, anyone who can access your server can potentially delete or change any file 
 
 WARNING: In general, you do not want to make your Twirlip15 server available to the public! Please consult appropriate guides on how to restrict access to servers on your network.
 
-WARNING: Twirlip15 is currently pre-alpha software and is only appropriate for us by advanced users who know about computer networking and software development.
+WARNING: Twirlip15 is currently pre-alpha software and is only appropriate for use by advanced users who know about computer networking and software development.
 
 You must have a recent version of Node.js (version >= 10) installed to use this software. 
 
