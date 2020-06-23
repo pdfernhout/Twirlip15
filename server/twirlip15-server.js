@@ -1,21 +1,21 @@
 console.log("Twirlip15")
 
-/* global process */
+/* global require, process */
 
-import path from "path"
-import express from "express"
+const fs = require("fs")
+const path = require("path")
+const express = require("express")
+const bodyParser = require("body-parser")
 
-const __dirname = "/" // path.resolve()
+const baseDir = "/" // path.resolve()
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
 const host = "127.0.0.1"
 const port = 8080
 
-import fs from "fs"
 const app = express()
 
-import bodyParser from "body-parser"
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -70,7 +70,7 @@ function requestEcho(request, response) {
 async function requestFileContents(request, response) {
     console.log("POST file-contents", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.fileName)
+    const filePath = path.join(baseDir, request.body.fileName)
     try {
         const contents = await fs.promises.readFile(filePath, "utf8")
         response.json({ok: true, contents: contents})
@@ -83,7 +83,7 @@ async function requestFileContents(request, response) {
 async function requestFileAppend(request, response) {
     console.log("POST file-append", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.fileName)
+    const filePath = path.join(baseDir, request.body.fileName)
     const stringToAppend = request.body.stringToAppend
     try {
         await fs.promises.appendFile(filePath, stringToAppend)
@@ -97,7 +97,7 @@ async function requestFileAppend(request, response) {
 async function requestFileSave(request, response) {
     console.log("POST file-save", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.fileName)
+    const filePath = path.join(baseDir, request.body.fileName)
     const fileContents = request.body.contents
     try {
         await fs.promises.writeFile(filePath, fileContents)
@@ -123,7 +123,7 @@ async function requestFileRename(request, response) {
 
     for (let item of renameFiles) {
         try {
-            await fs.promises.rename(path.join(__dirname, item.oldFileName), path.join(__dirname, item.newFileName))
+            await fs.promises.rename(path.join(baseDir, item.oldFileName), path.join(baseDir, item.newFileName))
         } catch {
             return response.json({ok: false, errorMessage: "renameFile failed for: " + JSON.stringify(item)})
         }
@@ -148,9 +148,9 @@ async function requestFileMove(request, response) {
     // TODO: better handling and reporting if some files moved but others are not
     for (let fileName of moveFiles) {
         try {
-            const oldFileName = path.join(__dirname, fileName)
+            const oldFileName = path.join(baseDir, fileName)
             const shortFileName = path.basename(fileName)
-            const newFileName = path.join(__dirname, newLocation, shortFileName)
+            const newFileName = path.join(baseDir, newLocation, shortFileName)
             await fs.promises.rename(oldFileName, newFileName)
         } catch (err) {
             console.log(err)
@@ -172,7 +172,7 @@ async function requestFileDelete(request, response) {
     // TODO: better handling and reporting if some files deleted but others are not
     for (let fileName of deleteFiles) {
         try {
-            const filePath = path.join(__dirname, fileName)
+            const filePath = path.join(baseDir, fileName)
             const stat = await fs.promises.lstat(filePath)
             if (stat.isFile()) {
                 await fs.promises.unlink(filePath)
@@ -192,7 +192,7 @@ async function requestFileDelete(request, response) {
 async function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.directoryPath)
+    const filePath = path.join(baseDir, request.body.directoryPath)
     console.log("POST file-directory filePath", filePath)
     try {
         const entries = await fs.promises.readdir(filePath, {encoding: "utf8", withFileTypes: true})
@@ -213,7 +213,7 @@ async function requestFileDirectory(request, response) {
 async function requestFileNewDirectory(request, response) {
     console.log("POST file-new-directory", request.body)
     // Very unsafe!
-    const filePath = path.join(__dirname, request.body.directoryPath)
+    const filePath = path.join(baseDir, request.body.directoryPath)
     console.log("POST file-new-directory filePath", filePath)
     try {
         await fs.promises.mkdir(filePath, {recursive: true})
