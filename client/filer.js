@@ -72,7 +72,7 @@ async function loadDirectory(newPath, saveState) {
     chosenFileName = ""
     chosenFileContents = null
     editing = false
-    const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath})
+    const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
@@ -234,11 +234,11 @@ function viewFileEntry(fileInfo) { // selectedFiles
     return fileInfo.isDirectory
         ? m("div",
             viewCheckBox(fileInfo.name),
-            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true)}, "📂 " + fileInfo.name)
+            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: JSON.stringify(fileInfo.stats, null, 4)}, "📂 " + fileInfo.name)
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true)},"📄 "),
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: JSON.stringify(fileInfo.stats, null, 4)},"📄 "),
             m("a.link", {href: directoryPath + fileInfo.name},  fileInfo.name),
         )
 }

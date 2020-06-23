@@ -32,7 +32,7 @@ app.get("/twirlip15-api", function(request, response) {
             "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
             "file-move": "moves files given a fileNames array and a newLocation", 
             "file-delete": "delete files in a deleteFiles array of file paths", 
-            "file-directory": "return list of files in a directory given a directoryPath",
+            "file-directory": "return list of files in a directory given a directoryPath, with extra stats if includeStats is true",
             "file-new-directory": "make a new directory given a directoryPath"
         }
     })
@@ -193,14 +193,24 @@ async function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
     // Very unsafe!
     const filePath = path.join(baseDir, request.body.directoryPath)
+    const includeStats = request.body.includeStats || false
     console.log("POST file-directory filePath", filePath)
     try {
         const entries = await fs.promises.readdir(filePath, {encoding: "utf8", withFileTypes: true})
         const files = []
         for (let entry of entries) {
+            let stats = null
+            if (includeStats) stats = await fs.promises.lstat(filePath)
             files.push({
                 name: entry.name,
-                isDirectory: entry.isDirectory()
+                isBlockDevice: entry.isBlockDevice(),
+                isCharacterDevice: entry.isCharacterDevice(),
+                isDirectory: entry.isDirectory(),
+                isFIFO: entry.isFIFO(),
+                isFile: entry.isFile(),
+                isSocket: entry.isSocket(),
+                isSymbolicLink: entry.isSymbolicLink(),
+                stats: stats
             })
         }
         response.json({ok: true, files: files})
