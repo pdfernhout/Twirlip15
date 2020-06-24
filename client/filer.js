@@ -231,14 +231,28 @@ function viewCheckBox(fileName) {
 }
 
 function viewFileEntry(fileInfo) { // selectedFiles
+
+    function statsTitle(stats) {
+        // console.log("stats", stats)
+        if (!stats) return undefined
+        // return JSON.stringify(fileInfo.stats, null, 4)
+        return JSON.stringify({
+            size: stats.size,
+            creationTime: stats.ctime,
+            modifiedTime: stats.mtime,
+            accessTime: stats.atime,
+            ownerUID: stats.uid
+        }, null, 4)
+    }
+
     return fileInfo.isDirectory
         ? m("div",
             viewCheckBox(fileInfo.name),
-            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: JSON.stringify(fileInfo.stats, null, 4)}, "📂 " + fileInfo.name)
+            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: JSON.stringify(fileInfo.stats, null, 4)},"📄 "),
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)},"📄 "),
             m("a.link", {href: directoryPath + fileInfo.name},  fileInfo.name),
         )
 }
