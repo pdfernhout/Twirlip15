@@ -200,7 +200,7 @@ async function requestFileDirectory(request, response) {
         const files = []
         for (let entry of entries) {
             let stats = null
-            if (includeStats) stats = await fs.promises.lstat(filePath)
+            if (includeStats) stats = await fs.promises.lstat(path.join(filePath, entry.name))
             files.push({
                 name: entry.name,
                 isBlockDevice: entry.isBlockDevice(),
