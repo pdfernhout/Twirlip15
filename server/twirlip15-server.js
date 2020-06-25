@@ -279,6 +279,11 @@ async function requestFileNewDirectory(request, response) {
 }
 
 app.use("/twirlip15", express.static(process.cwd() + "/client"))
+
+app.get("/favicon.ico", (req, res) => {
+    res.sendFile(process.cwd() + "/client/favicon.ico")
+})
+
 // Very unsafe!
 app.use("/", express.static("/"))
 // app.use(serveIndex("/", {"icons": true}))
