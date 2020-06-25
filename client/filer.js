@@ -13,9 +13,12 @@ let fileSaveInProgress = false
 let showMenu = false
 let selectedFiles = {}
 let partialFileTest = ""
+let lastSort = "name"
 
 window.onpopstate = async function(event) {
     if (event.state) {
+        console.log("onpopstate", event.state)
+        showMenu = event.state.showMenu || false
         await loadDirectory(event.state.directoryPath, false)
         if (event.state.chosenFileName) {
             await loadFileContents(event.state.chosenFileName, false)
@@ -63,9 +66,9 @@ async function loadDirectory(newPath, saveState) {
         urlParams.set("dir", newPath)
         // window.location.search = urlParams.toString()
         if (saveState === "replace") {
-            history.replaceState({directoryPath: newPath}, newPath, "?" + urlParams.toString())
+            history.replaceState({directoryPath: newPath, showMenu}, newPath, "?" + urlParams.toString())
         } else {
-            history.pushState({directoryPath: newPath}, newPath, "?" + urlParams.toString())
+            history.pushState({directoryPath: newPath, showMenu}, newPath, "?" + urlParams.toString())
         }
     }
     directoryPath = newPath
@@ -79,13 +82,8 @@ async function loadDirectory(newPath, saveState) {
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
-        directoryFiles.sort(
-            function(a, b) {
-              if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-              if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
-              return 0
-            }
-          )
+        lastSort = null
+        sortByFileName()
     }
 }
 
@@ -103,7 +101,7 @@ async function loadFileContents(newFileName, saveState) {
     editing = false
     partialFileTest = ""
     if (saveState) {
-        history.pushState({directoryPath, chosenFileName}, directoryPath)
+        history.pushState({directoryPath, chosenFileName, showMenu}, directoryPath)
     }
     const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
     if (apiResult) {
@@ -230,9 +228,70 @@ function viewSelectedFiles() {
     )
 }
 
+function sortByFileName() {
+    lastSort === "name"
+        ? lastSort = "name-reversed"
+        : lastSort = "name"
+    directoryFiles.sort((a, b) => {
+        if (a.name === b.name) return 0
+        if (a.name === ".." && b.name !== "..") return -1
+        if (a.name !== ".." && b.name === "..") return 1
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+        throw new Error("sortByFileName: unexpected sort case")
+    })
+    if (lastSort === "name-reversed") directoryFiles.reverse()
+}
+
+function sortBySize() {
+    directoryFiles.sort((a, b) => {
+        if (!a.stats && !b.stats) return 0
+        if (!a.stats) return -1
+        if (!b.stats) return 1
+        return a.stats.size - b.stats.size
+    })
+    lastSort === "size"
+        ? lastSort = "size-reversed"
+        : lastSort = "size"
+    if (lastSort === "size-reversed") directoryFiles.reverse()
+}
+
+function sortByTime() {
+    directoryFiles.sort((a, b) => {
+        if (!a.stats && !b.stats) return 0
+        if (!a.stats) return -1
+        if (!b.stats) return 1
+        if (a.stats.mtime < b.stats.mtime) return -1
+        if (a.stats.mtime > b.stats.mtime) return 1
+        return 0
+    })
+    lastSort === "time"
+        ? lastSort = "time-reversed"
+        : lastSort = "time"
+    if (lastSort === "time-reversed") directoryFiles.reverse()
+}
+
+function sortArrow(field) {
+    if (field === lastSort) return "↓"
+    if (field + "-reversed" === lastSort) return "↑"
+    return ""
+}
+
 function viewDirectoryFiles() {
     return directoryFiles
-        ? m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
+        ? showMenu 
+            ? m("table", 
+                m("tr",
+                    m("th", ""),
+                    m("th", {onclick: sortByFileName}, "File Name" + sortArrow("name")),
+                    m("th", {onclick: sortBySize}, "Size" + sortArrow("size")),
+                    m("th", {onclick: sortByTime}, "Modified" + sortArrow("time")),
+                    // m("th", "Owner"),
+                    // m("th", "Menu")
+                ),
+                directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+            )
+            : m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
         : m("div", "Loading file data...")
 }
 
@@ -245,19 +304,43 @@ function viewCheckBox(fileName) {
     })
 }
 
-function viewFileEntry(fileInfo) { // selectedFiles
+function statsTitle(stats) {
+    // console.log("stats", stats)
+    if (!stats) return undefined
+    // return JSON.stringify(fileInfo.stats, null, 4)
+    return JSON.stringify({
+        size: stats.size,
+        creationTime: stats.ctime,
+        modifiedTime: stats.mtime,
+        accessTime: stats.atime,
+        ownerUID: stats.uid
+    }, null, 4)
+}
 
-    function statsTitle(stats) {
-        // console.log("stats", stats)
-        if (!stats) return undefined
-        // return JSON.stringify(fileInfo.stats, null, 4)
-        return JSON.stringify({
-            size: stats.size,
-            creationTime: stats.ctime,
-            modifiedTime: stats.mtime,
-            accessTime: stats.atime,
-            ownerUID: stats.uid
-        }, null, 4)
+function formatSize(size) {
+    const text = "" + size
+    // Put comma in every three numbers
+    return text.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+}
+
+function formatTime(time) {
+    // note: the T is replaced by a special non-breaking thin space
+    return time.replace("Z", " ").replace("T", " ")
+}
+
+function viewFileEntry(fileInfo) { // selectedFiles
+    if (showMenu) {
+        return m("tr",
+            m("td", viewCheckBox(fileInfo.name)),
+            m("td", fileInfo.isDirectory
+                ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
+                : m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)}, "📄 ", m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name))
+            ),
+            m("td.tr.pl2", fileInfo.stats && formatSize(fileInfo.stats.size)),
+            m("td.pl2", fileInfo.stats && formatTime(fileInfo.stats.mtime)),
+            // m("td", fileInfo.stats && fileInfo.stats.uid),
+            // m("td", "MENU")
+        )
     }
 
     return fileInfo.isDirectory
@@ -267,8 +350,8 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)},"📄 "),
-            m("a.link", {href: directoryPath + fileInfo.name},  fileInfo.name),
+            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)}, "📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name),
         )
 }
 
@@ -314,7 +397,11 @@ const Filer = {
         return m("div.ma2",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileName && m("div",
-                m("div", m("span.mr2", {onclick: () => showMenu = !showMenu}, "☰"), "Files in: ", directoryPath),
+                m("div", m("span.mr2", {onclick: () => {
+                    showMenu = !showMenu
+                    history.pushState({directoryPath, showMenu}, directoryPath)
+                }
+            }, "☰"), "Files in: ", directoryPath),
                 viewMenu(),
                 viewSelectedFiles(),
                 viewDirectoryFiles()
