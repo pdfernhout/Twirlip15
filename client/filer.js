@@ -6,11 +6,13 @@ let directoryFiles = null
 let errorMessage = ""
 let chosenFileName = ""
 let chosenFileContents = ""
+let chosenFileLoaded = false
 let editing = false
 let editedContents = ""
 let fileSaveInProgress = false
 let showMenu = false
 let selectedFiles = {}
+let partialFileTest = ""
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -71,6 +73,7 @@ async function loadDirectory(newPath, saveState) {
     errorMessage = ""
     chosenFileName = ""
     chosenFileContents = null
+    chosenFileLoaded = false
     editing = false
     const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
     if (apiResult) {
@@ -86,16 +89,28 @@ async function loadDirectory(newPath, saveState) {
     }
 }
 
+async function loadPartialFileTest(fileName) {
+    const apiResult = await apiCall({request: "file-read-bytes", fileName: fileName, length: 4096})
+    if (apiResult) {
+        partialFileTest = apiResult.data
+    }
+}
+
 async function loadFileContents(newFileName, saveState) {
     chosenFileName = newFileName
     chosenFileContents = null
+    chosenFileLoaded = false
     editing = false
+    partialFileTest = ""
     if (saveState) {
         history.pushState({directoryPath, chosenFileName}, directoryPath)
     }
     const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
     if (apiResult) {
         chosenFileContents = apiResult.contents
+        chosenFileLoaded = true
+    } else {
+        chosenFileContents = ""
     }
 }
 
@@ -259,8 +274,12 @@ function viewFileEntry(fileInfo) { // selectedFiles
 
 function viewFileContents() {
     return m("div",
-        (chosenFileName && (chosenFileContents === null)) && m("div", "Loading file contents..."),
-        (chosenFileContents !== null) && m("div",
+        (chosenFileContents === null) && m("div", "Loading file contents..."),
+        (!chosenFileLoaded && chosenFileContents === "") && m("div", 
+            m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
+            partialFileTest && m("div.break-word", partialFileTest)
+        ),
+        chosenFileLoaded && m("div",
             m("div",
                 m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
                 m("button.ml1", {onclick: () => {

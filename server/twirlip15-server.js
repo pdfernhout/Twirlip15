@@ -1,8 +1,9 @@
 console.log("Twirlip15")
 
-/* global require, process */
+/* global require, process, Buffer */
 
 const fs = require("fs")
+const util = require("util")
 const path = require("path")
 const express = require("express")
 const bodyParser = require("body-parser")
@@ -16,6 +17,8 @@ const port = 8080
 
 const app = express()
 
+const maxDataForResult = 2000000
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -27,6 +30,7 @@ app.get("/twirlip15-api", function(request, response) {
         supportedCommands: {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
+            "file-read-bytes": "return bytesRead and data for length bytes from start from a file given a fileName",
             "file-append": "append stringToAppend to a file given a fileName",
             "file-save": "save contents to a file given a fileName",
             "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
@@ -43,6 +47,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestEcho(request, response)
     } else if (request.body.request === "file-contents") {
         requestFileContents(request, response)
+    } else if (request.body.request === "file-read-bytes") {
+        requestFileReadBytes(request, response)
     } else if (request.body.request === "file-append") {
         requestFileAppend(request, response)
     } else if (request.body.request === "file-save") {
@@ -71,12 +77,50 @@ async function requestFileContents(request, response) {
     console.log("POST file-contents", request.body)
     // Very unsafe!
     const filePath = path.join(baseDir, request.body.fileName)
+    const encoding = request.body.encoding || "utf8"
+    const stat = await fs.promises.lstat(filePath)
+    if (stat.size > maxDataForResult) {
+        response.json({ok: false, errorMessage: "File size of " + stat.size + " too big to return all at once; max size: " + maxDataForResult})
+        return
+    }
     try {
-        const contents = await fs.promises.readFile(filePath, "utf8")
+        const contents = await fs.promises.readFile(filePath, encoding)
         response.json({ok: true, contents: contents})
     } catch(err) {
         console.log(err)
         response.json({ok: false, errorMessage: "Problem reading file"})
+    }
+}
+
+const fsRead = util.promisify(fs.read)
+
+async function requestFileReadBytes(request, response) {
+    console.log("POST file-read-bytes", request.body)
+    // Very unsafe!
+    const filePath = path.join(baseDir, request.body.fileName)
+    const start = request.body.start || 0
+    const length = request.body.length || 0
+    // encoding can be "hex" or "utf8"
+    const encoding = request.body.encoding || "hex"
+    if (length > maxDataForResult) {
+        response.json({ok: false, errorMessage: "Requested length is too big to return all at once; max length: " + maxDataForResult})
+        return
+    }
+    try {
+        const fileHandle = await fs.promises.open(filePath)
+        try {
+            const buffer = Buffer.alloc(length)
+            const readResult = await fsRead(fileHandle.fd, buffer, 0, length, start)
+            response.json({ok: true, data: buffer.toString(encoding), bytesRead: readResult.bytesRead})
+        } catch(err) {
+            console.log(err)
+            response.json({ok: false, errorMessage: "Problem reading file"})
+        } finally {
+            await fileHandle.close()
+        }
+    } catch (err) {
+        console.log(err)
+        response.json({ok: false, errorMessage: "Problem opening file"})
     }
 }
 
