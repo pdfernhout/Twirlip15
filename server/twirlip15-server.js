@@ -33,7 +33,8 @@ app.get("/twirlip15-api", function(request, response) {
             "file-read-bytes": "return bytesRead and data for length bytes from start from a file given a fileName",
             "file-append": "append stringToAppend to a file given a fileName",
             "file-save": "save contents to a file given a fileName",
-            "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName", 
+            "file-copy": "copy a file given an copyFromFilePath and copyToFilePath",
+            "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName",
             "file-move": "moves files given a fileNames array and a newLocation", 
             "file-delete": "delete files in a deleteFiles array of file paths", 
             "file-directory": "return list of files in a directory given a directoryPath, with extra stats if includeStats is true",
@@ -53,6 +54,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestFileAppend(request, response)
     } else if (request.body.request === "file-save") {
         requestFileSave(request, response)
+    } else if (request.body.request === "file-copy") {
+        requestFileCopy(request, response)
     } else if (request.body.request === "file-rename") {
         requestFileRename(request, response)
     } else if (request.body.request === "file-move") {
@@ -145,6 +148,20 @@ async function requestFileSave(request, response) {
     const fileContents = request.body.contents
     try {
         await fs.promises.writeFile(filePath, fileContents)
+        response.json({ok: true})
+    } catch(err) {
+        console.log(err)
+        response.json({ok: false, errorMessage: "Problem writing file"})
+    }
+}
+
+async function requestFileCopy(request, response) {
+    console.log("POST file-copy", request.body)
+    // Very unsafe!
+    const copyFromFilePath = path.join(baseDir, request.body.copyFromFilePath)
+    const copyToFilePath = path.join(baseDir, request.body.copyToFilePath)
+    try {
+        await fs.promises.copyFile(copyFromFilePath, copyToFilePath)
         response.json({ok: true})
     } catch(err) {
         console.log(err)

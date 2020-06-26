@@ -168,6 +168,20 @@ async function renameFile() {
     }
 }
 
+async function copyFile() {
+    const copyFromFilePath = Object.keys(selectedFiles)[0]
+    const copyFromFileName = fileNameFromPath(copyFromFilePath)
+    const copyToFileName = prompt("New file name for copy?", copyFromFileName)
+    if (copyToFileName) {
+        const copyToFilePath = directoryPath + copyToFileName
+        const apiResult = await apiCall({request: "file-copy", copyFromFilePath, copyToFilePath})
+        if (apiResult) {
+            selectedFiles = {}
+            loadDirectory(directoryPath, false)
+        }
+    }
+}
+
 async function deleteFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
@@ -213,6 +227,7 @@ function viewMenu() {
         m("div" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
         m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
+        m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
         m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete")
     )
 }
