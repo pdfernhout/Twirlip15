@@ -81,17 +81,22 @@ async function requestFileContents(request, response) {
     // Very unsafe!
     const filePath = path.join(baseDir, request.body.fileName)
     const encoding = request.body.encoding || "utf8"
-    const stat = await fs.promises.lstat(filePath)
-    if (stat.size > maxDataForResult) {
-        response.json({ok: false, errorMessage: "File size of " + stat.size + " too big to return all at once; max size: " + maxDataForResult})
-        return
-    }
     try {
-        const contents = await fs.promises.readFile(filePath, encoding)
-        response.json({ok: true, contents: contents})
-    } catch(err) {
-        console.log(err)
-        response.json({ok: false, errorMessage: "Problem reading file"})
+        const stat = await fs.promises.lstat(filePath)
+        if (stat.size > maxDataForResult) {
+            response.json({ok: false, errorMessage: "File size of " + stat.size + " too big to return all at once; max size: " + maxDataForResult})
+            return
+        }
+        try {
+            const contents = await fs.promises.readFile(filePath, encoding)
+            response.json({ok: true, contents: contents})
+        } catch(err) {
+            console.log(err)
+            response.json({ok: false, errorMessage: "Problem reading file"})
+        }
+    } catch(error) {
+        console.log(error)
+        response.json({ok: false, errorMessage: "Problem stat-ing file"})
     }
 }
 
@@ -165,7 +170,7 @@ async function requestFileCopy(request, response) {
         response.json({ok: true})
     } catch(err) {
         console.log(err)
-        response.json({ok: false, errorMessage: "Problem writing file"})
+        response.json({ok: false, errorMessage: "Problem copying file"})
     }
 }
 
