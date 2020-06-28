@@ -19,9 +19,9 @@ Simpler:
 Or to make new page:
 @link NewPage.md
 
-Click here to go to [AnotherPage not really](AnotherPage.md)
+Click here to go to [AnotherPage yes really](AnotherPage.md)
 
-Click here to go to [AnotherPage for realz](/twirlip15/view-md.html?file=/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md)
+Click here to go to [AnotherPage also for realz](AnotherPage.md)
 
 What if URL looked like: ?
 /twirlip15/view-md/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md

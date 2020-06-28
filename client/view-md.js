@@ -53,7 +53,10 @@ async function loadFileContents(newFileName) {
 function convertMarkdown(text) {
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const html = converter.makeHtml(text)
-    return html
+    // Add ?app=view-md as needed
+    const re = /(<a href="[^?>]*)(">)/g
+    const html2 = html.replace(re, "$1?app=view-md$2")
+    return html2
 }
 
 function viewFileContents() {
@@ -79,6 +82,6 @@ const ViewMarkdown = {
 
 const filePathFromParams = window.location.pathname
 
-m.mount(document.body, ViewMarkdown)
-
 if (filePathFromParams) loadFileContents(filePathFromParams)
+
+m.mount(document.body, ViewMarkdown)
