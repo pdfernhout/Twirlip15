@@ -343,6 +343,14 @@ function formatTime(time) {
     return time.replace("Z", " ").replace("T", " ")
 }
 
+function viewerForURL(url) {
+    if (url.endsWith(".md")) {
+        return "/twirlip15/view-md.html?file=" + url
+    } else {
+        return url
+    }
+}
+
 function viewFileEntry(fileInfo) { // selectedFiles
     if (showMenu) {
         return m("tr",
@@ -366,7 +374,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
         : m("div",
             viewCheckBox(fileInfo.name), 
             m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)}, "📄 "),
-            m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name),
+            m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
         )
 }
 
