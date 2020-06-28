@@ -4,15 +4,8 @@ import "./vendor/mithril.js"
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
-let chosenFileName = ""
-let chosenFileContents = ""
-let chosenFileLoaded = false
-let editing = false
-let editedContents = ""
-let fileSaveInProgress = false
 let showMenu = false
 let selectedFiles = {}
-let partialFileTest = ""
 let lastSort = "name"
 
 window.onpopstate = async function(event) {
@@ -20,9 +13,6 @@ window.onpopstate = async function(event) {
         console.log("onpopstate", event.state)
         showMenu = event.state.showMenu || false
         await loadDirectory(event.state.directoryPath, false)
-        if (event.state.chosenFileName) {
-            await loadFileContents(event.state.chosenFileName, false)
-        }
     } else {
         await loadDirectory("/", false)
     }
@@ -71,61 +61,12 @@ async function loadDirectory(newPath, saveState) {
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
-    chosenFileName = ""
-    chosenFileContents = null
-    chosenFileLoaded = false
-    editing = false
     const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
         lastSort = null
         sortByFileName()
-    }
-}
-
-async function loadPartialFileTest(fileName) {
-    const apiResult = await apiCall({request: "file-read-bytes", fileName: fileName, length: 4096})
-    if (apiResult) {
-        partialFileTest = apiResult.data
-    }
-}
-
-async function loadFileContents(newFileName, saveState) {
-    chosenFileName = newFileName
-    chosenFileContents = null
-    chosenFileLoaded = false
-    editing = false
-    partialFileTest = ""
-    if (saveState) {
-        history.pushState({directoryPath, chosenFileName, showMenu}, directoryPath)
-    }
-    const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
-    if (apiResult) {
-        chosenFileContents = apiResult.contents
-        chosenFileLoaded = true
-    } else {
-        chosenFileContents = ""
-    }
-}
-
-async function appendFile(fileName, stringToAppend, successCallback) {
-    if (fileSaveInProgress) return
-    fileSaveInProgress = true
-    const apiResult = await apiCall({request: "file-append", fileName, stringToAppend})
-    fileSaveInProgress = false
-    if (apiResult) {
-        successCallback()
-    }
-}
-
-async function saveFile(fileName, contents, successCallback) {
-    if (fileSaveInProgress) return
-    fileSaveInProgress = true
-    const apiResult = await apiCall({request: "file-save", fileName, contents})
-    fileSaveInProgress = false
-    if (apiResult) {
-        successCallback()
     }
 }
 
@@ -354,7 +295,10 @@ function viewFileEntry(fileInfo) { // selectedFiles
             m("td", viewCheckBox(fileInfo.name)),
             m("td", fileInfo.isDirectory
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
-                : m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)}, "📄 ", m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name))
+                : m("span", 
+                    m("a.link", {href: directoryPath + fileInfo.name + "?app=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
+                    m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name)
+                )
             ),
             m("td.tr.pl2", fileInfo.stats && formatSize(fileInfo.stats.size)),
             m("td.pl2", fileInfo.stats && formatTime(fileInfo.stats.mtime)),
@@ -370,53 +314,16 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("span", {onclick: () => loadFileContents(directoryPath + fileInfo.name, true), title: statsTitle(fileInfo.stats)}, "📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name + "?app=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "),
             m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
         )
-}
-
-function viewFileContents() {
-    return m("div",
-        (chosenFileContents === null) && m("div", "Loading file contents..."),
-        (!chosenFileLoaded && chosenFileContents === "") && m("div", 
-            m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
-            partialFileTest && m("div.break-word", partialFileTest)
-        ),
-        chosenFileLoaded && m("div",
-            m("div",
-                m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
-                m("button.ml1", {onclick: () => {
-                    editing = true
-                    editedContents = chosenFileContents
-                }, disabled:  editing}, "Edit"),
-                m("button.ml1", {onclick: () => { 
-                    appendFile(chosenFileName, editedContents, () => {
-                        chosenFileContents = chosenFileContents + editedContents
-                        editedContents = ""
-                    })
-                }, disabled: !editing || fileSaveInProgress}, "Append"),
-                m("button.ml1", {onclick: () => { 
-                    saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
-                }, disabled: !editing || fileSaveInProgress}, "Save"),
-                m("button.ml1", {onclick: () => { 
-                    chosenFileName = ""
-                    chosenFileContents = null
-                    history.back()
-                }, disabled: fileSaveInProgress}, "Close"),
-                fileSaveInProgress && m("span.yellow", "Saving...")
-            ),
-            editing
-                ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
-                : m("pre.ml2.pre-wrap", chosenFileContents)
-        )
-    )
 }
 
 const Filer = {
     view: () => {
         return m("div.ma2",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            !chosenFileName && m("div",
+            m("div",
                 m("div", m("span.mr2", {onclick: () => {
                     showMenu = !showMenu
                     history.pushState({directoryPath, showMenu}, directoryPath)
@@ -425,10 +332,6 @@ const Filer = {
                 viewMenu(),
                 viewSelectedFiles(),
                 viewDirectoryFiles()
-            ),
-            chosenFileName && m("div",
-                chosenFileName && m("div.ml2.mt2", "Chosen file: " , chosenFileName),
-                viewFileContents()
             )
         )
     }

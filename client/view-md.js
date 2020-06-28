@@ -80,7 +80,7 @@ const ViewMarkdown = {
     }
 }
 
-const filePathFromParams = window.location.pathname
+const filePathFromParams = decodeURI(window.location.pathname)
 
 if (filePathFromParams) loadFileContents(filePathFromParams)
 
