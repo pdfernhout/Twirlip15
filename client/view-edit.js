@@ -107,8 +107,6 @@ function viewFileContents() {
                     saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
                 }, disabled: !editing || fileSaveInProgress}, "Save"),
                 m("button.ml1", {onclick: () => { 
-                    chosenFileName = ""
-                    chosenFileContents = null
                     history.back()
                 }, disabled: fileSaveInProgress}, "Close"),
                 fileSaveInProgress && m("span.yellow", "Saving...")
