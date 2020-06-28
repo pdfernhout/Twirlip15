@@ -53,9 +53,9 @@ async function loadFileContents(newFileName) {
 function convertMarkdown(text) {
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const html = converter.makeHtml(text)
-    // Add ?app=view-md as needed
+    // Add ?twirlip=view-md as needed
     const re = /(<a href="[^?>]*)(">)/g
-    const html2 = html.replace(re, "$1?app=view-md$2")
+    const html2 = html.replace(re, "$1?twirlip=view-md$2")
     return html2
 }
 

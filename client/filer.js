@@ -53,9 +53,9 @@ async function loadDirectory(newPath, saveState) {
     }
     if (saveState) {
         if (saveState === "replace") {
-            history.replaceState({directoryPath: newPath, showMenu}, newPath, newPath + "?app=filer")
+            history.replaceState({directoryPath: newPath, showMenu}, newPath, newPath + "?twirlip=filer")
         } else {
-            history.pushState({directoryPath: newPath, showMenu}, newPath, newPath + "?app=filer")
+            history.pushState({directoryPath: newPath, showMenu}, newPath, newPath + "?twirlip=filer")
         }
     }
     directoryPath = newPath
@@ -283,7 +283,7 @@ function formatTime(time) {
 
 function viewerForURL(url) {
     if (url.endsWith(".md")) {
-        return url + "?app=view-md"
+        return url + "?twirlip=view-md"
     } else {
         return url
     }
@@ -296,7 +296,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
             m("td", fileInfo.isDirectory
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
                 : m("span", 
-                    m("a.link", {href: directoryPath + fileInfo.name + "?app=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
+                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
                     m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name)
                 )
             ),
@@ -314,7 +314,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("a.link", {href: directoryPath + fileInfo.name + "?app=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "),
             m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
         )
 }

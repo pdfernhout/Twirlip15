@@ -43,6 +43,6 @@ or can also implicitly define triples via links in markdown file
 
 What if use base URL as from root and then add querystring with app vs. putting app in path early on. So:
 
-http://localhost/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md?app=view-md
+http://localhost/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md?twirlip=view-md
 
-http://localhost/home/pdfernhout/workspace/Twirlip15/?app=filer
+http://localhost/home/pdfernhout/workspace/Twirlip15/?twirlip=filer
