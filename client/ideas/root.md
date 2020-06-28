@@ -30,5 +30,19 @@ Or:
 /localhost/view-md/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md
 /localhost/files/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md
 
+--
 
+Maybe better if @ works where if no space is full triple and if space it refers to self?
+@test1 tag test-tag
+@ tag test-tag
 
+so can explicitly define triples in a file
+or can also implicitly define triples via links in markdown file
+
+-----
+
+What if use base URL as from root and then add querystring with app vs. putting app in path early on. So:
+
+http://localhost/home/pdfernhout/workspace/Twirlip15/client/ideas/AnotherPage.md?app=view-md
+
+http://localhost/home/pdfernhout/workspace/Twirlip15/?app=filer
