@@ -77,8 +77,7 @@ const ViewMarkdown = {
     }
 }
 
-const urlParams = new URLSearchParams(window.location.search)
-const filePathFromParams = urlParams.get("file")
+const filePathFromParams = window.location.pathname
 
 m.mount(document.body, ViewMarkdown)
 

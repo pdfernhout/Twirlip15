@@ -62,13 +62,10 @@ async function loadDirectory(newPath, saveState) {
         newPath = newPathParts.join("/") + "/"
     }
     if (saveState) {
-        const urlParams = new URLSearchParams(window.location.search)
-        urlParams.set("dir", newPath)
-        // window.location.search = urlParams.toString()
         if (saveState === "replace") {
-            history.replaceState({directoryPath: newPath, showMenu}, newPath, "?" + urlParams.toString())
+            history.replaceState({directoryPath: newPath, showMenu}, newPath, newPath + "?app=filer")
         } else {
-            history.pushState({directoryPath: newPath, showMenu}, newPath, "?" + urlParams.toString())
+            history.pushState({directoryPath: newPath, showMenu}, newPath, newPath + "?app=filer")
         }
     }
     directoryPath = newPath
@@ -345,7 +342,7 @@ function formatTime(time) {
 
 function viewerForURL(url) {
     if (url.endsWith(".md")) {
-        return "/twirlip15/view-md.html?file=" + url
+        return url + "?app=view-md"
     } else {
         return url
     }
@@ -439,7 +436,6 @@ const Filer = {
 
 m.mount(document.body, Filer)
 
-const urlParams = new URLSearchParams(window.location.search)
-const startDirectory =  urlParams.get("dir") || "/"
+const startDirectory =  window.location.pathname
 
 loadDirectory(startDirectory, "replace")

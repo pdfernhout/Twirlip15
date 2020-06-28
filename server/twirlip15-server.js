@@ -300,23 +300,32 @@ async function requestFileNewDirectory(request, response) {
      }
 }
 
-app.use("/twirlip15", express.static(process.cwd() + "/client"))
-
 app.get("/favicon.ico", (req, res) => {
     res.sendFile(process.cwd() + "/client/favicon.ico")
 })
 
+app.use("/twirlip15", express.static(process.cwd() + "/client"))
+
+app.use((req, res, next) => {
+    console.log("querystring", req.query, req.originalUrl)
+    const app = req.query.app
+    if (app) {
+        res.sendFile(process.cwd() + "/client/" + app.replace(/[^0-9a-z-]/gi, "") + ".html")
+    } else {
+        next()
+    }
+})
+
+app.get("/", (req, res, next) => {
+    if (!req.query.app) {
+        res.status(301).redirect("/?app=filer")
+    } else {
+        next()
+    }
+})
+
 // Very unsafe!
 app.use("/", express.static("/"))
-// app.use(serveIndex("/", {"icons": true}))
-
-app.get("/", (req, res) => {
-    res.status(301).redirect("/twirlip15/filer.html")
-})
-
-app.get("/twirlip15/", (req, res) => {
-    res.status(301).redirect("/twirlip15/filer.html")
-})
 
 app.listen(port, host)
 
