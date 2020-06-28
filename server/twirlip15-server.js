@@ -308,17 +308,13 @@ app.use("/twirlip15", express.static(process.cwd() + "/client"))
 
 app.use((req, res, next) => {
     console.log("querystring", req.query, req.originalUrl)
+    console.log("req.url 1", req.url)
     const app = req.query.app
     if (app) {
+        console.log("send file for app", app.replace(/[^0-9a-z-]/gi, ""))
         res.sendFile(process.cwd() + "/client/" + app.replace(/[^0-9a-z-]/gi, "") + ".html")
-    } else {
-        next()
-    }
-})
-
-app.get("/", (req, res, next) => {
-    if (!req.query.app) {
-        res.status(301).redirect("/?app=filer")
+    } else if (req.url.endsWith("/") && !req.query.app) {
+            res.status(301).redirect(req.url + "?app=filer")
     } else {
         next()
     }
