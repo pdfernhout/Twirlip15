@@ -87,7 +87,7 @@ function viewDirectoryFiles() {
 
 const Ideas = {
     view: () => {
-        return m("div.ma2",
+        return m("div.ma2.mw-37rem",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             viewDirectoryFiles()
         )
