@@ -44,7 +44,11 @@ async function loadDirectory(newPath) {
     errorMessage = ""
     const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
     if (apiResult) {
-        directoryFiles = apiResult.files.filter(fileInfo => !fileInfo.isDirectory && !fileInfo.name.startsWith("."))
+        directoryFiles = apiResult.files.filter(
+            fileInfo => !fileInfo.isDirectory 
+            && !fileInfo.name.startsWith(".")
+            && fileInfo.name.endsWith(".md")
+        )
     }
     directoryFiles.forEach(fileInfo => loadFileContents(fileInfo))
 }
@@ -73,7 +77,11 @@ function viewFileEntry(fileInfo) {
 
 function viewDirectoryFiles() {
     return directoryFiles
-        ? m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
+        ? m("div", 
+            directoryFiles.length === 0
+                ? "No *.md files in directory"
+                : directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+        )
         : m("div", "Loading file data...")
 }
 
