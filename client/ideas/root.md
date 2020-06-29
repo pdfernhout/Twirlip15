@@ -32,9 +32,9 @@ Or:
 
 --
 
-Maybe better if @ works where if no space is full triple and if space it refers to self?
-@test1 tag test-tag
-@ tag test-tag
+Maybe better if @ works where if no space is full triple and if space it refers to self?  
+@test1 tag test-tag  
+@ tag test-tag  
 
 so can explicitly define triples in a file
 or can also implicitly define triples via links in markdown file

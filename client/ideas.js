@@ -5,7 +5,7 @@ import "./vendor/showdown.js"
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
-
+let filter = ""
 let triples = []
 
 async function apiCall(request) {
@@ -59,18 +59,27 @@ async function loadDirectory(newPath) {
     console.log("triples", triples)
 }
 
-function parseTriples(text) {
+function removeExtension(fileName) {
+    return fileName.split(".md")[0]
+}
+
+function parseTriples(fileInfo) {
+    const fileName = removeExtension(fileInfo.name)
+    const text = fileInfo.contents
     const lines = text.split("\n")
-    for (let line of lines) {
-        line = line.trim()
+    for (const untrimmedLine of lines) {
+        const line = untrimmedLine.trimEnd()
         if (line.startsWith("@ ")) {
             console.log("starts with @ ", line)
-            const segments = line.split(" ")
+            const segments = line.split(/\s+/)
             segments.shift()
             if (segments.length === 2) {
-                segments.unshift("self")
+                segments.unshift(fileName)
                 triples.push(segments)
             } else if (segments.length === 3) {
+                if (segments[0] == "self" || segments[0] == "this") {
+                    segments[0] = fileName
+                }
                 triples.push(segments)
             } else {
                 console.log("@ command has too few or too many sections (not 2 or 3)", line)
@@ -84,7 +93,7 @@ async function loadFileContents(fileInfo) {
     const apiResult = await apiCall({request: "file-contents", fileName: directoryPath + fileInfo.name})
     if (apiResult) {
         fileInfo.contents = apiResult.contents
-        parseTriples(fileInfo.contents)
+        parseTriples(fileInfo)
     }
 }
 
@@ -97,10 +106,20 @@ function convertMarkdown(text) {
     return html2
 }
 
+function hasTag(name, tag) {
+    for (const triple of triples) {
+        if (triple[0] === name && triple[1] === "tag" && triple[2] === tag) return true
+    }
+    return false
+}
+
 function viewFileEntry(fileInfo) {
-    return m("div.ba.ma2.pa2",
+    if (filter.trim() && !hasTag(removeExtension(fileInfo.name), filter.trim())) {
+        return []
+    }
+    return m("div.ba.ma2.pa2.overflow-auto.mh-15rem",
             m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
-            m("a", {href: fileInfo.name + "?twirlip=view-md"}, fileInfo.name),
+            m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name)),
             fileInfo.contents && m("div.ml2", m.trust(convertMarkdown(fileInfo.contents))
         )
     )
@@ -111,7 +130,13 @@ function viewDirectoryFiles() {
         ? m("div", 
             directoryFiles.length === 0
                 ? "No *.md files in directory"
-                : directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+                : m("div",
+                    m("div",
+                        m("span.mr1", "filter by a tag:"),
+                        m("input", {value: filter, onchange: event => filter = event.target.value})
+                    ),
+                    directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+                )
         )
         : m("div", "Loading file data...")
 }

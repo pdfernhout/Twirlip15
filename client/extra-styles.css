@@ -18,3 +18,11 @@
 .break-word {
     overflow-wrap: anywhere;
 }
+
+.mh-15rem {
+    max-height: 20rem;
+}
+
+.mh-20rem {
+    max-height: 15rem;
+}
