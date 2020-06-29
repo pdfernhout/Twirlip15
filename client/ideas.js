@@ -68,7 +68,7 @@ async function addFile() {
         const fileName = directoryPath + newFileName
         const apiResult = await apiCall({request: "file-save", fileName, contents: ""})
         if (apiResult) {
-            window.location.href = fileName + "?twirlip=view-edit"
+            window.location.assign(fileName + "?twirlip=view-edit")
         }
     }
 }
@@ -160,7 +160,10 @@ const Ideas = {
         return m("div.ma2.mw-37rem",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             viewDirectoryFiles(),
-            m("button", {onclick: () => addFile()}, "+ New File")
+            m("div.mt2",
+                m("button", {onclick: () => addFile()}, "+ New File"),
+                m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
+            )
         )
     }
 }

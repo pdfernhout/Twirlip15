@@ -1,8 +1,8 @@
 This is a test file.
 
-@ tag test
-@ tag space
-@ tag earth
+@ tag test  
+@ tag space  
+@ tag earth  
 
 Some content goes here!
 
