@@ -70,7 +70,7 @@ function convertMarkdown(text) {
 }
 
 function viewFileEntry(fileInfo) {
-    return m("div.ba.ma2", m("a", {href: fileInfo.name + "?twirlip=view-md"}, fileInfo.name),
+    return m("div.ba.ma2.pa2", m("a", {href: fileInfo.name + "?twirlip=view-md"}, fileInfo.name),
         fileInfo.contents && m("div.ml2", m.trust(convertMarkdown(fileInfo.contents)))
     )
 }
