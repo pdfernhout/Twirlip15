@@ -2,21 +2,21 @@ Pointrel-like ideas inspired a bit by "Foam"
 https://news.ycombinator.com/item?id=23666950
 https://github.com/foambubble/foam
 
-triple: this tag start
+triple: this tag start  
 @ this tag start
 
-Implicit above is:
-@ this link https://news.ycombinator.com/item?id=23666950
-@ this link https://github.com/foambubble/foam
+Implicit above is:  
+@ this link https://news.ycombinator.com/item?id=23666950  
+@ this link https://github.com/foambubble/foam  
 
 Simpler:
 
-@tag start
-@tag: start
+@tag start  
+@tag: start  
 
 @link https://github.com/foambubble/foam
 
-Or to make new page:
+Or to make new page:  
 @link NewPage.md
 
 Click here to go to [AnotherPage yes really](AnotherPage.md)

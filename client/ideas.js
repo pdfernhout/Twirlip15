@@ -6,6 +6,8 @@ let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
 
+let triples = []
+
 async function apiCall(request) {
     let result = null
     errorMessage = ""
@@ -32,6 +34,7 @@ async function apiCall(request) {
 }
 
 async function loadDirectory(newPath) {
+    triples = []
     if (newPath.endsWith("/../")) {
         const newPathParts = newPath.split("/")
         newPathParts.pop()
@@ -50,13 +53,38 @@ async function loadDirectory(newPath) {
             && fileInfo.name.endsWith(".md")
         )
     }
-    directoryFiles.forEach(fileInfo => loadFileContents(fileInfo))
+    for (let fileInfo of directoryFiles) {
+        await loadFileContents(fileInfo)
+    }
+    console.log("triples", triples)
+}
+
+function parseTriples(text) {
+    const lines = text.split("\n")
+    for (let line of lines) {
+        line = line.trim()
+        if (line.startsWith("@ ")) {
+            console.log("starts with @ ", line)
+            const segments = line.split(" ")
+            segments.shift()
+            if (segments.length === 2) {
+                segments.unshift("self")
+                triples.push(segments)
+            } else if (segments.length === 3) {
+                triples.push(segments)
+            } else {
+                console.log("@ command has too few or too many sections (not 2 or 3)", line)
+                return
+            }
+        }
+    }
 }
 
 async function loadFileContents(fileInfo) {
     const apiResult = await apiCall({request: "file-contents", fileName: directoryPath + fileInfo.name})
     if (apiResult) {
         fileInfo.contents = apiResult.contents
+        parseTriples(fileInfo.contents)
     }
 }
 
@@ -70,8 +98,11 @@ function convertMarkdown(text) {
 }
 
 function viewFileEntry(fileInfo) {
-    return m("div.ba.ma2.pa2", m("a", {href: fileInfo.name + "?twirlip=view-md"}, fileInfo.name),
-        fileInfo.contents && m("div.ml2", m.trust(convertMarkdown(fileInfo.contents)))
+    return m("div.ba.ma2.pa2",
+            m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
+            m("a", {href: fileInfo.name + "?twirlip=view-md"}, fileInfo.name),
+            fileInfo.contents && m("div.ml2", m.trust(convertMarkdown(fileInfo.contents))
+        )
     )
 }
 
