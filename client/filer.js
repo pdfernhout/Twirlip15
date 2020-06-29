@@ -142,6 +142,10 @@ async function moveFiles() {
     }
 }
 
+function openAsIdeas() {
+    window.location.assign(directoryPath + "?twirlip=ideas")
+}
+
 function showSelectedFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     alert("Selected files:\n" + sortedSelections.join("\n"))
@@ -163,6 +167,7 @@ function viewMenu() {
     return showMenu && m("div.ml4.bg-light-green.w-12rem",
         m("div" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
         m("div" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
+        m("div" + hoverColor, {onclick: () => openAsIdeas()}, "* Open as Ideas"),
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
         m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
