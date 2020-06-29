@@ -59,6 +59,20 @@ async function loadDirectory(newPath) {
     console.log("triples", triples)
 }
 
+async function addFile() {
+    let newFileName = prompt("New file name?")
+    if (newFileName) {
+        if (!newFileName.endsWith(".md")) {
+            newFileName =  newFileName + ".md"
+        }
+        const fileName = directoryPath + newFileName
+        const apiResult = await apiCall({request: "file-save", fileName, contents: ""})
+        if (apiResult) {
+            window.location.href = fileName + "?twirlip=view-edit"
+        }
+    }
+}
+
 function removeExtension(fileName) {
     return fileName.split(".md")[0]
 }
@@ -145,7 +159,8 @@ const Ideas = {
     view: () => {
         return m("div.ma2.mw-37rem",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            viewDirectoryFiles()
+            viewDirectoryFiles(),
+            m("button", {onclick: () => addFile()}, "+ New File")
         )
     }
 }
