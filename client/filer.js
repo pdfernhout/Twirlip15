@@ -337,8 +337,7 @@ const Filer = {
     }
 }
 
-m.mount(document.body, Filer)
-
 const startDirectory =  window.location.pathname
-
 loadDirectory(startDirectory, "replace")
+
+m.mount(document.body, Filer)
