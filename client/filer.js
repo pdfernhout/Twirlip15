@@ -305,7 +305,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
                     m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name)
                 )
             ),
-            m("td.tr.pl2", fileInfo.stats && formatSize(fileInfo.stats.size)),
+            m("td.pl2", fileInfo.stats && formatSize(fileInfo.stats.size)),
             m("td.pl2", fileInfo.stats && formatTime(fileInfo.stats.mtime)),
             // m("td", fileInfo.stats && fileInfo.stats.uid),
             // m("td", "MENU")
