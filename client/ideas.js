@@ -51,7 +51,12 @@ async function loadDirectory(newPath) {
             fileInfo => !fileInfo.isDirectory 
             && !fileInfo.name.startsWith(".")
             && fileInfo.name.endsWith(".md")
-        )
+        ).sort((a, b) => {
+            if (a.name === b.name) return 0
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+            throw new Error("sort by fileName: unexpected sort case")
+        })
     }
     for (let fileInfo of directoryFiles) {
         await loadFileContents(fileInfo)
@@ -120,6 +125,14 @@ function convertMarkdown(text) {
     return html2
 }
 
+function allTags() {
+    const result = []
+    for (const triple of triples) {
+        if ( triple[1] === "tag") result.push(triple[2])
+    }
+    return result
+}
+
 function hasTag(name, tag) {
     for (const triple of triples) {
         if (triple[0] === name && triple[1] === "tag" && triple[2] === tag) return true
@@ -127,14 +140,24 @@ function hasTag(name, tag) {
     return false
 }
 
+function satisfiesFilter(name) {
+    const tags = filter.trim().split(/\s+/)
+    for (let tag of tags) {
+        if (!hasTag(name, tag)) return false
+    }
+    return true
+}
+
 function viewFileEntry(fileInfo) {
-    if (filter.trim() && !hasTag(removeExtension(fileInfo.name), filter.trim())) {
+    if (filter.trim() && !satisfiesFilter(removeExtension(fileInfo.name))) {
         return []
     }
-    return m("div.ba.ma2.pa2.overflow-auto.mh-15rem",
-            m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
-            m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name)),
-            fileInfo.contents && m("div.ml2", m.trust(convertMarkdown(fileInfo.contents))
+    return m("div.ba.ma2.pa2",
+            m("div.mb1",
+                m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
+                m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name))
+            ),
+            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo.contents))
         )
     )
 }
@@ -146,8 +169,9 @@ function viewDirectoryFiles() {
                 ? "No *.md files in directory"
                 : m("div",
                     m("div",
-                        m("span.mr1", "filter by a tag:"),
-                        m("input", {value: filter, onchange: event => filter = event.target.value})
+                        m("span.mr1", "filter by tag:"),
+                        m("input", {value: filter, onchange: event => filter = event.target.value}),
+                        m("div.mt2", "Tags:", allTags().map(tag => m("span.ml1", tag)))
                     ),
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
                 )
