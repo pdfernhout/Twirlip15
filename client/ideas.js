@@ -325,7 +325,8 @@ function renderCytoscape() {
         ],
     
         layout: {
-        name: "cose"
+            name: "cose",
+            animate: false
         }
     
     })
