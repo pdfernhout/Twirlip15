@@ -179,14 +179,58 @@ function viewDirectoryFiles() {
         : m("div", "Loading file data...")
 }
 
+let lastSort = "a"
+
+function sortTriples(field) {
+    lastSort === field
+        ? lastSort = field + "-reversed"
+        : lastSort = field
+    const index = {
+        a: 0,
+        b: 1,
+        c: 2
+    }[field]
+    triples.sort((a, b) => {
+        if (a[index] === b[index]) return 0
+        if (a[index].toLowerCase() < b[index].toLowerCase()) return -1
+        if (a[index].toLowerCase() > b[index].toLowerCase()) return 1
+        throw new Error("sortByFileName: unexpected sort case")
+    })
+    if (lastSort === field + "-reversed") triples.reverse()
+}
+
+function sortArrow(field) {
+    if (field === lastSort) return "↓"
+    if (field + "-reversed" === lastSort) return "↑"
+    return ""
+}
+
 const Ideas = {
     view: () => {
-        return m("div.ma2.mw-37rem",
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            viewDirectoryFiles(),
-            m("div.mt2",
-                m("button", {onclick: () => addFile()}, "+ New File"),
-                m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
+        return m("div.flex",
+            m("div.ma2.mw-37rem",
+                errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+                viewDirectoryFiles(),
+                m("div.mt2",
+                    m("button", {onclick: () => addFile()}, "+ New File"),
+                    m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
+                )
+            ),
+            m("div", 
+                m("table",
+                    m("tr",
+                        m("th", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
+                        m("th", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
+                        m("th", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
+                    ),
+                    triples.map(triple => 
+                        m("tr",
+                            m("td", triple[0]),
+                            m("td.pl2", triple[1]),
+                            m("td.pl2", triple[2])
+                        )
+                    )
+                )
             )
         )
     }
