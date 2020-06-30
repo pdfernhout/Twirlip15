@@ -1,12 +1,17 @@
-/* global m, showdown */
+/* global m, showdown, cytoscape */
 import "./vendor/mithril.js"
 import "./vendor/showdown.js"
+import "./vendor/cytoscape.umd.js"
+
+console.log("cytoscape", cytoscape)
 
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
 let filter = ""
 let triples = []
+
+let navigate = "graph" // table
 
 async function apiCall(request) {
     let result = null
@@ -205,6 +210,34 @@ function sortArrow(field) {
     return ""
 }
 
+function viewTriples() {
+    return m("table",
+        m("tr",
+            m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
+            m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
+            m("th.bg-light-silver", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
+        ),
+        triples.map(triple => 
+            m("tr",
+                m("td", triple[0]),
+                m("td.pl2", triple[1]),
+                m("td.pl2", triple[2])
+            )
+        )
+    )
+}
+
+function viewGraph() {
+    return m("div#cy", {
+        oncreate: renderCytoscape, 
+            style: {
+            width: "300px",
+            height: "300px",
+            display: "block"
+        }
+    })
+}
+
 const Ideas = {
     view: () => {
         return m("div.flex",
@@ -216,21 +249,13 @@ const Ideas = {
                     m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
                 )
             ),
-            m("div", 
-                m("table",
-                    m("tr",
-                        m("th", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
-                        m("th", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
-                        m("th", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
-                    ),
-                    triples.map(triple => 
-                        m("tr",
-                            m("td", triple[0]),
-                            m("td.pl2", triple[1]),
-                            m("td.pl2", triple[2])
-                        )
-                    )
-                )
+            m("div",
+                m("div.ma1", 
+                    m("button", {onclick: () => navigate = "graph"}, "Graph"),
+                    m("button.ml2", {onclick: () => navigate = "table"}, "Table")
+                ),
+                navigate === "table" && viewTriples(),
+                navigate === "graph" && viewGraph()
             )
         )
     }
@@ -240,3 +265,51 @@ const startDirectory =  window.location.pathname
 loadDirectory(startDirectory, "replace")
 
 m.mount(document.body, Ideas)
+
+function renderCytoscape() {
+    console.log("renderCytoscape", document.getElementById("cy"))
+    const cy = cytoscape({
+
+        container: document.getElementById("cy"), // container to render in
+    
+        elements: [ // list of graph elements to start with
+        { // node a
+            data: { id: "a" }
+        },
+        { // node b
+            data: { id: "b" }
+        },
+        { // edge ab
+            data: { id: "ab", source: "a", target: "b" }
+        }
+        ],
+    
+        style: [ // the stylesheet for the graph
+        {
+            selector: "node",
+            style: {
+            "background-color": "#666",
+            "label": "data(id)"
+            }
+        },
+    
+        {
+            selector: "edge",
+            style: {
+            "width": 3,
+            "line-color": "#ccc",
+            "target-arrow-color": "#ccc",
+            "target-arrow-shape": "triangle",
+            "curve-style": "bezier"
+            }
+        }
+        ],
+    
+        layout: {
+        name: "grid",
+        rows: 1
+        }
+    
+    })
+    return cy
+}
