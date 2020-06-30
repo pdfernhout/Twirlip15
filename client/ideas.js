@@ -3,8 +3,6 @@ import "./vendor/mithril.js"
 import "./vendor/showdown.js"
 import "./vendor/cytoscape.umd.js"
 
-console.log("cytoscape", cytoscape)
-
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
@@ -66,7 +64,7 @@ async function loadDirectory(newPath) {
     for (let fileInfo of directoryFiles) {
         await loadFileContents(fileInfo)
     }
-    console.log("triples", triples)
+    renderCytoscape()
 }
 
 async function addFile() {
@@ -94,7 +92,6 @@ function parseTriples(fileInfo) {
     for (const untrimmedLine of lines) {
         const line = untrimmedLine.trimEnd()
         if (line.startsWith("@ ")) {
-            console.log("starts with @ ", line)
             const segments = line.split(/\s+/)
             segments.shift()
             if (segments.length === 2) {
@@ -211,7 +208,11 @@ function sortArrow(field) {
 }
 
 function viewTriples() {
-    return m("table",
+    return m("table", {
+            style: {
+                display: navigate === "table" ? "block" : "none"
+            }
+        },
         m("tr",
             m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
             m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
@@ -228,13 +229,13 @@ function viewTriples() {
 }
 
 function viewGraph() {
-    return m("div#cy", {
-        oncreate: renderCytoscape, 
-            style: {
-            width: "300px",
-            height: "300px",
-            display: "block"
-        }
+    return m("div.ba#cy", {
+        style: {
+            display: navigate === "graph" ? "block" : "none",
+            width: "600px",
+            height: "600px"
+        },
+        oncreate: renderCytoscape
     })
 }
 
@@ -254,8 +255,8 @@ const Ideas = {
                     m("button", {onclick: () => navigate = "graph"}, "Graph"),
                     m("button.ml2", {onclick: () => navigate = "table"}, "Table")
                 ),
-                navigate === "table" && viewTriples(),
-                navigate === "graph" && viewGraph()
+                viewTriples(),
+                viewGraph()
             )
         )
     }
@@ -267,49 +268,67 @@ loadDirectory(startDirectory, "replace")
 m.mount(document.body, Ideas)
 
 function renderCytoscape() {
-    console.log("renderCytoscape", document.getElementById("cy"))
+    console.log("renderCytoscape", triples)
+
+    const container = document.getElementById("cy")
+    if (!container) {
+        console.log("no cytoscape container", container)
+        return
+    }
+
+    const elements = []
+
+    const nodes = {}
+    for (const triple of triples) {
+        for (let i = 0; i < 3; i++) {
+            if (i === 1) continue
+            const label = triple[i]
+            if (!nodes[label]) {
+                nodes[label] = true
+                elements.push({
+                    data: { id: label }
+                })
+            }
+        }
+        elements.push({
+            data: { id: JSON.stringify(triple), source: triple[0], target: triple[2] }
+        })
+    }
+
+    console.log("elements", elements)
+    
     const cy = cytoscape({
 
-        container: document.getElementById("cy"), // container to render in
+        container,
     
-        elements: [ // list of graph elements to start with
-        { // node a
-            data: { id: "a" }
-        },
-        { // node b
-            data: { id: "b" }
-        },
-        { // edge ab
-            data: { id: "ab", source: "a", target: "b" }
-        }
-        ],
+        elements,
     
         style: [ // the stylesheet for the graph
-        {
-            selector: "node",
-            style: {
-            "background-color": "#666",
-            "label": "data(id)"
+            {
+                selector: "node",
+                style: {
+                "background-color": "#666",
+                "label": "data(id)"
+                }
+            },
+        
+            {
+                selector: "edge",
+                style: {
+                "width": 3,
+                "line-color": "#ccc",
+                "target-arrow-color": "#ccc",
+                "target-arrow-shape": "triangle",
+                "curve-style": "bezier"
+                }
             }
-        },
-    
-        {
-            selector: "edge",
-            style: {
-            "width": 3,
-            "line-color": "#ccc",
-            "target-arrow-color": "#ccc",
-            "target-arrow-shape": "triangle",
-            "curve-style": "bezier"
-            }
-        }
         ],
     
         layout: {
-        name: "grid",
-        rows: 1
+        name: "cose"
         }
     
     })
+    console.log("cy", cy)
     return cy
 }
