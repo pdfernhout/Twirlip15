@@ -16,6 +16,7 @@ let navigate = "graph" // table
 let cy
 
 let finishedRenderingGraph = false
+let loadingAllFiles = true
 
 async function apiCall(request) {
     let result = null
@@ -43,6 +44,7 @@ async function apiCall(request) {
 }
 
 async function loadDirectory(newPath) {
+    loadingAllFiles = true
     triples = []
     if (!newPath.endsWith("/")) {
         newPath = newPath + "/"
@@ -66,6 +68,7 @@ async function loadDirectory(newPath) {
     for (let fileInfo of directoryFiles) {
         await loadFileContents(fileInfo)
     }
+    loadingAllFiles = false
     renderCytoscape()
 }
 
@@ -265,7 +268,9 @@ function viewGraph() {
             height: "600px"
         },
         oncreate: renderCytoscape
-    }, !finishedRenderingGraph && m("i", "Calculating where to put everything..."))
+    }, 
+    loadingAllFiles && "Loading Markdown files...",
+    !loadingAllFiles && !finishedRenderingGraph && m("i", "Calculating where to put everything..."))
 }
 
 const Ideas = {
@@ -273,6 +278,7 @@ const Ideas = {
         return m("div.flex.h-100.w-100",
             m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+                loadingAllFiles && m("div.absolute.ma2.pa2.ba.bw2.bg-yellow.flex.items-center", m("span", "Loading Markdown files..."), m("span.ml2.spinner-border")),
                 m("div.mt2.mb1",
                     m("button", {onclick: () => addFile()}, "+ New File"),
                     m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")

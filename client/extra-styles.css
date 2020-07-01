@@ -30,3 +30,29 @@
 .mh-20rem {
     max-height: 15rem;
 }
+
+/* from bootstrap: https://getbootstrap.com/docs/4.3/components/spinners/ */
+@keyframes spinner-border {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+        border-right-color: currentcolor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+        animation-name: spinner-border;
+        animation-duration: 0.75s;
+        animation-timing-function: linear;
+        animation-delay: 0s;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+        animation-fill-mode: none;
+        animation-play-state: running;
+}
