@@ -15,6 +15,8 @@ let navigate = "graph" // table
 
 let cy
 
+let finishedRenderingGraph = false
+
 async function apiCall(request) {
     let result = null
     errorMessage = ""
@@ -263,7 +265,7 @@ function viewGraph() {
             height: "600px"
         },
         oncreate: renderCytoscape
-    })
+    }, !finishedRenderingGraph && m("i", "Calculating where to put everything..."))
 }
 
 const Ideas = {
@@ -312,6 +314,8 @@ function storageKeyForNodes() {
 }
 
 function renderCytoscape() {
+
+    finishedRenderingGraph = false
 
     const container = document.getElementById("cy")
     if (!container) {
@@ -427,6 +431,11 @@ function renderCytoscape() {
 
     cy.on("tapend", function () {
         saveNodePositions()
+    })
+
+    cy.on("layoutstop", () => {
+        finishedRenderingGraph = true
+        m.redraw()
     })
 
     return cy
