@@ -224,6 +224,13 @@ function sortArrow(field) {
 }
 
 function viewTriples() {
+    const fileNames = makeDirectoryFileNameDict()
+
+    function colorFiles(name) {
+        if (fileNames[name]) return ".green"
+        return ""
+    }
+
     return m("table", {
             style: {
                 display: navigate === "table" ? "block" : "none"
@@ -236,9 +243,9 @@ function viewTriples() {
         ),
         triples.map(triple => 
             m("tr",
-                m("td.pointer", { onclick: () => openOrFilter(triple[0]) }, triple[0]),
+                m("td.pointer" + colorFiles(triple[0]), { onclick: () => openOrFilter(triple[0]) }, triple[0]),
                 m("td.pl2", triple[1]),
-                m("td.pl2.pointer", { onclick: () => openOrFilter(triple[2]) }, triple[2])
+                m("td.pl2.pointer" + colorFiles(triple[2]), { onclick: () => openOrFilter(triple[2]) }, triple[2])
             )
         )
     )
@@ -278,13 +285,14 @@ const Ideas = {
     }
 }
 
-function isFileName(text) {
-    if (!directoryFiles) return false
-    for (const fileInfo of directoryFiles) {
-        // Inefficient
-        if (text === removeExtension(fileInfo.name)) return true
+function makeDirectoryFileNameDict() {
+    const result = {}
+    if (directoryFiles) {
+        for (const fileInfo of directoryFiles) {
+            result[removeExtension(fileInfo.name)] = true
+        }
     }
-    return false
+    return result
 }
 
 function openOrFilter(id) {
@@ -303,21 +311,40 @@ function renderCytoscape() {
         return
     }
 
+    const savedPositions = JSON.parse(localStorage.getItem("twirlip-ideas--nodes") || "{}")
+
     const elements = []
 
+    const fileNames = makeDirectoryFileNameDict()
+
+    let addedNode = false
     const nodes = {}
+
+    function addNode(label, extraClass) {
+        if (!nodes[label]) {
+            nodes[label] = true
+            const element = {
+                data: { id: label }
+            }
+            if (extraClass) element.classes = [extraClass]
+            const savedPosition = savedPositions[label]
+            if (savedPosition) {
+                element.position = savedPosition
+            } else {
+                addedNode = true
+            }
+            elements.push(element)
+        }
+    }
+
+    for (const fileName of Object.keys(fileNames)) {
+        addNode(fileName, "green")
+    }
+
     for (const triple of triples) {
         for (let i = 0; i < 3; i++) {
             if (i === 1) continue
-            const label = triple[i]
-            if (!nodes[label]) {
-                nodes[label] = true
-                const element = {
-                    data: { id: label }
-                }
-                if (i === 0 && isFileName(label)) element.classes = ["green"]
-                elements.push(element)
-            }
+            addNode(triple[i])
         }
         elements.push({
             data: { id: JSON.stringify(triple), source: triple[0], target: triple[2] }
@@ -358,19 +385,34 @@ function renderCytoscape() {
         ],
     
         layout: {
-            name: "cose",
-            animate: false
+            name: addedNode ? "cose" : "preset",
+            animate: false,
+            nodeDimensionsIncludeLabels: true
         }
     
     })
 
-    cy.on("tap", "node", function (evt) {
-        const id = evt.target.id()
+    cy.on("tap", "node", function (event) {
+        const id = event.target.id()
         openOrFilter(id)
         m.redraw()
     })
 
+    cy.on("tapend", function () {
+        saveNodePositions()
+    })
+
     return cy
+}
+
+function saveNodePositions() {
+    const result = {}
+    const nodes = cy.json().elements.nodes
+    for (const node of nodes) {
+        result[node.data.id] = {x: node.position.x, y: node.position.y}
+    }
+    console.log("saveNodePositions", result)
+    localStorage.setItem("twirlip-ideas--nodes", JSON.stringify(result))
 }
 
 function startup() {
