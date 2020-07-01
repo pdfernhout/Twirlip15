@@ -118,14 +118,20 @@ async function loadFileContents(fileInfo) {
         fileInfo.contents = apiResult.contents
         parseTriples(fileInfo)
     }
+    convertMarkdown(fileInfo)
 }
 
-function convertMarkdown(text) {
+function convertMarkdown(fileInfo) {
+    if (fileInfo.markdown) return fileInfo.markdown
+    const text = fileInfo.contents
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const html = converter.makeHtml(text)
+    const re1 = /<a href="([^?>]*)">/g
+    fileInfo.links = Array.from(html.matchAll(re1)).map(match => match[1])
     // Add ?twirlip=view-md as needed
-    const re = /(<a href="[^?>]*)(">)/g
-    const html2 = html.replace(re, "$1?twirlip=view-md$2")
+    const re2 = /(<a href="[^?>]*)(">)/g
+    const html2 = html.replace(re2, "$1?twirlip=view-md$2")
+    fileInfo.markdown = html2
     return html2
 }
 
@@ -169,7 +175,7 @@ function viewFileEntry(fileInfo) {
                 m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
                 m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name))
             ),
-            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo.contents))
+            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo))
         )
     )
 }
@@ -320,6 +326,8 @@ function renderCytoscape() {
     let addedNode = false
     const nodes = {}
 
+    const links = {}
+
     function addNode(label, extraClass) {
         if (!nodes[label]) {
             nodes[label] = true
@@ -346,9 +354,26 @@ function renderCytoscape() {
             if (i === 1) continue
             addNode(triple[i])
         }
+        const key = JSON.stringify({a: triple[0], c: triple[2]})
+        if (links[key]) continue
+        links[key] = true
         elements.push({
             data: { id: JSON.stringify(triple), source: triple[0], target: triple[2] }
         })
+    }
+
+    if (directoryFiles) {
+        for (const fileInfo of directoryFiles) {
+            for (const index in fileInfo.links) {
+                const link = fileInfo.links[index]
+                const key = JSON.stringify({a: removeExtension(fileInfo.name), c: removeExtension(link)})
+                if (links[key]) continue
+                links[key] = true
+                elements.push({
+                    data: { id: JSON.stringify({name: fileInfo.name, link, index}), source: removeExtension(fileInfo.name), target: removeExtension(link) }
+                })
+            }
+        }
     }
 
     cy = cytoscape({
