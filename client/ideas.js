@@ -278,11 +278,6 @@ const Ideas = {
     }
 }
 
-const startDirectory =  window.location.pathname
-loadDirectory(startDirectory, "replace")
-
-m.mount(document.body, Ideas)
-
 function isFileName(text) {
     if (!directoryFiles) return false
     for (const fileInfo of directoryFiles) {
@@ -368,3 +363,11 @@ function renderCytoscape() {
 
     return cy
 }
+
+function startup() {
+    const startDirectory =  window.location.pathname
+    loadDirectory(startDirectory, "replace")
+    m.mount(document.body, Ideas)
+}
+
+startup()
