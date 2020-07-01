@@ -3,6 +3,8 @@ import "./vendor/mithril.js"
 import "./vendor/showdown.js"
 import "./vendor/cytoscape.umd.js"
 
+const storageKeyForNodes = "twirlip-ideas--nodes"
+
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
@@ -317,7 +319,7 @@ function renderCytoscape() {
         return
     }
 
-    const savedPositions = JSON.parse(localStorage.getItem("twirlip-ideas--nodes") || "{}")
+    const savedPositions = JSON.parse(localStorage.getItem(storageKeyForNodes) || "{}")
 
     const elements = []
 
@@ -437,13 +439,18 @@ function saveNodePositions() {
         result[node.data.id] = {x: node.position.x, y: node.position.y}
     }
     console.log("saveNodePositions", result)
-    localStorage.setItem("twirlip-ideas--nodes", JSON.stringify(result))
+    localStorage.setItem(storageKeyForNodes, JSON.stringify(result))
 }
 
 function startup() {
     const startDirectory =  window.location.pathname
     loadDirectory(startDirectory, "replace")
     m.mount(document.body, Ideas)
+
+    window.addEventListener("storage", () => {
+        if (event.key !== storageKeyForNodes) return
+        renderCytoscape()
+    })
 }
 
 startup()
