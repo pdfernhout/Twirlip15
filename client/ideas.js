@@ -165,7 +165,7 @@ function updateFilter(newFilter) {
 }
 
 function viewFileEntry(fileInfo) {
-    if (filter.trim() && !satisfiesFilter(removeExtension(fileInfo.name))) {
+    if (!satisfiesFilter(removeExtension(fileInfo.name))) {
         return []
     }
     return m("div.ba.ma2.pa2.br3",
