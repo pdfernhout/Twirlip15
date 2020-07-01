@@ -257,7 +257,7 @@ function viewGraph() {
 
 const Ideas = {
     view: () => {
-        return m("div.flex.h-100.w-100.overflow-hidden",
+        return m("div.flex.h-100.w-100",
             m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 m("div.mt2.mb1",
@@ -283,6 +283,15 @@ loadDirectory(startDirectory, "replace")
 
 m.mount(document.body, Ideas)
 
+function isFileName(text) {
+    if (!directoryFiles) return false
+    for (const fileInfo of directoryFiles) {
+        // Inefficient
+        if (text === removeExtension(fileInfo.name)) return true
+    }
+    return false
+}
+
 function renderCytoscape() {
 
     const container = document.getElementById("cy")
@@ -300,9 +309,11 @@ function renderCytoscape() {
             const label = triple[i]
             if (!nodes[label]) {
                 nodes[label] = true
-                elements.push({
+                const element = {
                     data: { id: label }
-                })
+                }
+                if (i === 0 && isFileName(label)) element.classes = ["green"]
+                elements.push(element)
             }
         }
         elements.push({
@@ -320,21 +331,27 @@ function renderCytoscape() {
             {
                 selector: "node",
                 style: {
-                "background-color": "#666",
-                "label": "data(id)"
+                    "background-color": "#666",
+                    "label": "data(id)"
                 }
             },
         
             {
                 selector: "edge",
                 style: {
-                "width": 3,
-                "line-color": "#ccc",
-                "target-arrow-color": "#ccc",
-                "target-arrow-shape": "triangle",
-                "curve-style": "bezier"
+                    "width": 3,
+                    "line-color": "#ccc",
+                    "target-arrow-color": "#ccc",
+                    "target-arrow-shape": "triangle",
+                    "curve-style": "bezier"
                 }
-            }
+            },
+            {
+                selector: ".green",
+                style: {
+                    "background-color": "green",
+                }
+            },
         ],
     
         layout: {
