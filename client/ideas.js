@@ -233,9 +233,9 @@ function viewTriples() {
         ),
         triples.map(triple => 
             m("tr",
-                m("td", triple[0]),
+                m("td.pointer", { onclick: () => updateFilter(triple[0]) }, triple[0]),
                 m("td.pl2", triple[1]),
-                m("td.pl2", triple[2])
+                m("td.pl2.pointer", { onclick: () => updateFilter(triple[2]) }, triple[2])
             )
         )
     )
@@ -255,7 +255,7 @@ function viewGraph() {
 const Ideas = {
     view: () => {
         return m("div.flex.h-100.w-100.overflow-hidden",
-            m("div.ma2.mw-37rem.overflow-y-auto",
+            m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 viewDirectoryFiles(),
                 m("div.mt2",
@@ -263,7 +263,7 @@ const Ideas = {
                     m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
                 )
             ),
-            m("div",
+            m("div.overflow-auto",
                 m("div.ma1", 
                     m("button", {onclick: () => navigate = "graph"}, "Graph"),
                     m("button.ml2", {onclick: () => navigate = "table"}, "Table")

@@ -10,6 +10,10 @@
     max-width: 37rem;
 }
 
+.w-37rem {
+    width: 37rem;
+}
+
 .disabled-button {
     pointer-events: none;
     opacity: 0.4;
