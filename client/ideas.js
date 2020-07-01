@@ -186,7 +186,10 @@ function viewDirectoryFiles() {
                             value: filter,
                             onchange: event => updateFilter(event.target.value)
                         }),
-                        m("div.mt2", "Tags:", allTags().map(tag => m("span.ml1", tag)))
+                        m("span.ml1.pointer", {onclick: () => updateFilter(""), disabled: !filter}, "X"),
+                        m("div.mt2", "Tags:", allTags().map(tag => m("span.ml1.pointer", {
+                            onclick: () => updateFilter((filter ? filter + " " : "") + tag)
+                        }, tag)))
                     ),
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
                 )
