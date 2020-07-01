@@ -156,14 +156,8 @@ function satisfiesFilter(name) {
 function updateFilter(newFilter) {
     filter = newFilter
 
-    // a workaround where cytoscape seems to have a bug where it can get confused for origin for clicking
-    if (navigate === "graph") {
-        navigate = "none"
-        setTimeout(() => {
-            navigate = "graph" 
-            m.redraw()
-        }, 10)
-    }
+    // a workaround where cytoscape can get confused for origin for clicking when its container gets moved
+    setTimeout(() => cy.resize(), 50)
 }
 
 function viewFileEntry(fileInfo) {
