@@ -260,11 +260,11 @@ const Ideas = {
         return m("div.flex.h-100.w-100.overflow-hidden",
             m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-                viewDirectoryFiles(),
-                m("div.mt2",
+                m("div.mt2.mb1",
                     m("button", {onclick: () => addFile()}, "+ New File"),
                     m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
-                )
+                ),
+                viewDirectoryFiles()
             ),
             m("div.overflow-auto",
                 m("div.ma1", 
