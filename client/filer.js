@@ -44,6 +44,9 @@ async function apiCall(request) {
 }
 
 async function loadDirectory(newPath, saveState) {
+    if (!newPath.endsWith("/")) {
+        newPath = newPath + "/"
+    }
     if (newPath.endsWith("/../")) {
         const newPathParts = newPath.split("/")
         newPathParts.pop()
@@ -342,7 +345,10 @@ const Filer = {
     }
 }
 
-const startDirectory =  window.location.pathname
-loadDirectory(startDirectory, "replace")
+function startup() {
+    const startDirectory =  window.location.pathname
+    loadDirectory(startDirectory, "replace")
+    m.mount(document.body, Filer)
+}
 
-m.mount(document.body, Filer)
+startup()
