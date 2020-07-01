@@ -164,7 +164,7 @@ function viewFileEntry(fileInfo) {
     if (filter.trim() && !satisfiesFilter(removeExtension(fileInfo.name))) {
         return []
     }
-    return m("div.ba.ma2.pa2",
+    return m("div.ba.ma2.pa2.br3",
             m("div.mb1",
                 m("a.link", {href: fileInfo.name + "?twirlip=view-edit"}, "📄 "),
                 m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name))
