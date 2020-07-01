@@ -236,9 +236,9 @@ function viewTriples() {
         ),
         triples.map(triple => 
             m("tr",
-                m("td.pointer", { onclick: () => updateFilter(triple[0]) }, triple[0]),
+                m("td.pointer", { onclick: () => openOrFilter(triple[0]) }, triple[0]),
                 m("td.pl2", triple[1]),
-                m("td.pl2.pointer", { onclick: () => updateFilter(triple[2]) }, triple[2])
+                m("td.pl2.pointer", { onclick: () => openOrFilter(triple[2]) }, triple[2])
             )
         )
     )
@@ -285,6 +285,14 @@ function isFileName(text) {
         if (text === removeExtension(fileInfo.name)) return true
     }
     return false
+}
+
+function openOrFilter(id) {
+    if (id.startsWith("http:") || id.startsWith("https:")) {
+        window.location.assign(id)
+    } else {
+        updateFilter(id)
+    }
 }
 
 function renderCytoscape() {
@@ -357,7 +365,8 @@ function renderCytoscape() {
     })
 
     cy.on("tap", "node", function (evt) {
-        updateFilter(evt.target.id())
+        const id = evt.target.id()
+        openOrFilter(id)
         m.redraw()
     })
 
