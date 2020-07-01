@@ -3,7 +3,7 @@ import "./vendor/mithril.js"
 import "./vendor/showdown.js"
 import "./vendor/cytoscape.umd.js"
 
-const storageKeyForNodes = "twirlip-ideas--nodes"
+const baseStorageKeyForNodes = "twirlip-ideas--nodes"
 
 let directoryPath = "/"
 let directoryFiles = null
@@ -42,12 +42,8 @@ async function apiCall(request) {
 
 async function loadDirectory(newPath) {
     triples = []
-    if (newPath.endsWith("/../")) {
-        const newPathParts = newPath.split("/")
-        newPathParts.pop()
-        newPathParts.pop()
-        newPathParts.pop()
-        newPath = newPathParts.join("/") + "/"
+    if (!newPath.endsWith("/")) {
+        newPath = newPath + "/"
     }
     directoryPath = newPath
     directoryFiles = null
@@ -119,20 +115,20 @@ async function loadFileContents(fileInfo) {
     if (apiResult) {
         fileInfo.contents = apiResult.contents
         parseTriples(fileInfo)
+        convertMarkdown(fileInfo)
     }
-    convertMarkdown(fileInfo)
 }
 
 function convertMarkdown(fileInfo) {
     if (fileInfo.markdown) return fileInfo.markdown
     const text = fileInfo.contents
     const converter = new showdown.Converter({simplifiedAutoLink: true})
-    const html = converter.makeHtml(text)
+    const convertedHTML = converter.makeHtml(text)
     const re1 = /<a href="([^?>]*)">/g
-    fileInfo.links = Array.from(html.matchAll(re1)).map(match => match[1])
+    fileInfo.links = Array.from(convertedHTML.matchAll(re1)).map(match => match[1])
     // Add ?twirlip=view-md as needed
     const re2 = /(<a href="[^?>]*)(">)/g
-    const html2 = html.replace(re2, "$1?twirlip=view-md$2")
+    const html2 = convertedHTML.replace(re2, "$1?twirlip=view-md$2")
     fileInfo.markdown = html2
     return html2
 }
@@ -311,6 +307,10 @@ function openOrFilter(id) {
     }
 }
 
+function storageKeyForNodes() {
+    return baseStorageKeyForNodes + "--" + directoryPath
+}
+
 function renderCytoscape() {
 
     const container = document.getElementById("cy")
@@ -319,7 +319,7 @@ function renderCytoscape() {
         return
     }
 
-    const savedPositions = JSON.parse(localStorage.getItem(storageKeyForNodes) || "{}")
+    const savedPositions = JSON.parse(localStorage.getItem(storageKeyForNodes()) || "{}")
 
     const elements = []
 
@@ -438,7 +438,7 @@ function saveNodePositions() {
     for (const node of nodes) {
         result[node.data.id] = {x: node.position.x, y: node.position.y}
     }
-    localStorage.setItem(storageKeyForNodes, JSON.stringify(result))
+    localStorage.setItem(storageKeyForNodes(), JSON.stringify(result))
 }
 
 function startup() {
@@ -447,7 +447,7 @@ function startup() {
     m.mount(document.body, Ideas)
 
     window.addEventListener("storage", () => {
-        if (event.key !== storageKeyForNodes) return
+        if (event.key !== storageKeyForNodes()) return
         renderCytoscape()
     })
 }
