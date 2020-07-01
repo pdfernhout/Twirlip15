@@ -11,6 +11,8 @@ let triples = []
 
 let navigate = "graph" // table
 
+let cy
+
 async function apiCall(request) {
     let result = null
     errorMessage = ""
@@ -128,17 +130,18 @@ function convertMarkdown(text) {
 }
 
 function allTags() {
-    const result = []
+    const result = {}
     for (const triple of triples) {
-        if ( triple[1] === "tag") result.push(triple[2])
+        if ( triple[1] === "tag") result[triple[2]] = true
     }
-    return result
+    return Object.keys(result).sort()
 }
 
 function hasTag(name, tag) {
     for (const triple of triples) {
         if (triple[0] === name && triple[1] === "tag" && triple[2] === tag) return true
     }
+    if (name === tag) return true
     return false
 }
 
@@ -148,6 +151,19 @@ function satisfiesFilter(name) {
         if (!hasTag(name, tag)) return false
     }
     return true
+}
+
+function updateFilter(newFilter) {
+    filter = newFilter
+
+    // a workaround where cytoscape seems to have a bug where it can get confused for origin for clicking
+    if (navigate === "graph") {
+        navigate = "none"
+        setTimeout(() => {
+            navigate = "graph" 
+            m.redraw()
+        }, 10)
+    }
 }
 
 function viewFileEntry(fileInfo) {
@@ -171,8 +187,11 @@ function viewDirectoryFiles() {
                 ? "No *.md files in directory"
                 : m("div",
                     m("div",
-                        m("span.mr1", "filter by tag:"),
-                        m("input", {value: filter, onchange: event => filter = event.target.value}),
+                        m("span.mr1", "filter by tag (or file name):"),
+                        m("input", {
+                            value: filter,
+                            onchange: event => updateFilter(event.target.value)
+                        }),
                         m("div.mt2", "Tags:", allTags().map(tag => m("span.ml1", tag)))
                     ),
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
@@ -241,8 +260,8 @@ function viewGraph() {
 
 const Ideas = {
     view: () => {
-        return m("div.flex",
-            m("div.ma2.mw-37rem",
+        return m("div.flex.h-100.w-100.overflow-hidden",
+            m("div.ma2.mw-37rem.overflow-y-auto",
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 viewDirectoryFiles(),
                 m("div.mt2",
@@ -268,7 +287,6 @@ loadDirectory(startDirectory, "replace")
 m.mount(document.body, Ideas)
 
 function renderCytoscape() {
-    console.log("renderCytoscape", triples)
 
     const container = document.getElementById("cy")
     if (!container) {
@@ -295,9 +313,7 @@ function renderCytoscape() {
         })
     }
 
-    console.log("elements", elements)
-    
-    const cy = cytoscape({
+    cy = cytoscape({
 
         container,
     
@@ -330,6 +346,11 @@ function renderCytoscape() {
         }
     
     })
-    console.log("cy", cy)
+
+    cy.on("tap", "node", function (evt) {
+        updateFilter(evt.target.id())
+        m.redraw()
+    })
+
     return cy
 }
