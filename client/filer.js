@@ -191,7 +191,7 @@ function sortByFileName() {
         ? lastSort = "name-reversed"
         : lastSort = "name"
     directoryFiles.sort((a, b) => {
-        if (a.name === b.name) return 0
+        if (a.name.toLowerCase() === b.name.toLowerCase()) return 0
         if (a.name === ".." && b.name !== "..") return -1
         if (a.name !== ".." && b.name === "..") return 1
         if (a.name.toLowerCase() < b.name.toLowerCase()) return -1

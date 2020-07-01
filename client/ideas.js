@@ -217,10 +217,10 @@ function sortTriples(field) {
         c: 2
     }[field]
     triples.sort((a, b) => {
-        if (a[index] === b[index]) return 0
+        if (a[index].toLowerCase() === b[index].toLowerCase()) return 0
         if (a[index].toLowerCase() < b[index].toLowerCase()) return -1
         if (a[index].toLowerCase() > b[index].toLowerCase()) return 1
-        throw new Error("sortByFileName: unexpected sort case")
+        throw new Error("sortTriples: unexpected sort case")
     })
     if (lastSort === field + "-reversed") triples.reverse()
 }
@@ -438,7 +438,6 @@ function saveNodePositions() {
     for (const node of nodes) {
         result[node.data.id] = {x: node.position.x, y: node.position.y}
     }
-    console.log("saveNodePositions", result)
     localStorage.setItem(storageKeyForNodes, JSON.stringify(result))
 }
 
