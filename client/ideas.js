@@ -15,7 +15,6 @@ let navigate = "graph" // table
 
 let cy
 
-let finishedRenderingGraph = false
 let loadingAllFiles = true
 
 async function apiCall(request) {
@@ -269,8 +268,8 @@ function viewGraph() {
         },
         oncreate: renderCytoscape
     }, 
-    loadingAllFiles && "Loading Markdown files...",
-    !loadingAllFiles && !finishedRenderingGraph && m("i", "Calculating where to put everything..."))
+        loadingAllFiles && m("div", "Loading Markdown files...")
+    )
 }
 
 const Ideas = {
@@ -320,8 +319,6 @@ function storageKeyForNodes() {
 }
 
 function renderCytoscape() {
-
-    finishedRenderingGraph = false
 
     const container = document.getElementById("cy")
     if (!container) {
@@ -437,11 +434,6 @@ function renderCytoscape() {
 
     cy.on("tapend", function () {
         saveNodePositions()
-    })
-
-    cy.on("layoutstop", () => {
-        finishedRenderingGraph = true
-        m.redraw()
     })
 
     return cy
