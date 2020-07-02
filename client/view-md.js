@@ -54,7 +54,7 @@ function convertMarkdown(text) {
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const html = converter.makeHtml(text)
     // Add ?twirlip=view-md as needed
-    const re = /(<a href="[^?>]*)(">)/g
+    const re = /(<a href="[^?>]*.md)(">)/g
     const html2 = html.replace(re, "$1?twirlip=view-md$2")
     return html2
 }
