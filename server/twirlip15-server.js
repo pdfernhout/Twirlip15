@@ -13,7 +13,7 @@ const baseDir = "/" // path.resolve()
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
 const host = "127.0.0.1"
-const port = 8080
+const port = 8015
 
 const app = express()
 

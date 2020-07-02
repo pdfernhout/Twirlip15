@@ -32,7 +32,7 @@ To start the server, run this command from the main project directory:
 
 Then browse to:
 
-    http://localhost:8080
+    http://localhost:8015
 
 ## Licence 
 
