@@ -166,7 +166,7 @@ function disabled(flag) {
 }
 
 function viewShowHiddenFiles() {
-    return m("div",
+    return m("span.dib",
         m("input[type=checkbox].mr1", {
             checked: showHiddenFiles,
             onclick: () => showHiddenFiles = !showHiddenFiles
@@ -178,15 +178,15 @@ function viewShowHiddenFiles() {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     const hoverColor = ".hover-bg-orange"
-    return showMenu && m("div.ml4.bg-light-green.w-12rem",
-        m("div" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
-        m("div" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
-        m("div" + hoverColor, {onclick: () => openAsIdeas()}, "* Open as Ideas"),
-        m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
-        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
-        m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
-        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete"),
-        viewShowHiddenFiles()
+    return showMenu && m("div.ml4.bg-light-green",
+        viewShowHiddenFiles(),
+        m("span.dib.mr2.ml2" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
+        m("span.dib.mr2" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
+        m("span.dib.mr2" + hoverColor, {onclick: () => openAsIdeas()}, "* Open as Ideas"),
+        m("span.dib.mr2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
+        m("span.dib.mr2" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
+        m("span.dib.mr2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
+        m("span.dib.mr2" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete")
     )
 }
 
