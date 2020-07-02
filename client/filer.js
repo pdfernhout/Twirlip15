@@ -7,6 +7,7 @@ let errorMessage = ""
 let showMenu = false
 let selectedFiles = {}
 let lastSort = "name"
+let showHiddenFiles = false
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -164,6 +165,16 @@ function disabled(flag) {
     return flag ? ".disabled-button" : ""
 }
 
+function viewShowHiddenFiles() {
+    return m("div",
+        m("input[type=checkbox].mr1", {
+            checked: showHiddenFiles,
+            onclick: () => showHiddenFiles = !showHiddenFiles
+        }),
+        "Show hidden files"
+    )
+}
+
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     const hoverColor = ".hover-bg-orange"
@@ -174,7 +185,8 @@ function viewMenu() {
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
         m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
         m("div" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
-        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete")
+        m("div" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete"),
+        viewShowHiddenFiles()
     )
 }
 
@@ -298,6 +310,8 @@ function viewerForURL(url) {
 }
 
 function viewFileEntry(fileInfo) { // selectedFiles
+    if (!showHiddenFiles && fileInfo.name !== ".." && fileInfo.name.startsWith(".")) return []
+
     if (showMenu) {
         return m("tr",
             m("td", viewCheckBox(fileInfo.name)),
