@@ -449,7 +449,7 @@ function saveNodePositions() {
 }
 
 function startup() {
-    const startDirectory =  window.location.pathname
+    const startDirectory =  decodeURI(window.location.pathname)
     loadDirectory(startDirectory, "replace")
     m.mount(document.body, Ideas)
 

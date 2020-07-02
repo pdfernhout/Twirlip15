@@ -341,6 +341,19 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
 }
 
+function viewPath(path) {
+    const parts = path.split("/")
+    let subpath = location.protocol + "//" + location.hostname + ":" + location.port + "/"
+    const links = [m("a.mr1.link", {href: subpath}, "/")]
+    for (const part of parts) {
+        if (part) {
+            subpath = subpath + part + "/"
+            links.push(m("a.mr1.link", {href: subpath}, part + "/"))
+        }
+    }
+    return m("span", links)
+}
+
 const Filer = {
     view: () => {
         return m("div.ma2",
@@ -350,7 +363,7 @@ const Filer = {
                     showMenu = !showMenu
                     history.pushState({directoryPath, showMenu}, directoryPath)
                 }
-            }, "☰"), "Files in: ", directoryPath),
+            }, "☰"), "Files in: ", viewPath(directoryPath)),
                 viewMenu(),
                 viewSelectedFiles(),
                 viewDirectoryFiles()
@@ -360,7 +373,7 @@ const Filer = {
 }
 
 function startup() {
-    const startDirectory =  window.location.pathname
+    const startDirectory =  decodeURI(window.location.pathname)
     loadDirectory(startDirectory, "replace")
     m.mount(document.body, Filer)
 }

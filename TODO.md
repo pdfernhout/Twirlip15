@@ -8,4 +8,4 @@ add chat
 add websockets or similar for chat
 add upload menu item to filer
 DONE read triples from ideas md files
-
+DONE support clicking on path segments in filer to navigate
