@@ -1,9 +1,9 @@
-Twirlip15 Information Organizer
+# Twirlip15 Information Organizer
 
-Twirlip15 supports browsing and editing files on your local host -- like a simpler version of NextCloud.
-Ideally more apps will be added over time -- including perhaps apps ported from Twirlip7.
+Twirlip15 supports browsing and editing files on your local host -- like a simpler version of NextCloud. Another app is a step towards a personal knowledge management tool. Ideally more apps will be added over time -- including perhaps apps ported from Twirlip7.
 
 Twirlip15 uses Node.js+Express for the server and Mithril+Tachyons for the UI.
+
 Twirlip15 makes it easy to develop applications in Mithril which operate on local files. 
 
 A Twirlip15 server is intended to be used locally by a single user or a small trusted group. 
@@ -18,7 +18,9 @@ WARNING: In general, you do not want to make your Twirlip15 server available to 
 
 WARNING: Twirlip15 is currently pre-alpha software and is only appropriate for use by advanced users who know about computer networking and software development.
 
-You must have a recent version of Node.js (version >= 10) installed to use this software. 
+## Usage
+
+You must have a recent version of Node.js (version >= 10) installed to use this software.
 
 To setup the software, run this command from the main project directory:
 
@@ -32,4 +34,20 @@ Then browse to:
 
     http://localhost:8080
 
-License: MIT
+## Licence 
+
+Twirlip 15 is under the MIT License
+
+## Screenshots
+
+#### Twirlip15 Filer with menu open
+![Twirlip15 Filer](./screenshots/Twirlip15-Filer-Screenshot-2020-07-01.png)
+
+#### Twirlip15 Ideas with Graph of linked nodes
+![Twirlip15 Ideas Graph](./screenshots/Twirlip15-Ideas-Graph-Screenshot-2020-07-01.png)
+
+#### Twirlip15 Ideas with Table
+![Twirlirp15 Ideas Table ](./screenshots/Twirlip15-Ideas-Table-Screenshot-2020-07-01.png)
+
+#### Twirlip15 Editor
+![Twirlip15 Editor](./screenshots/Twirlip15-Editor-Screenshot-2020-07-01.png)
