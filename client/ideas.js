@@ -3,7 +3,7 @@ import "./vendor/mithril.js"
 import "./vendor/showdown.js"
 import "./vendor/cytoscape.umd.js"
 
-const baseStorageKeyForNodes = "twirlip-ideas--nodes"
+const baseStorageKeyForNodes = "twirlip15-ideas--nodes"
 
 let directoryPath = "/"
 let directoryFiles = null

@@ -1,6 +1,8 @@
 /* global m */
 import "./vendor/mithril.js"
 
+const baseStorageKey = "twirlip15-filer--"
+
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
@@ -19,7 +21,7 @@ window.onpopstate = async function(event) {
 }
 
 function getPreference(preferenceName, defaultValue) {
-    const valueAsString = sessionStorage.getItem("twirlip15-" + preferenceName) 
+    const valueAsString = localStorage.getItem(baseStorageKey + preferenceName) 
     if (valueAsString === null) return defaultValue
     try {
         return JSON.parse(valueAsString)
@@ -29,7 +31,7 @@ function getPreference(preferenceName, defaultValue) {
 }
 
 function setPreference(preferenceName, newValue) {
-    sessionStorage.setItem("twirlip15-" + preferenceName, JSON.stringify(newValue))
+    localStorage.setItem(baseStorageKey + preferenceName, JSON.stringify(newValue))
     return newValue
 }
 
@@ -394,6 +396,13 @@ function startup() {
     const startDirectory =  decodeURI(window.location.pathname)
     loadDirectory(startDirectory, "replace")
     m.mount(document.body, Filer)
+
+    window.addEventListener("storage", (event) => {
+        if (!event.key.startsWith(baseStorageKey)) return
+        showMenu = getPreference("showMenu")
+        showHiddenFiles = getPreference("showHiddenFiles")
+        m.redraw()
+    })
 }
 
 startup()
