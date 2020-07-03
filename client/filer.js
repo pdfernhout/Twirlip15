@@ -7,7 +7,7 @@ let errorMessage = ""
 let showMenu = sessionStorage.getItem("twirlip15-showMenu") === "true"
 let selectedFiles = {}
 let lastSort = "name"
-let showHiddenFiles = false
+let showHiddenFiles = sessionStorage.getItem("twirlip15-showHiddenFiles") === "true"
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -168,7 +168,10 @@ function viewShowHiddenFiles(hoverColor) {
     return m("label.dib.pa2" + hoverColor,
         m("input[type=checkbox].mr1", {
             checked: showHiddenFiles,
-            onclick: () => showHiddenFiles = !showHiddenFiles
+            onclick: () => {
+                showHiddenFiles = !showHiddenFiles
+                sessionStorage.setItem("twirlip15-showHiddenFiles", showHiddenFiles ? "true" : "false") 
+            }
         }),
         "Show hidden files"
     )
