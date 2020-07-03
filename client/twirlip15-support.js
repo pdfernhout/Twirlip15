@@ -57,7 +57,7 @@ export class Twirlip15Preferences {
 
 }
 
-const menuHoverColor = ".hover-bg-orange"
+export const menuHoverColor = ".hover-bg-orange"
 
 export function menuTopBar(parts) {
     return m("div.ma1.ml4.bg-light-green", parts)

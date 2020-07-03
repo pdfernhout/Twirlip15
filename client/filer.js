@@ -1,6 +1,6 @@
 /* global m */
 import "./vendor/mithril.js"
-import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuButton, menuCheckbox } from "./twirlip15-support.js"
+import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "./twirlip15-support.js"
 
 const preferences = new Twirlip15Preferences()
 
@@ -310,14 +310,18 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
 }
 
+function viewDirectorySegment(subpath, label) {
+    return m("span.dib.mr1" + menuHoverColor, {onclick: () => loadDirectory(subpath, true)}, label)
+}
+
 function viewPath(path) {
     const parts = path.split("/")
-    let subpath = location.protocol + "//" + location.hostname + ":" + location.port + "/"
-    const links = [m("a.mr1.link", {href: subpath}, "/")]
+    let subpath = "/"
+    const links = [viewDirectorySegment(subpath, "/")]
     for (const part of parts) {
         if (part) {
             subpath = subpath + part + "/"
-            links.push(m("a.mr1.link", {href: subpath}, part + "/"))
+            links.push(viewDirectorySegment(subpath, part + " /"))
         }
     }
     return m("span", links)
