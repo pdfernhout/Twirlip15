@@ -164,8 +164,8 @@ function disabled(flag) {
     return flag ? ".disabled-button" : ""
 }
 
-function viewShowHiddenFiles() {
-    return m("span.dib",
+function viewShowHiddenFiles(hoverColor) {
+    return m("label.dib" + hoverColor,
         m("input[type=checkbox].mr1", {
             checked: showHiddenFiles,
             onclick: () => showHiddenFiles = !showHiddenFiles
@@ -177,8 +177,8 @@ function viewShowHiddenFiles() {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     const hoverColor = ".hover-bg-orange"
-    return showMenu && m("div.ml4.bg-light-green",
-        viewShowHiddenFiles(),
+    return showMenu && m("div.ma1.ml4.bg-light-green",
+        viewShowHiddenFiles(hoverColor),
         m("span.dib.mr2.ml2" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
         m("span.dib.mr2" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
         m("span.dib.mr2" + hoverColor, {onclick: () => openAsIdeas()}, "* Open as Ideas"),
@@ -191,7 +191,7 @@ function viewMenu() {
 
 function viewSelectedFiles() {
     const selectedFileCount = Object.keys(selectedFiles).length
-    return showMenu && m("div.ml4",
+    return showMenu && m("div.ma1.ml4",
         "Selected file count: ",
         selectedFileCount,
         m("button.ml2", {onclick: () => selectAll(), }, "Select All"),
