@@ -302,6 +302,7 @@ function formatTime(time) {
 }
 
 function viewerForURL(url) {
+    console.log("viewerForURL", url)
     if (url.endsWith(".md")) {
         return url + "?twirlip=view-md"
     } else {
@@ -319,7 +320,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
                 : m("span", 
                     m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
-                    m("a.link", {href: directoryPath + fileInfo.name}, fileInfo.name)
+                    m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name)
                 )
             ),
             m("td.pl2", fileInfo.stats && formatSize(fileInfo.stats.size)),
