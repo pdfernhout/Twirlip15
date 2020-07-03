@@ -85,36 +85,29 @@ async function saveFile(fileName, contents, successCallback) {
 
 function viewFileContents() {
     return m("div",
-        (chosenFileContents === null) && m("div", "Loading file contents..."),
-        (!chosenFileLoaded && chosenFileContents === "") && m("div", 
-            m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
-            partialFileTest && m("div.break-word", partialFileTest)
+        m("div",
+            m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
+            m("button.ml1", {onclick: () => {
+                editing = true
+                editedContents = chosenFileContents
+            }, disabled:  editing}, "Edit"),
+            m("button.ml1", {onclick: () => { 
+                appendFile(chosenFileName, editedContents, () => {
+                    chosenFileContents = chosenFileContents + editedContents
+                    editedContents = ""
+                })
+            }, disabled: !editing || fileSaveInProgress}, "Append"),
+            m("button.ml1", {onclick: () => { 
+                saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
+            }, disabled: !editing || fileSaveInProgress}, "Save"),
+            m("button.ml1", {onclick: () => { 
+                history.back()
+            }, disabled: fileSaveInProgress}, "Close"),
+            fileSaveInProgress && m("span.yellow", "Saving...")
         ),
-        chosenFileLoaded && m("div",
-            m("div",
-                m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
-                m("button.ml1", {onclick: () => {
-                    editing = true
-                    editedContents = chosenFileContents
-                }, disabled:  editing}, "Edit"),
-                m("button.ml1", {onclick: () => { 
-                    appendFile(chosenFileName, editedContents, () => {
-                        chosenFileContents = chosenFileContents + editedContents
-                        editedContents = ""
-                    })
-                }, disabled: !editing || fileSaveInProgress}, "Append"),
-                m("button.ml1", {onclick: () => { 
-                    saveFile(chosenFileName, editedContents, () => chosenFileContents = editedContents)
-                }, disabled: !editing || fileSaveInProgress}, "Save"),
-                m("button.ml1", {onclick: () => { 
-                    history.back()
-                }, disabled: fileSaveInProgress}, "Close"),
-                fileSaveInProgress && m("span.yellow", "Saving...")
-            ),
-            editing
-                ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
-                : m("pre.ml2.pre-wrap", chosenFileContents)
-        )
+        editing
+            ? m("textarea.w-90", {style: {height: "400px"}, value: editedContents, onchange: event => editedContents = event.target.value})
+            : m("pre.ml2.pre-wrap", chosenFileContents)
     )
 }
 
@@ -122,10 +115,14 @@ const ViewEdit = {
     view: () => {
         return m("div.ma2.measure-wide",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            chosenFileName && !chosenFileLoaded && chosenFileContents === null && m("div",
+            !chosenFileLoaded && chosenFileContents === null && m("div",
                 "Loading..."
             ),
-            chosenFileName && chosenFileLoaded && m("div",
+            (!chosenFileLoaded && chosenFileContents === "") && m("div", 
+                m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
+                partialFileTest && m("div.break-word", partialFileTest)
+            ),
+            chosenFileLoaded && m("div",
                 viewFileContents()
             )
         )
