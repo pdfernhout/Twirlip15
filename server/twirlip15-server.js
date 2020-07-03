@@ -301,7 +301,7 @@ async function requestFileNewDirectory(request, response) {
 }
 
 app.get("/favicon.ico", (req, res) => {
-    res.sendFile(process.cwd() + "/client/favicon.ico")
+    res.sendFile(process.cwd() + "/client/favicon/favicon.ico")
 })
 
 app.use("/twirlip15", express.static(process.cwd() + "/client"))
