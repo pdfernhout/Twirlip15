@@ -4,7 +4,7 @@ import "./vendor/mithril.js"
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
-let showMenu = false
+let showMenu = sessionStorage.getItem("twirlip15-showMenu") === "true"
 let selectedFiles = {}
 let lastSort = "name"
 let showHiddenFiles = false
@@ -12,7 +12,6 @@ let showHiddenFiles = false
 window.onpopstate = async function(event) {
     if (event.state) {
         console.log("onpopstate", event.state)
-        showMenu = event.state.showMenu || false
         await loadDirectory(event.state.directoryPath, false)
     } else {
         await loadDirectory("/", false)
@@ -57,9 +56,9 @@ async function loadDirectory(newPath, saveState) {
     }
     if (saveState) {
         if (saveState === "replace") {
-            history.replaceState({directoryPath: newPath, showMenu}, newPath, newPath + "?twirlip=filer")
+            history.replaceState({directoryPath: newPath}, newPath, newPath + "?twirlip=filer")
         } else {
-            history.pushState({directoryPath: newPath, showMenu}, newPath, newPath + "?twirlip=filer")
+            history.pushState({directoryPath: newPath}, newPath, newPath + "?twirlip=filer")
         }
     }
     directoryPath = newPath
@@ -362,7 +361,7 @@ const Filer = {
             m("div",
                 m("div", m("span.mr2", {onclick: () => {
                     showMenu = !showMenu
-                    history.pushState({directoryPath, showMenu}, directoryPath)
+                    sessionStorage.setItem("twirlip15-showMenu", showMenu ? "true" : "false") 
                 }
             }, "☰"), "Files in: ", viewPath(directoryPath)),
                 viewMenu(),
