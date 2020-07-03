@@ -1,15 +1,16 @@
 /* global m */
 import "./vendor/mithril.js"
+import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuButton, menuCheckbox } from "./twirlip15-support.js"
 
-const baseStorageKey = "twirlip15-filer--"
+const preferences = new Twirlip15Preferences()
 
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
-let showMenu = getPreference("showMenu", false)
+let showMenu = preferences.get("showMenu", false)
 let selectedFiles = {}
 let lastSort = "name"
-let showHiddenFiles = getPreference("showHiddenFiles", false)
+let showHiddenFiles = preferences.get("showHiddenFiles", false)
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -20,44 +21,8 @@ window.onpopstate = async function(event) {
     }
 }
 
-function getPreference(preferenceName, defaultValue) {
-    const valueAsString = localStorage.getItem(baseStorageKey + preferenceName) 
-    if (valueAsString === null) return defaultValue
-    try {
-        return JSON.parse(valueAsString)
-    } catch {
-        return defaultValue
-    }
-}
-
-function setPreference(preferenceName, newValue) {
-    localStorage.setItem(baseStorageKey + preferenceName, JSON.stringify(newValue))
-    return newValue
-}
-
-async function apiCall(request) {
-    let result = null
-    errorMessage = ""
-    const response = await fetch("/twirlip15-api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify(request)
-    })
-    if (response.ok) {
-        const json = await response.json()
-        if (json.ok) {
-            result = json
-        } else {
-            errorMessage = json.errorMessage
-        }   
-    } else {
-        console.log("HTTP-Error: " + response.status, response)
-        errorMessage = "API request failed for file contents: " + response.status
-    }
-    setTimeout(() => m.redraw(), 0)
-    return result
+function showError(error) {
+    errorMessage = error
 }
 
 async function loadDirectory(newPath, saveState) {
@@ -81,7 +46,7 @@ async function loadDirectory(newPath, saveState) {
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
-    const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
+    const apiResult = await twirlip15ApiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true}, showError)
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
@@ -94,7 +59,7 @@ async function addFile() {
     const newFileName = prompt("New file name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
-        const apiResult = await apiCall({request: "file-save", fileName, contents: ""})
+        const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents: ""}, showError)
         if (apiResult) loadDirectory(directoryPath, false)
     }
 }
@@ -103,7 +68,7 @@ async function addDirectory() {
     const newFileName = prompt("New directory name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
-        const apiResult = await apiCall({request: "file-new-directory", directoryPath: fileName, contents: ""})
+        const apiResult = await twirlip15ApiCall({request: "file-new-directory", directoryPath: fileName, contents: ""}, showError)
         if (apiResult) loadDirectory(directoryPath, false)
     }
 }
@@ -118,7 +83,7 @@ async function renameFile() {
     if (fileNameAfter) {
         const oldFileName = directoryPath + fileNameBefore
         const newFileName = directoryPath + fileNameAfter
-        const apiResult = await apiCall({request: "file-rename", renameFiles: [{oldFileName, newFileName}]})
+        const apiResult = await twirlip15ApiCall({request: "file-rename", renameFiles: [{oldFileName, newFileName}]}, showError)
         if (apiResult) {
             selectedFiles = {}
             loadDirectory(directoryPath, false)
@@ -132,7 +97,7 @@ async function copyFile() {
     const copyToFileName = prompt("New file name for copy?", copyFromFileName)
     if (copyToFileName) {
         const copyToFilePath = directoryPath + copyToFileName
-        const apiResult = await apiCall({request: "file-copy", copyFromFilePath, copyToFilePath})
+        const apiResult = await twirlip15ApiCall({request: "file-copy", copyFromFilePath, copyToFilePath}, showError)
         if (apiResult) {
             selectedFiles = {}
             loadDirectory(directoryPath, false)
@@ -144,7 +109,7 @@ async function deleteFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
     if (!proceed) return
-    const apiResult = await apiCall({request: "file-delete", deleteFiles: Object.keys(selectedFiles)})
+    const apiResult = await twirlip15ApiCall({request: "file-delete", deleteFiles: Object.keys(selectedFiles)}, showError)
     if (apiResult) {
         selectedFiles = {}
         loadDirectory(directoryPath, false)
@@ -155,7 +120,7 @@ async function moveFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
     if (!proceed) return
-    const apiResult = await apiCall({request: "file-move", moveFiles: Object.keys(selectedFiles), newLocation: directoryPath})
+    const apiResult = await twirlip15ApiCall({request: "file-move", moveFiles: Object.keys(selectedFiles), newLocation: directoryPath}, showError)
     if (apiResult) {
         selectedFiles = {}
         loadDirectory(directoryPath, false)
@@ -177,30 +142,12 @@ function selectAll() {
     })
 }
 
-const menuHoverColor = ".hover-bg-orange"
-
-function menuCheckbox(label, checked, action, disabled) {
-    return m("label.dib.pa2" + menuHoverColor + (disabled ? ".disabled-button" : ""), 
-        m("input[type=checkbox].mr1", {
-            checked: checked,
-            onclick: action
-        }),
-        label
-    )
-}
-
-function menuButton(label, action, disabled) {
-    return m("span.dib.pa2" + menuHoverColor + (disabled ? ".disabled-button" : ""), {
-        onclick: action, 
-    }, label)
-}
-
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
-    return showMenu && m("div.ma1.ml4.bg-light-green",
+    return showMenu && menuTopBar([
         menuCheckbox("Show hidden files", showHiddenFiles, () => {
             showHiddenFiles = !showHiddenFiles
-            setPreference("showHiddenFiles", showHiddenFiles)
+            preferences.set("showHiddenFiles", showHiddenFiles)
         }),
         menuButton("+📄 Add file",() => addFile()),
         menuButton("+📂 Add directory", () => addDirectory()),
@@ -209,7 +156,7 @@ function viewMenu() {
         menuButton("Move", () => moveFiles(), !selectedFileCount),
         menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
         menuButton("Delete", () => deleteFiles(), !selectedFileCount)
-    )
+    ])
 }
 
 function viewSelectedFiles() {
@@ -324,7 +271,6 @@ function formatTime(time) {
 }
 
 function viewerForURL(url) {
-    console.log("viewerForURL", url)
     if (url.endsWith(".md")) {
         return url + "?twirlip=view-md"
     } else {
@@ -384,7 +330,7 @@ const Filer = {
             m("div",
                 m("div", m("span.mr2", {onclick: () => {
                     showMenu = !showMenu
-                    setPreference("showMenu", showMenu)
+                    preferences.set("showMenu", showMenu)
                 }
             }, "☰"), "Files in: ", viewPath(directoryPath)),
                 viewMenu(),
@@ -401,9 +347,9 @@ function startup() {
     m.mount(document.body, Filer)
 
     window.addEventListener("storage", (event) => {
-        if (!event.key.startsWith(baseStorageKey)) return
-        showMenu = getPreference("showMenu")
-        showHiddenFiles = getPreference("showHiddenFiles")
+        if (!preferences.isPreferenceStorageEvent(event)) return
+        showMenu = preferences.get("showMenu", false)
+        showHiddenFiles = preferences.get("showHiddenFiles", false)
         m.redraw()
     })
 }

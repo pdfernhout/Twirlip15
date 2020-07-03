@@ -1,5 +1,6 @@
 /* global m, showdown, cytoscape */
 import "./vendor/mithril.js"
+import { twirlip15ApiCall } from "./twirlip15-support.js"
 import "./vendor/showdown.js"
 import "./vendor/cytoscape.umd.js"
 
@@ -17,29 +18,8 @@ let cy
 
 let loadingAllFiles = true
 
-async function apiCall(request) {
-    let result = null
-    errorMessage = ""
-    const response = await fetch("/twirlip15-api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify(request)
-    })
-    if (response.ok) {
-        const json = await response.json()
-        if (json.ok) {
-            result = json
-        } else {
-            errorMessage = json.errorMessage
-        }   
-    } else {
-        console.log("HTTP-Error: " + response.status, response)
-        errorMessage = "API request failed for file contents: " + response.status
-    }
-    setTimeout(() => m.redraw(), 0)
-    return result
+function showError(error) {
+    errorMessage = error
 }
 
 async function loadDirectory(newPath) {
@@ -51,7 +31,7 @@ async function loadDirectory(newPath) {
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
-    const apiResult = await apiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true})
+    const apiResult = await twirlip15ApiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true}, showError)
     if (apiResult) {
         directoryFiles = apiResult.files.filter(
             fileInfo => !fileInfo.isDirectory 
@@ -78,7 +58,7 @@ async function addFile() {
             newFileName =  newFileName + ".md"
         }
         const fileName = directoryPath + newFileName
-        const apiResult = await apiCall({request: "file-save", fileName, contents: ""})
+        const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents: ""}, showError)
         if (apiResult) {
             window.location.assign(fileName + "?twirlip=view-edit")
         }
@@ -115,7 +95,7 @@ function parseTriples(fileInfo) {
 }
 
 async function loadFileContents(fileInfo) {
-    const apiResult = await apiCall({request: "file-contents", fileName: directoryPath + fileInfo.name})
+    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: directoryPath + fileInfo.name}, showError)
     if (apiResult) {
         fileInfo.contents = apiResult.contents
         parseTriples(fileInfo)

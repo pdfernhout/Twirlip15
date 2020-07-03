@@ -1,5 +1,6 @@
 /* global m */
 import "./vendor/mithril.js"
+import { twirlip15ApiCall } from "./twirlip15-support.js"
 
 let errorMessage = ""
 let chosenFileName = ""
@@ -10,38 +11,12 @@ let editedContents = ""
 let partialFileTest = ""
 let fileSaveInProgress = false
 
-async function apiCall(request) {
-    let result = null
-    errorMessage = ""
-    try {
-        const response = await fetch("/twirlip15-api", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json;charset=utf-8"
-            },
-            body: JSON.stringify(request)
-        })
-        if (response.ok) {
-            const json = await response.json()
-            if (json.ok) {
-                result = json
-            } else {
-                errorMessage = json.errorMessage
-            }   
-        } else {
-            console.log("HTTP-Error: " + response.status, response)
-            errorMessage = "API request failed for file contents: " + response.status
-        }
-    } catch (error) {
-        console.log("api call error", error)
-        errorMessage = "API call error; see console for details"
-    }
-    setTimeout(() => m.redraw(), 0)
-    return result
+function showError(error) {
+    errorMessage = error
 }
 
 async function loadPartialFileTest(fileName) {
-    const apiResult = await apiCall({request: "file-read-bytes", fileName: fileName, length: 4096})
+    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName: fileName, length: 4096}, showError)
     if (apiResult) {
         partialFileTest = apiResult.data
     }
@@ -54,7 +29,7 @@ async function loadFileContents(newFileName) {
     editing = false
     partialFileTest = ""
     console.log("loadFileContents", chosenFileName)
-    const apiResult = await apiCall({request: "file-contents", fileName: chosenFileName})
+    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
     if (apiResult) {
         chosenFileContents = apiResult.contents
         chosenFileLoaded = true
@@ -66,7 +41,7 @@ async function loadFileContents(newFileName) {
 async function appendFile(fileName, stringToAppend, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const apiResult = await apiCall({request: "file-append", fileName, stringToAppend})
+    const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
     fileSaveInProgress = false
     if (apiResult) {
         successCallback()
@@ -76,7 +51,7 @@ async function appendFile(fileName, stringToAppend, successCallback) {
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const apiResult = await apiCall({request: "file-save", fileName, contents})
+    const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents}, showError)
     fileSaveInProgress = false
     if (apiResult) {
         successCallback()
