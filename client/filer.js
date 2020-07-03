@@ -165,7 +165,7 @@ function disabled(flag) {
 }
 
 function viewShowHiddenFiles(hoverColor) {
-    return m("label.dib" + hoverColor,
+    return m("label.dib.pa2" + hoverColor,
         m("input[type=checkbox].mr1", {
             checked: showHiddenFiles,
             onclick: () => showHiddenFiles = !showHiddenFiles
@@ -179,13 +179,13 @@ function viewMenu() {
     const hoverColor = ".hover-bg-orange"
     return showMenu && m("div.ma1.ml4.bg-light-green",
         viewShowHiddenFiles(hoverColor),
-        m("span.dib.mr2.ml2" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
-        m("span.dib.mr2" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
-        m("span.dib.mr2" + hoverColor, {onclick: () => openAsIdeas()}, "* Open as Ideas"),
-        m("span.dib.mr2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "* Rename"),
-        m("span.dib.mr2" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "* Move"),
-        m("span.dib.mr2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "* Copy"),
-        m("span.dib.mr2" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "* Delete")
+        m("span.dib.pa2" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
+        m("span.dib.pa2" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
+        m("span.dib.pa2" + hoverColor, {onclick: () => openAsIdeas()}, "Open as Ideas"),
+        m("span.dib.pa2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "Rename"),
+        m("span.dib.pa2" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "Move"),
+        m("span.dib.pa2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "Copy"),
+        m("span.dib.pa2" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "Delete")
     )
 }
 
