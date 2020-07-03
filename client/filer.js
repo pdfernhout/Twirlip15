@@ -242,7 +242,13 @@ function viewCheckBox(fileName) {
     return showMenu && m("input[type=checkbox].mr1" + (hidden ? ".o-0" : ""), {
         checked: selectedFiles[directoryPath + fileName],
         disabled: hidden,
-        onclick: () => selectedFiles[directoryPath + fileName] = !selectedFiles[directoryPath + fileName]
+        onclick: () => {
+            if (selectedFiles[directoryPath + fileName]) {
+                delete selectedFiles[directoryPath + fileName]
+            } else {
+                selectedFiles[directoryPath + fileName] = true
+            }
+        }
     })
 }
 
