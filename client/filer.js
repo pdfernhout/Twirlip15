@@ -177,35 +177,38 @@ function selectAll() {
     })
 }
 
-function disabled(flag) {
-    return flag ? ".disabled-button" : ""
+const menuHoverColor = ".hover-bg-orange"
+
+function menuCheckbox(label, checked, action, disabled) {
+    return m("label.dib.pa2" + menuHoverColor + (disabled ? ".disabled-button" : ""), 
+        m("input[type=checkbox].mr1", {
+            checked: checked,
+            onclick: action
+        }),
+        label
+    )
 }
 
-function viewShowHiddenFiles(hoverColor) {
-    return m("label.dib.pa2" + hoverColor,
-        m("input[type=checkbox].mr1", {
-            checked: showHiddenFiles,
-            onclick: () => {
-                showHiddenFiles = !showHiddenFiles
-                setPreference("showHiddenFiles", showHiddenFiles)
-            }
-        }),
-        "Show hidden files"
-    )
+function menuButton(label, action, disabled) {
+    return m("span.dib.pa2" + menuHoverColor + (disabled ? ".disabled-button" : ""), {
+        onclick: action, 
+    }, label)
 }
 
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
-    const hoverColor = ".hover-bg-orange"
     return showMenu && m("div.ma1.ml4.bg-light-green",
-        viewShowHiddenFiles(hoverColor),
-        m("span.dib.pa2" + hoverColor, {onclick: () => addFile()}, "+📄 Add file"),
-        m("span.dib.pa2" + hoverColor, {onclick: () => addDirectory()}, "+📂 Add directory"),
-        m("span.dib.pa2" + hoverColor, {onclick: () => openAsIdeas()}, "Open as Ideas"),
-        m("span.dib.pa2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => renameFile()}, "Rename"),
-        m("span.dib.pa2" + hoverColor + disabled(!selectedFileCount), {onclick: () => moveFiles()}, "Move"),
-        m("span.dib.pa2" + hoverColor + disabled(selectedFileCount !== 1), {onclick: () => copyFile()}, "Copy"),
-        m("span.dib.pa2" + hoverColor + disabled(!selectedFileCount), {onclick: () => deleteFiles()}, "Delete")
+        menuCheckbox("Show hidden files", showHiddenFiles, () => {
+            showHiddenFiles = !showHiddenFiles
+            setPreference("showHiddenFiles", showHiddenFiles)
+        }),
+        menuButton("+📄 Add file",() => addFile()),
+        menuButton("+📂 Add directory", () => addDirectory()),
+        menuButton("Open as Ideas", () => openAsIdeas()),
+        menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
+        menuButton("Move", () => moveFiles(), !selectedFileCount),
+        menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
+        menuButton("Delete", () => deleteFiles(), !selectedFileCount)
     )
 }
 
