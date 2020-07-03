@@ -4,10 +4,10 @@ import "./vendor/mithril.js"
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
-let showMenu = sessionStorage.getItem("twirlip15-showMenu") === "true"
+let showMenu = getPreference("showMenu", false)
 let selectedFiles = {}
 let lastSort = "name"
-let showHiddenFiles = sessionStorage.getItem("twirlip15-showHiddenFiles") === "true"
+let showHiddenFiles = getPreference("showHiddenFiles", false)
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -16,6 +16,21 @@ window.onpopstate = async function(event) {
     } else {
         await loadDirectory("/", false)
     }
+}
+
+function getPreference(preferenceName, defaultValue) {
+    const valueAsString = sessionStorage.getItem("twirlip15-" + preferenceName) 
+    if (valueAsString === null) return defaultValue
+    try {
+        return JSON.parse(valueAsString)
+    } catch {
+        return defaultValue
+    }
+}
+
+function setPreference(preferenceName, newValue) {
+    sessionStorage.setItem("twirlip15-" + preferenceName, JSON.stringify(newValue))
+    return newValue
 }
 
 async function apiCall(request) {
@@ -170,7 +185,7 @@ function viewShowHiddenFiles(hoverColor) {
             checked: showHiddenFiles,
             onclick: () => {
                 showHiddenFiles = !showHiddenFiles
-                sessionStorage.setItem("twirlip15-showHiddenFiles", showHiddenFiles ? "true" : "false") 
+                setPreference("showHiddenFiles", showHiddenFiles)
             }
         }),
         "Show hidden files"
@@ -364,7 +379,7 @@ const Filer = {
             m("div",
                 m("div", m("span.mr2", {onclick: () => {
                     showMenu = !showMenu
-                    sessionStorage.setItem("twirlip15-showMenu", showMenu ? "true" : "false") 
+                    setPreference("showMenu", showMenu)
                 }
             }, "☰"), "Files in: ", viewPath(directoryPath)),
                 viewMenu(),
