@@ -311,10 +311,13 @@ app.use((req, res, next) => {
     console.log("req.url 1", req.url)
     const twirlip = req.query.twirlip
     if (twirlip) {
-        console.log("send file for twirlip", twirlip.replace(/[^0-9a-z-]/gi, ""))
-        res.sendFile(process.cwd() + "/client/" + twirlip.replace(/[^0-9a-z-]/gi, "") + ".html")
+        // Special handling for urls with a querystring like: /some/path/something?twirlip=editor
+        const appName = twirlip.replace(/[^0-9a-z-]/gi, "")
+        console.log("send app file for twirlip", appName)
+        res.sendFile(process.cwd() + "/client/" + appName + ".html")
     } else if (req.url.endsWith("/") && !req.query.twirlip) {
-            res.status(301).redirect(req.url + "?twirlip=filer")
+        // Use the filer app to handle interacting with directories
+        res.status(301).redirect(req.url + "?twirlip=filer")
     } else {
         next()
     }
