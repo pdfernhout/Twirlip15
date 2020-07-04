@@ -7,6 +7,7 @@ const util = require("util")
 const path = require("path")
 const express = require("express")
 const bodyParser = require("body-parser")
+const sharp = require("sharp")
 
 const baseDir = "/" // path.resolve()
 
@@ -50,6 +51,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestFileContents(request, response)
     } else if (request.body.request === "file-read-bytes") {
         requestFileReadBytes(request, response)
+    } else if (request.body.request === "file-preview") {
+        requestFilePreview(request, response)
     } else if (request.body.request === "file-append") {
         requestFileAppend(request, response)
     } else if (request.body.request === "file-save") {
@@ -129,6 +132,24 @@ async function requestFileReadBytes(request, response) {
     } catch (err) {
         console.log(err)
         response.json({ok: false, errorMessage: "Problem opening file"})
+    }
+}
+
+async function requestFilePreview(request, response) {
+    console.log("POST file-preview", request.body)
+    const filePath = path.join(baseDir, request.body.fileName)
+    const defaultResizeOptions = { width: 100, height: 100, fit: "inside", withoutEnlargement: true }
+    const resizeOptions = request.body.resizeOptions || defaultResizeOptions
+    try {
+        sharp(filePath).
+        resize(resizeOptions)
+        .toFormat("jpeg")
+        .toBuffer()
+        .then(data => { response.json({ ok: true, base64Data: data.toString("base64") }) })
+        .catch(error => { console.log(error); response.json({ok: false, errorMessage: "Problem previewing file: " + error}) })
+    } catch(err) {
+        console.log(err)
+        response.json({ok: false, errorMessage: "Problem previewing file"})
     }
 }
 

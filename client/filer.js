@@ -11,10 +11,12 @@ let showMenu = preferences.get("showMenu", false)
 let selectedFiles = {}
 let lastSort = "name"
 let showHiddenFiles = preferences.get("showHiddenFiles", false)
+let showPreview = false
+let previews = {}
+let previewsToFetch = []
 
 window.onpopstate = async function(event) {
     if (event.state) {
-        console.log("onpopstate", event.state)
         await loadDirectory(event.state.directoryPath, false)
     } else {
         await loadDirectory("/", false)
@@ -26,6 +28,7 @@ function showError(error) {
 }
 
 async function loadDirectory(newPath, saveState) {
+    clearPreviewFetchQueue()
     if (!newPath.endsWith("/")) {
         newPath = newPath + "/"
     }
@@ -52,7 +55,55 @@ async function loadDirectory(newPath, saveState) {
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
         lastSort = null
         sortByFileName()
+        queuePreviewsIfNeeded()
     }
+}
+
+function clearPreviewFetchQueue() {
+    previewsToFetch = []
+}
+
+function queuePreviewsIfNeeded() {
+    if (showPreview) {
+        for (const fileInfo of directoryFiles) {
+            if (!fileInfo.name.startsWith(".") && !fileInfo.isDirectory && isFilePreviewable(fileInfo.name)) {
+                previewsToFetch.push(directoryPath + fileInfo.name)
+            }
+        }
+        setTimeout(fetchNextPreview)
+    }
+}
+
+async function fetchNextPreview() {
+    if (!showPreview) return
+    if (!previewsToFetch.length) return
+    const nextFileName = previewsToFetch.shift()
+    const neededFetching = await fetchFilePreview(nextFileName)
+    if (previewsToFetch.length) {
+        setTimeout(fetchNextPreview, neededFetching ? 10 : 0)
+    }
+}
+
+async function fetchFilePreview(fileName) {
+    if (previews[fileName] !== undefined) return false
+    previews[fileName] = null
+    const apiResult = await twirlip15ApiCall({request: "file-preview", fileName}, showError)
+    if (apiResult) {
+        previews[fileName] = apiResult.base64Data
+    }
+    return true
+}
+
+function isFilePreviewable(fileName) {
+    const fileNameLowerCase = fileName.toLowerCase()
+    let isPreviewable = false
+    for (const extension of [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".gif", ".svg"]) {
+        if (fileNameLowerCase.endsWith(extension)) {
+            isPreviewable = true
+            break
+        }
+    }
+    return isPreviewable
 }
 
 async function addFile() {
@@ -145,17 +196,23 @@ function selectAll() {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
-        menuCheckbox("Show hidden files", showHiddenFiles, () => {
-            showHiddenFiles = !showHiddenFiles
-            preferences.set("showHiddenFiles", showHiddenFiles)
-        }),
         menuButton("+📄 Add file",() => addFile()),
         menuButton("+📂 Add directory", () => addDirectory()),
         menuButton("Open as Ideas", () => openAsIdeas()),
         menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("Move", () => moveFiles(), !selectedFileCount),
         menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
-        menuButton("Delete", () => deleteFiles(), !selectedFileCount)
+        menuButton("Delete", () => deleteFiles(), !selectedFileCount),
+        m("br"),
+        menuCheckbox("Show hidden files", showHiddenFiles, () => {
+            showHiddenFiles = !showHiddenFiles
+            preferences.set("showHiddenFiles", showHiddenFiles)
+        }),
+        menuCheckbox("Show preview", showPreview, () => {
+            showPreview = !showPreview
+            queuePreviewsIfNeeded()
+            // preferences.set("showPreview", showPreview)
+        }),
     ])
 }
 
@@ -224,7 +281,8 @@ function viewDirectoryFiles() {
         ? showMenu 
             ? m("table", 
                 m("tr",
-                    m("th", ""),
+                    showPreview && m("th"),
+                    m("th"),
                     m("th", {onclick: sortByFileName}, "File Name" + sortArrow("name")),
                     m("th", {onclick: sortBySize}, "Size" + sortArrow("size")),
                     m("th", {onclick: sortByTime}, "Modified" + sortArrow("time")),
@@ -253,7 +311,6 @@ function viewCheckBox(fileName) {
 }
 
 function statsTitle(stats) {
-    // console.log("stats", stats)
     if (!stats) return undefined
     // return JSON.stringify(fileInfo.stats, null, 4)
     return JSON.stringify({
@@ -287,8 +344,11 @@ function viewerForURL(url) {
 function viewFileEntry(fileInfo) { // selectedFiles
     if (!showHiddenFiles && fileInfo.name !== ".." && fileInfo.name.startsWith(".")) return []
 
+    const previewData = previews[directoryPath + fileInfo.name]
+
     if (showMenu) {
         return m("tr",
+            showPreview && m("td", previewData && m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
             m("td", viewCheckBox(fileInfo.name)),
             m("td", fileInfo.isDirectory
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
@@ -360,6 +420,7 @@ function startup() {
         if (!preferences.isPreferenceStorageEvent(event)) return
         showMenu = preferences.get("showMenu", false)
         showHiddenFiles = preferences.get("showHiddenFiles", false)
+        // showPreview = preferences.get("showPreview", false)
         m.redraw()
     })
 }
