@@ -1,6 +1,12 @@
 /* global m */
 import "./vendor/mithril.js"
 import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "./twirlip15-support.js"
+import Dexie from "./vendor/dexie.mjs"
+
+var previewCache = new Dexie("preview-cache")
+previewCache.version(1).stores({
+    entries: "&key"
+})
 
 const preferences = new Twirlip15Preferences()
 
@@ -81,6 +87,8 @@ async function fetchNextPreview() {
     const neededFetching = await fetchFilePreview(nextFileName)
     if (previewsToFetch.length) {
         setTimeout(fetchNextPreview, neededFetching ? 10 : 0)
+    } else {
+        m.redraw()
     }
 }
 
@@ -88,9 +96,17 @@ async function fetchFilePreview(fileName) {
     if (previews[fileName] !== undefined) return false
     previews[fileName] = null
     const resizeOptions = { width: 200, height: 200, fit: "inside", withoutEnlargement: true }
+    const key = JSON.stringify({fileName, width: resizeOptions.width, height: resizeOptions.height})
+    const cacheEntry = await previewCache.entries.get({key})
+    if (cacheEntry) {
+        previews[fileName] = cacheEntry.base64Data
+        return false
+    }
     const apiResult = await twirlip15ApiCall({request: "file-preview", fileName, resizeOptions}, showError)
     if (apiResult) {
-        previews[fileName] = apiResult.base64Data
+        const base64Data = apiResult.base64Data
+        previews[fileName] = base64Data
+        await previewCache.entries.add({key, base64Data})
     }
     return true
 }
