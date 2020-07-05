@@ -87,7 +87,8 @@ async function fetchNextPreview() {
 async function fetchFilePreview(fileName) {
     if (previews[fileName] !== undefined) return false
     previews[fileName] = null
-    const apiResult = await twirlip15ApiCall({request: "file-preview", fileName}, showError)
+    const resizeOptions = { width: 200, height: 200, fit: "inside", withoutEnlargement: true }
+    const apiResult = await twirlip15ApiCall({request: "file-preview", fileName, resizeOptions}, showError)
     if (apiResult) {
         previews[fileName] = apiResult.base64Data
     }
