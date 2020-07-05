@@ -297,16 +297,18 @@ function viewDirectoryFiles() {
     return directoryFiles
         ? showMenu 
             ? m("table", 
-                m("tr",
-                    showPreview && m("th"),
-                    m("th"),
-                    m("th", {onclick: sortByFileName}, "File Name" + sortArrow("name")),
-                    m("th", {onclick: sortBySize}, "Size" + sortArrow("size")),
-                    m("th", {onclick: sortByTime}, "Modified" + sortArrow("time")),
-                    // m("th", "Owner"),
-                    // m("th", "Menu")
+                m("thead",
+                    showPreview && m("th.sticky-header.bg-silver"),
+                    m("th.sticky-header.bg-silver"),
+                    m("th.sticky-header.bg-silver", {onclick: sortByFileName}, "File Name" + sortArrow("name")),
+                    m("th.sticky-header.bg-silver", {onclick: sortBySize}, "Size" + sortArrow("size")),
+                    m("th.sticky-header.bg-silver", {onclick: sortByTime}, "Modified" + sortArrow("time")),
+                    // m("th.sticky-header.bg-silver", "Owner"),
+                    // m("th.sticky-header.bg-silver", "Menu")
                 ),
-                directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+                m("tbody",
+                    directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+                )
             )
             : m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
         : m("div", "Loading file data...")
@@ -412,18 +414,17 @@ function viewPath(path) {
 
 const Filer = {
     view: () => {
-        return m("div.ma2",
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            m("div",
-                m("div", m("span.mr2", {onclick: () => {
+        return m("div.pa2.h-100.flex.flex-column",
+            errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+            m("div.flex-none", m("span.mr2", {
+                onclick: () => {
                     showMenu = !showMenu
                     preferences.set("showMenu", showMenu)
-                }
-            }, "☰"), "Files in: ", viewPath(directoryPath)),
-                viewMenu(),
-                viewSelectedFiles(),
-                viewDirectoryFiles()
-            )
+                }}, "☰"), "Files in: ", viewPath(directoryPath)
+            ),
+            m("div.flex-none", viewMenu()),
+            m("div.flex-none", viewSelectedFiles()),
+            m("div.flex-auto.overflow-y-auto", viewDirectoryFiles())
         )
     }
 }
