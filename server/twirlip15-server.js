@@ -32,6 +32,7 @@ app.get("/twirlip15-api", function(request, response) {
             "echo": "Echo the post data",
             "file-contents": "return contents of a file given a fileName", 
             "file-read-bytes": "return bytesRead and data for length bytes from start from a file given a fileName",
+            "file-preview": "return base64Data jpeg preview given a fileName and optional resizeOptions", 
             "file-append": "append stringToAppend to a file given a fileName",
             "file-save": "save contents to a file given a fileName",
             "file-copy": "copy a file given an copyFromFilePath and copyToFilePath",
