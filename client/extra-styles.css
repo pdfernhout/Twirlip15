@@ -20,6 +20,12 @@
     max-width: 200px;
 }
 
+.h-100px {
+    min-height: 100px;
+    height: 100px;
+    max-height: 100px; 
+}
+
 .disabled-button {
     pointer-events: none;
     opacity: 0.4;
@@ -30,13 +36,12 @@
 }
 
 .mh-15rem {
-    max-height: 20rem;
-}
-
-.mh-20rem {
     max-height: 15rem;
 }
 
+.mh-20rem {
+    max-height: 20rem;
+}
 
 .sticky-header {
     position: -webkit-sticky;

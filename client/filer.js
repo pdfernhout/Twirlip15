@@ -366,8 +366,8 @@ function viewFileEntry(fileInfo) { // selectedFiles
     const previewData = previews[directoryPath + fileInfo.name]
 
     if (showMenu) {
-        return m("tr",
-            showPreview && m("td.w-200px", previewData && m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
+        return m("tr" + (showPreview ? ".h-100px" : ""),
+            showPreview && m("td", previewData && m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
             m("td", viewCheckBox(fileInfo.name)),
             m("td", fileInfo.isDirectory
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
