@@ -30,7 +30,7 @@ const usersFileName = "users/users.json"
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
-// Or you could change "host" to listen on the network (required adding users for basic auth)
+// Or you could change "host" to listen on the network (requires adding users for basic auth)
 // const host = "0.0.0.0"
 const host = "127.0.0.1"
 
