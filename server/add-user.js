@@ -23,7 +23,9 @@ function saveHashedPassword(nameSupplied, passwordSupplied) {
             console.log("something went wrong using bcrypt.hash")
             process.exit(-1)
         }
-        users[nameSupplied] = hash
+        const userData = users[nameSupplied] || {}
+        userData.passwordHash = hash
+        users[nameSupplied] = userData
 
         /*
         bcrypt.compare(passwordSupplied, hash, function(err, result) {

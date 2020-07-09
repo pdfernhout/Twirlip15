@@ -108,7 +108,11 @@ try {
 }
 
 async function checkHashedPasswordForUserAuthorizer(usernameSupplied, passwordSupplied, authorize) {
-    const neededPasswordHash = users[usernameSupplied]
+    const userData = users[usernameSupplied]
+    if (userData === undefined) {
+        return authorize(null, false)
+    }
+    const neededPasswordHash = userData.passwordHash
     if (neededPasswordHash === undefined) {
         return authorize(null, false)
     } else {
