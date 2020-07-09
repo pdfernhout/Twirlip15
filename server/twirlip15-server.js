@@ -17,7 +17,7 @@ let sharp
 try {
     // Sharp is not easily available on all platforms (like BSD)
     sharp = require("sharp")
-} catch () {
+} catch {
     console.log("sharp is not available on this platform")
 }
 
