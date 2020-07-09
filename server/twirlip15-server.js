@@ -10,13 +10,18 @@ const bodyParser = require("body-parser")
 const sharp = require("sharp")
 const https = require("https")
 const pem = require("pem")
+const expressForceSSL = require("express-force-ssl")
 
 const baseDir = "/" // path.resolve()
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
+// const host = "0.0.0.0"
 const host = "127.0.0.1"
+
+const useOnlySSL = host !== "127.0.0.1"
 const port = 8015
+const httpsPort = 8016
 
 const app = express()
 
@@ -24,6 +29,14 @@ const maxDataForResult = 2000000
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+if (useOnlySSL) {
+    // Force use of SSL if not local server
+    app.set("forceSSLOptions", {
+        httpsPort
+    })
+    app.use(expressForceSSL)
+}
 
 app.get("/twirlip15-api", function(request, response) {
     response.json({
@@ -350,23 +363,22 @@ app.use((req, res, next) => {
 // Very unsafe!
 app.use("/", express.static("/"))
 
-app.listen(port, host)
-
 console.log("Twirlip serving from directory", process.cwd())
 
-console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+app.listen(port, host)
+console.log("info", "Twirlip server listening at http://" + host + ":" + port)
 
-// Create an HTTPS service
-
-pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
-    if (err) {
-        console.log("Problem creating https service")
-        return
-    }
-    const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(port + 1, host, function () {
-        const host = httpsServer.address().address
-        const port = httpsServer.address().port
-        console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+if (httpsPort) {
+    // Create an HTTPS service
+    pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
+        if (err) {
+            console.log("Problem creating https service")
+            return
+        }
+        const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(httpsPort, host, function () {
+            const host = httpsServer.address().address
+            const port = httpsServer.address().port
+            console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+        })
     })
-})
-
+}
