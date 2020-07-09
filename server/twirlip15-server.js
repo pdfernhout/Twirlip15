@@ -59,8 +59,8 @@ try {
             realm: "twirlip15",
                 authorizeAsync: true,
                 authorizer: myAuthorizer
-            }))
-        }
+            })
+        )
 
         fs.watch(usersFileName, (event, filename) => {
             if (filename) {
@@ -77,10 +77,11 @@ try {
                 }, 100)
             }
         })
-    } catch (error) {
-        console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
-        process.exit(-1)
     }
+} catch (error) {
+    console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
+    process.exit(-1)
+}
 
 async function myAuthorizer(usernameSupplied, passwordSupplied, authorize) {
     const neededPasswordHash = users[usernameSupplied]
