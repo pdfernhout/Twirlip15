@@ -11,17 +11,19 @@ const sharp = require("sharp")
 const https = require("https")
 const pem = require("pem")
 const expressForceSSL = require("express-force-ssl")
+const expressBasicAuth = require("express-basic-auth")
 
 const baseDir = "/" // path.resolve()
 
 const sslDirName = "ssl-info/"
 const sslKeyFileName = "ssl-key.pem"
 const sslCertFileName = "ssl-cert.pem"
+const usersFileName = "users/users.json"
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
-// const host = "0.0.0.0"
-const host = "127.0.0.1"
+const host = "0.0.0.0"
+// const host = "127.0.0.1"
 
 const httpPort = 8015
 const httpsPort = 8016
@@ -40,6 +42,30 @@ if (redirectHttpToHttps) {
         httpsPort
     })
     app.use(expressForceSSL)
+}
+
+let users = null 
+try {
+    if (redirectHttpToHttps) {
+        // Require users.json file if http-only
+        users = JSON.parse(fs.readFileSync(usersFileName))
+        console.log("users", users)
+        app.use(expressBasicAuth({
+            users, 
+            unauthorizedResponse: getUnauthorizedResponse,
+            challenge: true,
+            realm: "twirlip15"
+        }))
+    }
+} catch (error) {
+    console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
+    process.exit(-1)
+}
+
+function getUnauthorizedResponse(req) {
+    return req.auth
+        ? ("Credentials " + req.auth.user + ":" + req.auth.password + " rejected")
+        : "No credentials provided"
 }
 
 app.get("/twirlip15-api", function(request, response) {
