@@ -21,26 +21,41 @@ try {
     console.log("sharp is not available on this platform")
 }
 
-const baseDir = "/" // path.resolve()
+const preferencesFileName = "preferences.json"
 
-const sslDirName = "ssl-info/"
-const sslKeyFileName = "ssl-key.pem"
-const sslCertFileName = "ssl-cert.pem"
-const usersFileName = "users/users.json"
+let preferences = {}
+try {
+    preferences = JSON.parse(fs.readFileSync(preferencesFileName))
+} catch (error) {
+    console.log("no preferences file")
+}
+
+function getPreference(name, defaultValue) {
+    const preferenceValue = preferences[name] 
+    if (preferenceValue === undefined) return defaultValue
+    return preferenceValue
+}
+
+const baseDir = getPreference("baseDir", "/")
+
+const sslDirName = getPreference("sslDirName", "ssl-info/")
+const sslKeyFileName = getPreference("sslKeyFileName", "ssl-key.pem")
+const sslCertFileName = getPreference("sslCertFileName", "ssl-cert.pem")
+const usersFileName = getPreference("usersFileName", "users/users.json")
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
-// Or you could change "host" to listen on the network (requires adding users for basic auth)
-// const host = "0.0.0.0"
-const host = "127.0.0.1"
+// Or you could change "host" to "0.0.0.0" listen on the network (requires adding users for basic auth)
+const host = getPreference("host", "127.0.0.1")
 
-const httpPort = 8015
-const httpsPort = 8016
-const redirectHttpToHttps = host !== "127.0.0.1"
+const httpPort = getPreference("httpPort", 8015)
+const httpsPort = getPreference("httpsPort", 8016)
+const redirectHttpToHttps = getPreference("redirectHttpToHttps", host !== "127.0.0.1")
+const requireAuthentication = getPreference("requireAuthentication", redirectHttpToHttps)
 
 const app = express()
 
-const maxDataForResult = 2000000
+const maxDataForResult = getPreference("maxDataForResult", 2000000)
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -48,13 +63,16 @@ app.use(bodyParser.json())
 let users = null 
 let waitingOnWatchedFile = false
 
+if (redirectHttpToHttps) {
+    // Force use of SSL if not local server
+    app.set("forceSSLOptions", {
+        httpsPort
+    })
+    app.use(expressForceSSL)
+}
+
 try {
-    if (redirectHttpToHttps) {
-        // Force use of SSL if not local server
-        app.set("forceSSLOptions", {
-            httpsPort
-        })
-        app.use(expressForceSSL)
+    if (requireAuthentication) {
 
         // Require users.json file if http-only
         users = JSON.parse(fs.readFileSync(usersFileName))
@@ -64,7 +82,7 @@ try {
             challenge: true,
             realm: "twirlip15",
                 authorizeAsync: true,
-                authorizer: myAuthorizer
+                authorizer: checkHashedPasswordForUserAuthorizer
             })
         )
 
@@ -85,11 +103,11 @@ try {
         })
     }
 } catch (error) {
-    console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
+    console.log("A users file of " + usersFileName + " is required; use \"node server/add-user.js\" to make one")
     process.exit(-1)
 }
 
-async function myAuthorizer(usernameSupplied, passwordSupplied, authorize) {
+async function checkHashedPasswordForUserAuthorizer(usernameSupplied, passwordSupplied, authorize) {
     const neededPasswordHash = users[usernameSupplied]
     if (neededPasswordHash === undefined) {
         return authorize(null, false)
