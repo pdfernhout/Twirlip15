@@ -8,6 +8,8 @@ const path = require("path")
 const express = require("express")
 const bodyParser = require("body-parser")
 const sharp = require("sharp")
+const https = require("https")
+const pem = require("pem")
 
 const baseDir = "/" // path.resolve()
 
@@ -350,4 +352,21 @@ app.use("/", express.static("/"))
 
 app.listen(port, host)
 
-console.log("cwd", process.cwd())
+console.log("Twirlip serving from directory", process.cwd())
+
+console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+
+// Create an HTTPS service
+
+pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
+    if (err) {
+        console.log("Problem creating https service")
+        return
+    }
+    const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(port + 1, host, function () {
+        const host = httpsServer.address().address
+        const port = httpsServer.address().port
+        console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+    })
+})
+
