@@ -45,21 +45,20 @@ const maxDataForResult = 2000000
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-if (redirectHttpToHttps) {
-    // Force use of SSL if not local server
-    app.set("forceSSLOptions", {
-        httpsPort
-    })
-    app.use(expressForceSSL)
-}
-
 let users = null 
 let waitingOnWatchedFile = false
 
 try {
     if (redirectHttpToHttps) {
+        // Force use of SSL if not local server
+        app.set("forceSSLOptions", {
+            httpsPort
+        })
+        app.use(expressForceSSL)
+
         // Require users.json file if http-only
         users = JSON.parse(fs.readFileSync(usersFileName))
+
         app.use(expressBasicAuth({
             unauthorizedResponse: getUnauthorizedResponse,
             challenge: true,
