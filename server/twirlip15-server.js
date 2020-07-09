@@ -12,6 +12,7 @@ const https = require("https")
 const pem = require("pem")
 const expressForceSSL = require("express-force-ssl")
 const expressBasicAuth = require("express-basic-auth")
+const bcrypt  = require("bcrypt")
 
 const baseDir = "/" // path.resolve()
 
@@ -22,8 +23,9 @@ const usersFileName = "users/users.json"
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
-const host = "0.0.0.0"
-// const host = "127.0.0.1"
+// Or you could change "host" to listen on the network (required adding users for basic auth)
+// const host = "0.0.0.0"
+const host = "127.0.0.1"
 
 const httpPort = 8015
 const httpsPort = 8016
@@ -45,26 +47,54 @@ if (redirectHttpToHttps) {
 }
 
 let users = null 
+let waitingOnWatchedFile = false
+
 try {
     if (redirectHttpToHttps) {
         // Require users.json file if http-only
         users = JSON.parse(fs.readFileSync(usersFileName))
-        console.log("users", users)
         app.use(expressBasicAuth({
-            users, 
             unauthorizedResponse: getUnauthorizedResponse,
             challenge: true,
-            realm: "twirlip15"
-        }))
+            realm: "twirlip15",
+                authorizeAsync: true,
+                authorizer: myAuthorizer
+            }))
+        }
+
+        fs.watch(usersFileName, (event, filename) => {
+            if (filename) {
+                // debounce watch events
+                if (waitingOnWatchedFile) return
+                waitingOnWatchedFile = setTimeout(() => {
+                    waitingOnWatchedFile = false
+                    console.log("Users file changes; rereading")
+                    try {
+                        users = JSON.parse(fs.readFileSync(usersFileName))
+                    } catch (error) {
+                        console.log("Problem reading " + usersFileName)
+                    }
+                }, 100)
+            }
+        })
+    } catch (error) {
+        console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
+        process.exit(-1)
     }
-} catch (error) {
-    console.log("A users file of " + usersFileName + " is required for basic auth when running in https-only mode")
-    process.exit(-1)
+
+async function myAuthorizer(usernameSupplied, passwordSupplied, authorize) {
+    const neededPasswordHash = users[usernameSupplied]
+    if (neededPasswordHash === undefined) {
+        return authorize(null, false)
+    } else {
+        const passwordMatches = await bcrypt.compare(passwordSupplied, neededPasswordHash)
+        return authorize(null, passwordMatches)
+    }
 }
 
 function getUnauthorizedResponse(req) {
     return req.auth
-        ? ("Credentials " + req.auth.user + ":" + req.auth.password + " rejected")
+        ? ("Credentials for " + req.auth.user + " rejected")
         : "No credentials provided"
 }
 

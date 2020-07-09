@@ -34,6 +34,8 @@ Then browse to:
 
     http://localhost:8015
 
+If you decide to open your server to the world via changing the code, https and basic auth are required. Use "node server/add-user.js" from top-level project folder to add users.
+
 ## Licence 
 
 Twirlip 15 is under the MIT License

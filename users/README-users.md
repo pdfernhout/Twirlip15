@@ -1,2 +1,3 @@
-Users and password hashes for basic auth for https go in users.dat
-Copy users-template.json to users.json and edit it.
+Users and password hashes for basic auth for https go in users.json.
+Use "node server/add-user.js" from top-level project folder to add users to that file.
+That command creates the appropriate password hashes for you.
