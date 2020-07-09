@@ -7,12 +7,19 @@ const util = require("util")
 const path = require("path")
 const express = require("express")
 const bodyParser = require("body-parser")
-const sharp = require("sharp")
 const https = require("https")
 const pem = require("pem")
 const expressForceSSL = require("express-force-ssl")
 const expressBasicAuth = require("express-basic-auth")
 const bcrypt  = require("bcrypt")
+
+let sharp
+try {
+    // Sharp is not easily available on all platforms (like BSD)
+    sharp = require("sharp")
+} catch () {
+    console.log("sharp is not available on this platform")
+}
 
 const baseDir = "/" // path.resolve()
 
@@ -214,6 +221,10 @@ async function requestFileReadBytes(request, response) {
 
 async function requestFilePreview(request, response) {
     console.log("POST file-preview", request.body)
+    if (!sharp) {
+        response.json({ok: false, errorMessage: "Problem previewing file; sharp not available on server"})
+        return
+    }
     const filePath = path.join(baseDir, request.body.fileName)
     const defaultResizeOptions = { width: 100, height: 100, fit: "inside", withoutEnlargement: true }
     const resizeOptions = request.body.resizeOptions || defaultResizeOptions
