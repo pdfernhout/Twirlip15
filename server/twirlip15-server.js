@@ -14,14 +14,18 @@ const expressForceSSL = require("express-force-ssl")
 
 const baseDir = "/" // path.resolve()
 
+const sslDirName = "ssl-info/"
+const sslKeyFileName = "ssl-key.pem"
+const sslCertFileName = "ssl-cert.pem"
+
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
 // const host = "0.0.0.0"
 const host = "127.0.0.1"
 
-const useOnlySSL = host !== "127.0.0.1"
-const port = 8015
+const httpPort = 8015
 const httpsPort = 8016
+const redirectHttpToHttps = host !== "127.0.0.1"
 
 const app = express()
 
@@ -30,7 +34,7 @@ const maxDataForResult = 2000000
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-if (useOnlySSL) {
+if (redirectHttpToHttps) {
     // Force use of SSL if not local server
     app.set("forceSSLOptions", {
         httpsPort
@@ -365,20 +369,49 @@ app.use("/", express.static("/"))
 
 console.log("Twirlip serving from directory", process.cwd())
 
-app.listen(port, host)
-console.log("info", "Twirlip server listening at http://" + host + ":" + port)
+app.listen(httpPort, host)
+console.log("info", "Twirlip server listening at http://" + host + ":" + httpPort)
 
-if (httpsPort) {
-    // Create an HTTPS service
-    pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
-        if (err) {
-            console.log("Problem creating https service")
-            return
+function readOrCreateSSLCertificateKeys() {
+    // load certificates if available or otherwise create them
+    let serviceKey
+    let certificate
+    let keysPromise
+    try {
+        serviceKey = fs.readFileSync(sslDirName + sslKeyFileName)
+        certificate = fs.readFileSync(sslDirName + sslCertFileName)
+        keysPromise = Promise.resolve({serviceKey, certificate})
+    } catch (error) {
+        console.log("Could not read certificate files; creating self-signed certificate")
+        if (!fs.existsSync(sslDirName)) {
+            fs.mkdirSync(sslDirName)
         }
+        keysPromise = new Promise((resolve, reject) => {
+            pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
+                if (err) {
+                    console.log("Problem creating https certificate", err)
+                    reject("Problem creating https certificate")
+                } 
+                fs.writeFileSync(sslDirName + sslKeyFileName, keys.serviceKey)
+                fs.writeFileSync(sslDirName + sslCertFileName, keys.certificate)
+                resolve({serviceKey: keys.serviceKey, certificate: keys.certificate})
+            })
+        })
+    }
+    return keysPromise
+}
+
+function startHttpsServer() {
+    readOrCreateSSLCertificateKeys().then(keys => {
+        // Create an HTTPS service
         const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(httpsPort, host, function () {
             const host = httpsServer.address().address
             const port = httpsServer.address().port
             console.log("info", "Twirlip server listening at https://" + host + ":" + port)
         })
     })
+}
+
+if (httpsPort) {
+    startHttpsServer()
 }
