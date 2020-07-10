@@ -339,10 +339,8 @@ function renderCytoscape() {
     }
 
     for (const triple of triples) {
-        for (let i = 0; i < 3; i++) {
-            if (i === 1) continue
-            addNode(triple[i])
-        }
+        addNode(triple[0])
+        addNode(triple[2])
         const key = JSON.stringify({a: triple[0], c: triple[2]})
         if (links[key]) continue
         links[key] = true
@@ -355,15 +353,21 @@ function renderCytoscape() {
         for (const fileInfo of directoryFiles) {
             for (const index in fileInfo.links) {
                 const link = fileInfo.links[index]
-                const key = JSON.stringify({a: removeExtension(fileInfo.name), c: removeExtension(link)})
+                const source = removeExtension(fileInfo.name)
+                const target = removeExtension(link)
+                addNode(source)
+                addNode(target)
+                const key = JSON.stringify({a:source, c: target})
                 if (links[key]) continue
                 links[key] = true
                 elements.push({
-                    data: { id: JSON.stringify({name: fileInfo.name, link, index}), source: removeExtension(fileInfo.name), target: removeExtension(link) }
+                    data: { id: JSON.stringify({name: fileInfo.name, link, index}), source, target }
                 })
             }
         }
     }
+
+    console.log("elements", elements)
 
     cy = cytoscape({
 
