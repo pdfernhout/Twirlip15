@@ -154,6 +154,14 @@ function satisfiesFilter(name) {
 
 function updateFilter(newFilter) {
     filter = newFilter
+    const tagsWithoutDuplicates = []
+    const tags = filter.trim().split(/\s+/)
+    for (const tag of tags) {
+        if (!tagsWithoutDuplicates.includes(tag)) {
+            tagsWithoutDuplicates.push(tag)
+        }
+    }
+    filter = tagsWithoutDuplicates.join(" ")
 
     // a workaround where cytoscape can get confused for origin for clicking when its container gets moved
     setTimeout(() => cy.resize(), 50)
