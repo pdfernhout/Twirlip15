@@ -28,7 +28,6 @@ async function loadFileContents(newFileName) {
     chosenFileContents = null
     chosenFileLoaded = false
     partialFileTest = ""
-    console.log("loadFileContents", chosenFileName)
     const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
     if (apiResult) {
         chosenFileContents = apiResult.contents
