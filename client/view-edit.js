@@ -27,7 +27,6 @@ async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
     chosenFileLoaded = false
-    editing = false
     partialFileTest = ""
     console.log("loadFileContents", chosenFileName)
     const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
@@ -80,14 +79,30 @@ function interceptSaveKey(evt) {
     return true
 }
 
+function setMode(mode) {
+    if (mode === "edit") {
+        editing = true
+        editedContents = chosenFileContents
+        contentsSaved = editedContents
+    } else {
+        mode = "view"
+        editing = false
+    }
+
+    const urlParams = new URLSearchParams(window.location.search)
+    urlParams.set("mode", mode)
+    history.replaceState({}, location.pathname, location.pathname + "?" + urlParams.toString())
+}
+
 function viewFileContents() {
     return m("div",
         m("div",
-            m("button", {onclick: () => editing = false, disabled: !editing}, "View"),
+            m("button", {
+                onclick: () => setMode("view"), 
+                disabled: !editing || (editing && editedContents !== contentsSaved)
+            }, "View"),
             m("button.ml1", {onclick: () => {
-                editing = true
-                editedContents = chosenFileContents
-                contentsSaved = editedContents
+                setMode("edit")
             }, disabled:  editing}, "Edit"),
             m("button.ml1", {onclick: () => { 
                 appendFile(chosenFileName, editedContents, () => {
@@ -102,9 +117,9 @@ function viewFileContents() {
                     contentsSaved = editedContents
                 })
             }, disabled: !editing || fileSaveInProgress || editedContents === contentsSaved }, "Save"),
-            m("button.ml1", {onclick: () => { 
+            m("button.ml1", {onclick: () => {
                 history.back()
-            }, disabled: fileSaveInProgress}, "Close"),
+            }, disabled: fileSaveInProgress || (editing && editedContents !== contentsSaved)}, "Close"),
             fileSaveInProgress && m("span.yellow", "Saving...")
         ),
         editing
@@ -137,7 +152,12 @@ const ViewEdit = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
+const urlParams = new URLSearchParams(window.location.search)
 
-if (filePathFromParams) loadFileContents(filePathFromParams)
+if (filePathFromParams) {
+    loadFileContents(filePathFromParams).then(() => {
+        setMode(urlParams.get("mode") || "view")
+    })
+}
 
 m.mount(document.body, ViewEdit)
