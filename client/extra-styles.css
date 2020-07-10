@@ -20,6 +20,14 @@
     max-width: 200px;
 }
 
+.w-24rem { 
+    width: 24rem;
+}
+
+.w-32rem { 
+    width: 32rem;
+}
+
 .h-100px {
     min-height: 100px;
     height: 100px;

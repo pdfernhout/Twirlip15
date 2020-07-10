@@ -11,6 +11,7 @@ let directoryFiles = null
 let errorMessage = ""
 let filter = ""
 let triples = []
+let filterMode = "and"
 
 let navigate = "graph" // table
 
@@ -135,10 +136,20 @@ function hasTag(name, tag) {
 
 function satisfiesFilter(name) {
     const tags = filter.trim().split(/\s+/)
-    for (let tag of tags) {
-        if (!hasTag(name, tag)) return false
+    if (tags.length === 0) return false
+    if (filterMode === "and") {
+        for (let tag of tags) {
+            if (!hasTag(name, tag)) return false
+        }
+        return true
+    } else if (filterMode === "or") {
+        for (let tag of tags) {
+            if (hasTag(name, tag)) return true
+        }
+        return false
+    } else {
+        throw new Error("filter mode not expected: " + filterMode)
     }
-    return true
 }
 
 function updateFilter(newFilter) {
@@ -170,15 +181,21 @@ function viewDirectoryFiles() {
                 ? "No *.md files in directory"
                 : m("div",
                     m("div",
-                        m("span.mr1", "filter by tag (or file name):"),
-                        m("input", {
+                        m("span.mr1", {
+                            title: "filter by tag (or file name); click to change and/or mode",
+                            onclick: () => filterMode = filterMode === "and" ? "or" : "and"
+                        }, "show (" + filterMode + "):"),
+                        m("input.w-24rem", {
                             value: filter,
                             onchange: event => updateFilter(event.target.value)
                         }),
                         m("span.ml1.pointer", {onclick: () => updateFilter(""), disabled: !filter}, "X"),
-                        m("div.mt2", "Tags:", allTags().map(tag => m("span.ml1.pointer", {
+                        m("div.mt2", "Tags: |", allTags().map(tag => m("span.ml1.pointer.i", {
                             onclick: () => updateFilter((filter ? filter + " " : "") + tag)
-                        }, tag)))
+                        }, tag + " | "))),
+                        m("div.mt2", "Pages: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
+                            onclick: () => updateFilter((filter ? filter + " " : "") + removeExtension(fileInfo.name))
+                        }, m("span.dib", removeExtension(fileInfo.name) + " | "))))
                     ),
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
                 )
@@ -256,22 +273,23 @@ function viewGraph() {
 const Ideas = {
     view: () => {
         return m("div.flex.h-100.w-100",
-            m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
-                errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-                loadingAllFiles && m("div.absolute.ma2.pa2.ba.bw2.bg-yellow.flex.items-center", m("span", "Loading Markdown files..."), m("span.ml2.spinner-border")),
-                m("div.mt2.mb1",
-                    m("button", {onclick: () => addFile()}, "+ New File"),
-                    m("button.ml2", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer")
-                ),
-                viewDirectoryFiles()
-            ),
             m("div.overflow-auto",
                 m("div.ma1", 
                     m("button", {onclick: () => navigate = "graph"}, "Graph"),
-                    m("button.ml2", {onclick: () => navigate = "table"}, "Table")
+                    m("button.ml2", {onclick: () => navigate = "table"}, "Table"),
+                    m("button.ml4", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer"),
+                    m("button.ml2", {onclick: () => addFile()}, "+ New File")
                 ),
                 viewTriples(),
                 viewGraph()
+            ),
+            m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
+                errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+                loadingAllFiles && m("div.absolute.ma2.pa2.ba.bw2.bg-yellow.flex.items-center", 
+                    m("span", "Loading Markdown files..."), 
+                    m("span.ml2.spinner-border")
+                ),
+                viewDirectoryFiles()
             )
         )
     }
