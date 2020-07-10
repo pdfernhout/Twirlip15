@@ -368,8 +368,6 @@ function renderCytoscape() {
         }
     }
 
-    console.log("elements", elements)
-
     cy = cytoscape({
 
         container,
