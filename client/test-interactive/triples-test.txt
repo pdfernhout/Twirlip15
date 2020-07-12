@@ -7,3 +7,7 @@
 {"a":"1","b":"label","c":"different label","index":7}
 {"a":"2","b":"pro","c":"1","index":8}
 {"a":"2","b":"label","c":"good!","index":9}
+{"a":"1","b":"label","c":"another label","index":10}
+{"a":"1","b":"+","c":"cheap","index":11}
+{"a":"2","b":"label","c":"the second","index":12}
+{"a":"1","b":"+","c":"2","index":13}

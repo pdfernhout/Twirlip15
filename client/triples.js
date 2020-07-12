@@ -76,11 +76,12 @@ function viewTriples() {
             ),
             viewTripleFilter()
         ),
-        m("tbody", filterTriples(triples).map(triple => viewTriple(triple)))
+        m("tbody", filterTriples(filterTriple, triples).map(triple => viewTriple(triple)))
     )
 }
 
-function filterTriples(triples) {
+function filterTriples(filterTriple, triples) {
+    console.log("filterTriples", filterTriple)
     const result = []
     for (const triple of triples) {
         if (filterTriple.a.trim() && filterTriple.a.trim() !== triple.a.trim()) continue
@@ -137,6 +138,35 @@ function viewTripleFilter() {
     )
 }
 
+
+function find(a, b, c) {
+    if (!a) a = ""
+    if (!b) b = ""
+    if (!c) c = ""
+    return filterTriples({a, b, c}, triples)
+}
+
+function last(triples) {
+    if (triples.length === 0) return {a: "", b: "", c: ""}
+    return triples[triples.length - 1]
+}
+
+// recursive
+function viewIBISDiagram(id) {
+    console.log("viewIBISDiagram", id)
+    return m("div.ml2",
+        m("div", last(find(id, "label")).c || "Unlabelled"),
+        // triples[id]["+"].map(...)
+        // triples[id]["+"].last()
+        // triples[id]["+"]["some data"].store()
+        // triples.o100000676.plus.102323232.store()
+        find(id, "+").map(triple => m("div", "+", viewIBISDiagram(triple.c))),
+        find(id, "-").map(triple => m("div", "-", viewIBISDiagram(triple.c))),
+        find(id, "!").map(triple => m("div", "!", viewIBISDiagram(triple.c))),
+        find(id, "?").map(triple => m("div", "?", viewIBISDiagram(triple.c))),
+    )
+}
+
 const IBIS = {
     view: () => {
         return m("div.ma2.measure-wide",
@@ -146,7 +176,8 @@ const IBIS = {
             ),
             chosenFileLoaded && m("div",
                 viewTriples(),
-                viewTripleEditor()
+                viewTripleEditor(),
+                viewIBISDiagram("1")
             )
         )
     }
