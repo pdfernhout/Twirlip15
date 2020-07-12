@@ -51,6 +51,7 @@ async function appendFile(fileName, stringToAppend, successCallback) {
 }
 
 function addTriple(triple) {
+    triple.index = triples.length + 1
     triples.push(triple)
     appendFile(chosenFileName, JSON.stringify(triple) + "\n")
 }
@@ -129,7 +130,7 @@ function viewTripleFilterField(fieldName) {
 }
 function viewTripleFilter() {
     return m("tr",
-        m("td", "filter"),
+        m("td", {title: "filter"}, "⧩"),
         viewTripleFilterField("a"),
         viewTripleFilterField("b"),
         viewTripleFilterField("c"),

@@ -2,3 +2,8 @@
 {"a":"test","b":"other","c":"thing"}
 {"a":"test","b":"more","c":"another"}
 {"a":"test2","b":"something","c":"else"}
+{"a":"1","b":"name","c":""}
+{"a":"1","b":"label","c":"a long label"}
+{"a":"1","b":"label","c":"different label","index":7}
+{"a":"2","b":"pro","c":"1","index":8}
+{"a":"2","b":"label","c":"good!","index":9}
