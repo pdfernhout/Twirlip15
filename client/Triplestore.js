@@ -1,5 +1,11 @@
 import { twirlip15ApiCall } from "./twirlip15-support.js"
 
+// Future design ideas for API:
+// triples[id]["+"].map(...)
+// triples[id]["+"].last()
+// triples[id]["+"]["some data"].store()
+// triples.o100000676.plus.102323232.store()
+
 export function Triplestore(showError, fileName) {
 
     let triples = []

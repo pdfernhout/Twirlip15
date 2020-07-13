@@ -85,10 +85,6 @@ function viewIBISDiagram(leader, id) {
     console.log("viewIBISDiagram", id)
     return m("div.ml4",
         m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
-        // triples[id]["+"].map(...)
-        // triples[id]["+"].last()
-        // triples[id]["+"]["some data"].store()
-        // triples.o100000676.plus.102323232.store()
         t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
         t.find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
         t.find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),
