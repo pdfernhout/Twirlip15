@@ -123,7 +123,7 @@ function isFilePreviewable(fileName) {
     return isPreviewable
 }
 
-async function addFile() {
+async function newFile() {
     const newFileName = prompt("New file name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
@@ -132,7 +132,11 @@ async function addFile() {
     }
 }
 
-async function addDirectory() {
+async function uploadFile() {
+    alert("unfinished")
+}
+
+async function newDirectory() {
     const newFileName = prompt("New directory name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
@@ -213,9 +217,10 @@ function selectAll() {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
-        menuButton("+📄 Add file",() => addFile()),
-        menuButton("+📂 Add directory", () => addDirectory()),
-        menuButton("Open as Ideas", () => openAsIdeas()),
+        menuButton("+ New file",() => newFile()),
+        menuButton("⬆ Upload file",() => uploadFile()),
+        menuButton("+ New directory", () => newDirectory()),
+        menuButton("Launch Ideas", () => openAsIdeas()),
         menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("Move", () => moveFiles(), !selectedFileCount),
         menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
