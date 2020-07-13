@@ -37,3 +37,8 @@
 {"a":"root","b":"value","c":"7","index":37}
 {"a":"root","b":"value","c":"1","index":38}
 {"a":"root","b":"value","c":"0","index":39}
+{"a":"7","b":"+","c":"8","index":40}
+{"a":"8","b":"label","c":"Flexible","index":41}
+{"a":"7","b":"-","c":"","index":42}
+{"a":"7","b":"-","c":"9","index":43}
+{"a":"9","b":"label","c":"Flabby","index":44}

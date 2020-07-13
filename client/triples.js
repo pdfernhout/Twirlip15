@@ -94,7 +94,7 @@ function viewTripleFilter() {
 
 // recursive
 function viewIBISDiagram(leader, id) {
-    if (id === "") return m("div", "Missing id in IBIS diagram")
+    if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
         m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
