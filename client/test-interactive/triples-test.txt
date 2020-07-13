@@ -11,3 +11,12 @@
 {"a":"1","b":"+","c":"cheap","index":11}
 {"a":"2","b":"label","c":"the second","index":12}
 {"a":"1","b":"+","c":"2","index":13}
+{"a":"cheap","b":"label","c":"Cheap!","index":14}
+{"a":"cheap","b":"?","c":"3","index":15}
+{"a":"3","b":"label","c":"Is it really cheaper?","index":16}
+{"a":"1","b":"label","c":"A big idea","index":17}
+{"a":"1","b":"-","c":"risky","index":18}
+{"a":"risky","b":"label","c":"Risky","index":19}
+{"a":"2","b":"label","c":"another pro","index":20}
+{"a":"0","b":"label","c":"What to work on next?","index":21}
+{"a":"0","b":"!","c":"1","index":22}

@@ -152,18 +152,18 @@ function last(triples) {
 }
 
 // recursive
-function viewIBISDiagram(id) {
+function viewIBISDiagram(leader, id) {
     console.log("viewIBISDiagram", id)
-    return m("div.ml2",
-        m("div", last(find(id, "label")).c || "Unlabelled"),
+    return m("div.ml4",
+        m("div", leader, last(find(id, "label")).c || "Unlabelled"),
         // triples[id]["+"].map(...)
         // triples[id]["+"].last()
         // triples[id]["+"]["some data"].store()
         // triples.o100000676.plus.102323232.store()
-        find(id, "+").map(triple => m("div", "+", viewIBISDiagram(triple.c))),
-        find(id, "-").map(triple => m("div", "-", viewIBISDiagram(triple.c))),
-        find(id, "!").map(triple => m("div", "!", viewIBISDiagram(triple.c))),
-        find(id, "?").map(triple => m("div", "?", viewIBISDiagram(triple.c))),
+        find(id, "+").map(triple => viewIBISDiagram(m("span.mr1", "+"), triple.c)),
+        find(id, "-").map(triple => viewIBISDiagram(m("span.mr1", "-"), triple.c)),
+        find(id, "!").map(triple => viewIBISDiagram(m("span.mr1", "*"), triple.c)),
+        find(id, "?").map(triple => viewIBISDiagram(m("span.mr1", "?"), triple.c)),
     )
 }
 
@@ -177,7 +177,7 @@ const IBIS = {
             chosenFileLoaded && m("div",
                 viewTriples(),
                 viewTripleEditor(),
-                viewIBISDiagram("1")
+                viewIBISDiagram("", "0")
             )
         )
     }
