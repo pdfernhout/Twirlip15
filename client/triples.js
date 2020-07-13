@@ -155,7 +155,7 @@ function last(triples) {
 function viewIBISDiagram(leader, id) {
     console.log("viewIBISDiagram", id)
     return m("div.ml4",
-        m("div", leader, last(find(id, "label")).c || "Unlabelled"),
+        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, last(find(id, "label")).c || "Unlabelled"),
         // triples[id]["+"].map(...)
         // triples[id]["+"].last()
         // triples[id]["+"]["some data"].store()
