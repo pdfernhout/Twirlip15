@@ -95,7 +95,7 @@ function viewTripleFilter() {
 // recursive
 function viewIBISDiagram(leader, id) {
     if (id === "") return m("div", "Missing id in IBIS diagram")
-    console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
+    // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
         m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
         t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
@@ -108,7 +108,7 @@ function viewIBISDiagram(leader, id) {
 const TriplesApp = {
     view: () => {
         const rootId = t.last((t.find("root", "value")))
-        console.log("rootId", rootId)
+        // console.log("rootId", rootId)
         return m("div.ma2",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !t.getLoadingState().isFileLoaded && m("div",
