@@ -7,53 +7,106 @@ let chosenFileName = ""
 let fileSaveInProgress = false
 let chosenFileLoaded = false
 
-let triples = []
+const t = Triples()
 
 function showError(error) {
     errorMessage = error
 }
 
-async function loadFileContents(newFileName) {
-    chosenFileName = newFileName
-    chosenFileLoaded = false
-    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
-    if (apiResult) {
-        const chosenFileContents = apiResult.contents
-        const lines = chosenFileContents.split("\n")
-        const newTriples = []
-        let index = 1
-        for (const line of lines) {
-            if (line.trim()) {
-                let triple
-                try {
-                    triple = JSON.parse(line)
-                } catch (error) {
-                    console.log("problem parsing line in file", error, line)
-                    continue
+function Triples() {
+
+    let triples = []
+
+    async function loadFileContents(newFileName) {
+        chosenFileName = newFileName
+        chosenFileLoaded = false
+        const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
+        if (apiResult) {
+            const chosenFileContents = apiResult.contents
+            const lines = chosenFileContents.split("\n")
+            const newTriples = []
+            let index = 1
+            for (const line of lines) {
+                if (line.trim()) {
+                    let triple
+                    try {
+                        triple = JSON.parse(line)
+                    } catch (error) {
+                        console.log("problem parsing line in file", error, line)
+                        continue
+                    }
+                    triple.index = index++
+                    newTriples.push(triple)
                 }
-                triple.index = index++
-                newTriples.push(triple)
             }
+            triples = newTriples
+            chosenFileLoaded = true
         }
-        triples = newTriples
-        chosenFileLoaded = true
     }
-}
-
-async function appendFile(fileName, stringToAppend, successCallback) {
-    if (fileSaveInProgress) return
-    fileSaveInProgress = true
-    const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
-    fileSaveInProgress = false
-    if (apiResult && successCallback) {
-        successCallback()
+    
+    async function appendFile(fileName, stringToAppend, successCallback) {
+        if (fileSaveInProgress) return
+        fileSaveInProgress = true
+        const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
+        fileSaveInProgress = false
+        if (apiResult && successCallback) {
+            successCallback()
+        }
     }
-}
 
-function addTriple(triple) {
-    triple.index = triples.length + 1
-    triples.push(triple)
-    appendFile(chosenFileName, JSON.stringify(triple) + "\n")
+    function addTriple(triple) {
+        triple.index = triples.length + 1
+        triples.push(triple)
+        appendFile(chosenFileName, JSON.stringify(triple) + "\n")
+    }
+
+    function filterTriples(filterTriple) {
+        console.log("filterTriples", filterTriple)
+        const result = []
+        for (const triple of triples) {
+            if (filterTriple.a.trim() && filterTriple.a.trim() !== triple.a.trim()) continue
+            if (filterTriple.b.trim() && filterTriple.b.trim() !== triple.b.trim()) continue
+            if (filterTriple.c.trim() && filterTriple.c.trim() !== triple.c.trim()) continue
+            result.push(triple)
+        }
+        return result
+    }
+
+    function find(a, b, c) {
+        let wildcardCount = 0
+        let lastWildcard
+        if (!a) {
+            a = ""
+            wildcardCount++
+            lastWildcard = "a"
+        }
+        if (!b) {
+            b = ""
+            wildcardCount++
+            lastWildcard = "b"
+        }
+        if (!c) {
+            c = ""
+            wildcardCount++
+            lastWildcard = "c"
+        }
+        const result = filterTriples({a, b, c})
+        if (wildcardCount === 1) return result.map(triple => triple[lastWildcard])
+        return result
+    }
+    
+    function last(triples) {
+        if (triples.length === 0) return ""
+        return triples[triples.length - 1]
+    }    
+
+    return {
+        loadFileContents,
+        addTriple,
+        filterTriples,
+        find,
+        last,
+    }
 }
 
 function viewTriple(triple) {
@@ -76,20 +129,8 @@ function viewTriples() {
             ),
             viewTripleFilter()
         ),
-        m("tbody", filterTriples(filterTriple, triples).map(triple => viewTriple(triple)))
+        m("tbody", t.filterTriples(filterTriple).map(triple => viewTriple(triple)))
     )
-}
-
-function filterTriples(filterTriple, triples) {
-    console.log("filterTriples", filterTriple)
-    const result = []
-    for (const triple of triples) {
-        if (filterTriple.a.trim() && filterTriple.a.trim() !== triple.a.trim()) continue
-        if (filterTriple.b.trim() && filterTriple.b.trim() !== triple.b.trim()) continue
-        if (filterTriple.c.trim() && filterTriple.c.trim() !== triple.c.trim()) continue
-        result.push(triple)
-    }
-    return result
 }
 
 let editedTriple = {a: "", b: "", c: ""}
@@ -112,7 +153,7 @@ function viewTripleEditor() {
         viewTripleEditorField("c"),
         m("button", {
             onclick: () => {
-                addTriple(editedTriple)
+                t.addTriple(editedTriple)
                 editedTriple = {a: "", b: "", c: ""}
             }
         }, "Add triple")
@@ -138,48 +179,19 @@ function viewTripleFilter() {
     )
 }
 
-
-function find(a, b, c) {
-    let wildcardCount = 0
-    let lastWildcard
-    if (!a) {
-        a = ""
-        wildcardCount++
-        lastWildcard = "a"
-    }
-    if (!b) {
-        b = ""
-        wildcardCount++
-        lastWildcard = "b"
-    }
-    if (!c) {
-        c = ""
-        wildcardCount++
-        lastWildcard = "c"
-    }
-    const result = filterTriples({a, b, c}, triples)
-    if (wildcardCount === 1) return result.map(triple => triple[lastWildcard])
-    return result
-}
-
-function last(triples) {
-    if (triples.length === 0) return ""
-    return triples[triples.length - 1]
-}
-
 // recursive
 function viewIBISDiagram(leader, id) {
     console.log("viewIBISDiagram", id)
     return m("div.ml4",
-        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, last(find(id, "label")) || "Unlabelled"),
+        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
         // triples[id]["+"].map(...)
         // triples[id]["+"].last()
         // triples[id]["+"]["some data"].store()
         // triples.o100000676.plus.102323232.store()
-        find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
-        find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
-        find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),
-        find(id, "?").map(childId => viewIBISDiagram(m("span.mr1", "?"), childId)),
+        t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
+        t.find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
+        t.find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),
+        t.find(id, "?").map(childId => viewIBISDiagram(m("span.mr1", "?"), childId)),
     )
 }
 
@@ -200,6 +212,6 @@ const IBIS = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-loadFileContents(filePathFromParams)
+t.loadFileContents(filePathFromParams)
 
 m.mount(document.body, IBIS)

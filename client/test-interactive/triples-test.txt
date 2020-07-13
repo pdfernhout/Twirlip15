@@ -27,3 +27,5 @@
 {"a":"5","b":"label","c":"Really really cheap","index":27}
 {"a":"4","b":"+","c":"6","index":28}
 {"a":"6","b":"label","c":"Low risk","index":29}
+{"a":"0","b":"!","c":"7","index":30}
+{"a":"7","b":"label","c":"Triples","index":31}
