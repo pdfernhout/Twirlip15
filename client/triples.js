@@ -19,6 +19,14 @@ function viewTriple(triple) {
     )
 }
 
+function cleanup(triple) {
+    return {
+        a: triple.a.trim(),
+        b: triple.b.trim(),
+        c: triple.c.trim(),
+    }
+}
+
 function viewTriples() {
     return m("table",
         m("thead", 
@@ -30,7 +38,7 @@ function viewTriples() {
             ),
             viewTripleFilter()
         ),
-        m("tbody", t.filterTriples(filterTriple).map(triple => viewTriple(triple)))
+        m("tbody", t.filterTriples(cleanup(filterTriple)).map(triple => viewTriple(triple)))
     )
 }
 
@@ -54,6 +62,10 @@ function viewTripleEditor() {
         viewTripleEditorField("c"),
         m("button", {
             onclick: () => {
+                if (!editedTriple.a || !editedTriple.b) {
+                    showError("triples must have a an b fields as non-empty strings")
+                    return
+                }
                 t.addTriple(editedTriple)
                 editedTriple = {a: "", b: "", c: ""}
             }
@@ -82,7 +94,8 @@ function viewTripleFilter() {
 
 // recursive
 function viewIBISDiagram(leader, id) {
-    console.log("viewIBISDiagram", id)
+    if (id === "") return m("div", "Missing id in IBIS diagram")
+    console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
         m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
         t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
@@ -94,7 +107,9 @@ function viewIBISDiagram(leader, id) {
 
 const TriplesApp = {
     view: () => {
-        return m("div.ma2.measure-wide",
+        const rootId = t.last((t.find("root", "value")))
+        console.log("rootId", rootId)
+        return m("div.ma2",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !t.getLoadingState().isFileLoaded && m("div",
                 "Loading..."
@@ -102,7 +117,8 @@ const TriplesApp = {
             t.getLoadingState().isFileLoaded && m("div",
                 viewTriples(),
                 viewTripleEditor(),
-                viewIBISDiagram("", "0")
+                !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
+                rootId && viewIBISDiagram("", rootId)
             )
         )
     }

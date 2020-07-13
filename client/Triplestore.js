@@ -55,37 +55,40 @@ export function Triplestore(showError, fileName) {
     }
 
     function addTriple(triple) {
+        if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
         triple.index = triples.length + 1
         triples.push(triple)
         appendFile(JSON.stringify(triple) + "\n")
     }
 
     function filterTriples(filterTriple) {
-        console.log("filterTriples", filterTriple)
         const result = []
         for (const triple of triples) {
-            if (filterTriple.a.trim() && filterTriple.a.trim() !== triple.a.trim()) continue
-            if (filterTriple.b.trim() && filterTriple.b.trim() !== triple.b.trim()) continue
-            if (filterTriple.c.trim() && filterTriple.c.trim() !== triple.c.trim()) continue
+            if (filterTriple.a && filterTriple.a !== triple.a) continue
+            if (filterTriple.b && filterTriple.b !== triple.b) continue
+            if (filterTriple.c && filterTriple.c !== triple.c) continue
             result.push(triple)
         }
         return result
     }
 
     function find(a, b, c) {
+        if (a === "" || b === "") {
+            throw new Error("triple a and b fields can't be empty strings; use null for query")
+        }
         let wildcardCount = 0
         let lastWildcard
-        if (!a) {
+        if (a === null || a === undefined) {
             a = ""
             wildcardCount++
             lastWildcard = "a"
         }
-        if (!b) {
+        if (b === null || b === undefined) {
             b = ""
             wildcardCount++
             lastWildcard = "b"
         }
-        if (!c) {
+        if (c === null || c === undefined) {
             c = ""
             wildcardCount++
             lastWildcard = "c"
@@ -96,7 +99,7 @@ export function Triplestore(showError, fileName) {
     }
     
     function last(triples) {
-        if (triples.length === 0) return ""
+        if (triples.length === 0) return null
         return triples[triples.length - 1]
     }    
 

@@ -30,3 +30,6 @@
 {"a":"0","b":"!","c":"7","index":30}
 {"a":"7","b":"label","c":"Triples","index":31}
 {"a":"7","b":"label","c":"Triplestore","index":32}
+{"a":"root","b":"value","c":"0","index":33}
+{"a":"root","b":"value","c":"1","index":34}
+{"a":"root","b":"value","c":"0","index":35}
