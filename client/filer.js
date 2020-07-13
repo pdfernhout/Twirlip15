@@ -2,6 +2,7 @@
 import "./vendor/mithril.js"
 import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "./twirlip15-support.js"
 import Dexie from "./vendor/dexie.mjs"
+import { FileUtils } from "./FileUtils.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -13,6 +14,7 @@ const preferences = new Twirlip15Preferences()
 let directoryPath = "/"
 let directoryFiles = null
 let errorMessage = ""
+let statusMessage = ""
 let showMenu = preferences.get("showMenu", false)
 let selectedFiles = {}
 let lastSort = "name"
@@ -32,6 +34,11 @@ window.onpopstate = async function(event) {
 function showError(error) {
     errorMessage = error
 }
+
+function showStatus(messageText) {
+    statusMessage = messageText
+}
+
 
 async function loadDirectory(newPath, saveState) {
     clearPreviewFetchQueue()
@@ -132,8 +139,57 @@ async function newFile() {
     }
 }
 
+
+async function appendFile(fileName, stringToAppend, encoding) {
+    const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend, encoding}, showError)
+    if (apiResult) {
+        return true
+    }
+    return false
+}
+
+let isUploading = false
+
 async function uploadFile() {
-    alert("unfinished")
+    FileUtils.loadFromFile(true, async (filename, contents) => {
+        m.redraw()
+        // console.log("loadFromFile result", filename, contents, bytes)
+
+        for (const fileInfo of directoryFiles) {
+            if (fileInfo.name === filename) {
+                showError("A file with that name already exists: " + filename)
+                return
+            }
+        }
+
+        isUploading = true
+
+        const tempFileName = directoryPath + ("Upload-" + new Date().toISOString() + ".temp")
+        const finalFileName = directoryPath + filename
+        let success = false
+        // Chunk size needs to be a multiple of 4 so that base64 data is not corrupted
+        const chunkSize = 400000
+        for (let i = 0; i < contents.length; i = i + chunkSize) {
+            console.log("i", i, i + chunkSize, contents.length, chunkSize, Math.round((i / (contents.length + 1)) * 100) + "%" )
+            showStatus("Upload progress: " + Math.round((i / (contents.length + 1)) * 100) + "%" )
+            success = await appendFile(tempFileName, contents.substring(i, i + chunkSize), "base64")
+            console.log("success in loop", success)
+            if (!success) break
+        }
+
+        if (success) {
+            showStatus("File uploaded almost done; finishing up")
+            const apiResult = await twirlip15ApiCall({request: "file-rename", renameFiles: [{oldFileName: tempFileName, newFileName: finalFileName}]}, showError)
+            if (apiResult) {
+                loadDirectory(directoryPath, false)
+                if (!errorMessage) showStatus("Upload finished OK")
+            } else {
+                if (!errorMessage) showError("Upload failed; problem renaming file")
+            } 
+        }
+
+        isUploading = false
+    })
 }
 
 async function newDirectory() {
@@ -217,8 +273,8 @@ function selectAll() {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
-        menuButton("+ New file",() => newFile()),
-        menuButton("⬆ Upload file",() => uploadFile()),
+        menuButton("+ New file", () => newFile()),
+        menuButton("⬆ Upload file", () => uploadFile(), isUploading),
         menuButton("+ New directory", () => newDirectory()),
         menuButton("Launch Ideas", () => openAsIdeas()),
         menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
@@ -420,7 +476,8 @@ function viewPath(path) {
 const Filer = {
     view: () => {
         return m("div.pa2.h-100.flex.flex-column",
-            errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+            errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+            statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
             m("div.flex-none", m("span.mr2", {
                 onclick: () => {
                     showMenu = !showMenu

@@ -61,8 +61,8 @@ const app = express()
 
 const maxDataForResult = getPreference("maxDataForResult", 2000000)
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ limit: "1mb", extended: false }))
+app.use(bodyParser.json({limit: "1mb"}))
 
 let users = null 
 let waitingOnWatchedFile = false
@@ -141,8 +141,8 @@ app.get("/twirlip15-api", function(request, response) {
             "file-contents": "return contents of a file given a fileName", 
             "file-read-bytes": "return bytesRead and data for length bytes from start from a file given a fileName",
             "file-preview": "return base64Data jpeg preview given a fileName and optional resizeOptions", 
-            "file-append": "append stringToAppend to a file given a fileName",
-            "file-save": "save contents to a file given a fileName",
+            "file-append": "append stringToAppend to a file given a fileName and an optional encoding",
+            "file-save": "save contents to a file given a fileName and an optional encoding",
             "file-copy": "copy a file given an copyFromFilePath and copyToFilePath",
             "file-rename": "rename files given an renameFiles array of objects with oldFileName and newFileName",
             "file-move": "moves files given a fileNames array and a newLocation", 
@@ -283,8 +283,9 @@ async function requestFileAppend(request, response) {
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const stringToAppend = request.body.stringToAppend
+    const encoding = request.body.encoding || "utf8"
     try {
-        await fs.promises.appendFile(filePath, stringToAppend)
+        await fs.promises.appendFile(filePath, stringToAppend, encoding)
         response.json({ok: true})
     } catch(err) {
         console.log(err)
@@ -298,8 +299,9 @@ async function requestFileSave(request, response) {
     const filePath = path.join(baseDir, request.body.fileName)
     if (failForRequiredField(request, response, "contents")) return
     const fileContents = request.body.contents
+    const encoding = request.body.encoding || "utf8"
     try {
-        await fs.promises.writeFile(filePath, fileContents)
+        await fs.promises.writeFile(filePath, fileContents, encoding)
         response.json({ok: true})
     } catch(err) {
         console.log(err)
