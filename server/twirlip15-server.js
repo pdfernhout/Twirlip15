@@ -1,4 +1,8 @@
-console.log("Twirlip15")
+console.log("Twirlip15 starting up", new Date().toISOString())
+
+// WARNING: This server can read and modify files anywhere on the entire file system
+// that are accessible the the server process user id.
+// So, this server should only be made accessible to trusted clients.
 
 /* global require, process, Buffer */
 
@@ -184,9 +188,20 @@ function requestEcho(request, response) {
     response.json({ok: true, echo: request.body})
 }
 
+function failForRequiredField(request, response, fieldName) {
+    const value = request.body[fieldName]
+    if (!request.body[fieldName] || !typeof value === "string") {
+        const errorMessage = "API call missing required field: " + fieldName
+        console.log("Error:", errorMessage)
+        response.json({ok: false, errorMessage})
+        return true
+    }
+    return false
+}
+
 async function requestFileContents(request, response) {
     console.log("POST file-contents", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const encoding = request.body.encoding || "utf8"
     try {
@@ -212,7 +227,7 @@ const fsRead = util.promisify(fs.read)
 
 async function requestFileReadBytes(request, response) {
     console.log("POST file-read-bytes", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const start = request.body.start || 0
     const length = request.body.length || 0
@@ -246,6 +261,7 @@ async function requestFilePreview(request, response) {
         response.json({ok: false, errorMessage: "Problem previewing file; sharp not available on server"})
         return
     }
+    if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const defaultResizeOptions = { width: 100, height: 100, fit: "inside", withoutEnlargement: true }
     const resizeOptions = request.body.resizeOptions || defaultResizeOptions
@@ -264,7 +280,7 @@ async function requestFilePreview(request, response) {
 
 async function requestFileAppend(request, response) {
     console.log("POST file-append", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const stringToAppend = request.body.stringToAppend
     try {
@@ -278,8 +294,9 @@ async function requestFileAppend(request, response) {
 
 async function requestFileSave(request, response) {
     console.log("POST file-save", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
+    if (failForRequiredField(request, response, "contents")) return
     const fileContents = request.body.contents
     try {
         await fs.promises.writeFile(filePath, fileContents)
@@ -292,8 +309,9 @@ async function requestFileSave(request, response) {
 
 async function requestFileCopy(request, response) {
     console.log("POST file-copy", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "copyFromFilePath")) return
     const copyFromFilePath = path.join(baseDir, request.body.copyFromFilePath)
+    if (failForRequiredField(request, response, "copyToFilePath")) return
     const copyToFilePath = path.join(baseDir, request.body.copyToFilePath)
     try {
         await fs.promises.copyFile(copyFromFilePath, copyToFilePath)
@@ -306,7 +324,6 @@ async function requestFileCopy(request, response) {
 
 async function requestFileRename(request, response) {
     console.log("POST file-rename", request.body)
-    // Very unsafe!
     const renameFiles = request.body.renameFiles
     if (!renameFiles) {
         return response.json({ok: false, errorMessage: "renameFiles not specified"})
@@ -330,7 +347,6 @@ async function requestFileRename(request, response) {
 
 async function requestFileMove(request, response) {
     console.log("POST file-move", request.body)
-    // Very unsafe!
     const moveFiles = request.body.moveFiles
     if (!moveFiles) {
         return response.json({ok: false, errorMessage: "moveFiles not specified"})
@@ -359,7 +375,6 @@ async function requestFileMove(request, response) {
 
 async function requestFileDelete(request, response) {
     console.log("POST file-delete", request.body)
-    // Very unsafe!
     const deleteFiles = request.body.deleteFiles
     if (!deleteFiles) {
         return response.json({ok: false, errorMessage: "deleteFiles not specified"})
@@ -387,7 +402,7 @@ async function requestFileDelete(request, response) {
 
 async function requestFileDirectory(request, response) {
     console.log("POST file-directory", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "directoryPath")) return
     const filePath = path.join(baseDir, request.body.directoryPath)
     const includeStats = request.body.includeStats || false
     console.log("POST file-directory filePath", filePath)
@@ -418,7 +433,7 @@ async function requestFileDirectory(request, response) {
 
 async function requestFileNewDirectory(request, response) {
     console.log("POST file-new-directory", request.body)
-    // Very unsafe!
+    if (failForRequiredField(request, response, "directoryPath")) return
     const filePath = path.join(baseDir, request.body.directoryPath)
     console.log("POST file-new-directory filePath", filePath)
     try {
@@ -453,7 +468,6 @@ app.use((req, res, next) => {
     }
 })
 
-// Very unsafe!
 app.use("/", express.static("/"))
 
 console.log("Twirlip serving from directory", process.cwd())
