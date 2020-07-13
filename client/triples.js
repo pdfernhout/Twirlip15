@@ -96,7 +96,7 @@ function viewIBISDiagram(leader, id) {
     )
 }
 
-const IBIS = {
+const TriplesApp = {
     view: () => {
         return m("div.ma2.measure-wide",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
@@ -116,4 +116,4 @@ const filePathFromParams = decodeURI(window.location.pathname)
 t.setFileName(filePathFromParams)
 t.loadFileContents()
 
-m.mount(document.body, IBIS)
+m.mount(document.body, TriplesApp)
