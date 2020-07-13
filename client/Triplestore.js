@@ -1,16 +1,19 @@
 import { twirlip15ApiCall } from "./twirlip15-support.js"
 
-export function Triplestore(showError) {
+export function Triplestore(showError, fileName) {
 
     let triples = []
-    let chosenFileName = null
-    let chosenFileLoaded = false
-    let fileSaveInProgress = false
+    let isFileLoaded = false
+    let isFileSaveInProgress = false
 
-    async function loadFileContents(newFileName) {
-        chosenFileName = newFileName
-        chosenFileLoaded = false
-        const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
+    function setFileName(newFileName) {
+        fileName = newFileName
+    }
+
+    async function loadFileContents() {
+        if (!fileName) throw new Error("fileName not set yet")
+        isFileLoaded = false
+        const apiResult = await twirlip15ApiCall({request: "file-contents", fileName}, showError)
         if (apiResult) {
             const chosenFileContents = apiResult.contents
             const lines = chosenFileContents.split("\n")
@@ -30,16 +33,16 @@ export function Triplestore(showError) {
                 }
             }
             triples = newTriples
-            chosenFileLoaded = true
+            isFileLoaded = true
         }
     }
     
-    async function appendFile(fileName, stringToAppend, successCallback) {
-        chosenFileName = fileName
-        if (fileSaveInProgress) return
-        fileSaveInProgress = true
+    async function appendFile(stringToAppend, successCallback) {
+        if (!fileName) throw new Error("fileName not set yet")
+        if (isFileSaveInProgress) throw new Error("Error: Previous file save still in progress!")
+        isFileSaveInProgress = true
         const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
-        fileSaveInProgress = false
+        isFileSaveInProgress = false
         if (apiResult && successCallback) {
             successCallback()
         }
@@ -48,7 +51,7 @@ export function Triplestore(showError) {
     function addTriple(triple) {
         triple.index = triples.length + 1
         triples.push(triple)
-        appendFile(chosenFileName, JSON.stringify(triple) + "\n")
+        appendFile(JSON.stringify(triple) + "\n")
     }
 
     function filterTriples(filterTriple) {
@@ -93,13 +96,14 @@ export function Triplestore(showError) {
 
     function getLoadingState() {
         return {
-            fileName: chosenFileName,
-            isFileLoaded: chosenFileLoaded,
-            isFileSaveInProgress: fileSaveInProgress
+            fileName,
+            isFileLoaded,
+            isFileSaveInProgress,
         }
     }
 
     return {
+        setFileName,
         loadFileContents,
         addTriple,
         filterTriples,

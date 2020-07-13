@@ -113,6 +113,7 @@ const IBIS = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-t.loadFileContents(filePathFromParams)
+t.setFileName(filePathFromParams)
+t.loadFileContents()
 
 m.mount(document.body, IBIS)
