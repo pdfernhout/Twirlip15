@@ -110,7 +110,7 @@ const TriplesApp = {
         const rootId = t.last((t.find("root", "value")))
         // console.log("rootId", rootId)
         return m("div.ma2",
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+            errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
             !t.getLoadingState().isFileLoaded && m("div",
                 "Loading..."
             ),
