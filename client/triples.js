@@ -140,14 +140,30 @@ function viewTripleFilter() {
 
 
 function find(a, b, c) {
-    if (!a) a = ""
-    if (!b) b = ""
-    if (!c) c = ""
-    return filterTriples({a, b, c}, triples)
+    let wildcardCount = 0
+    let lastWildcard
+    if (!a) {
+        a = ""
+        wildcardCount++
+        lastWildcard = "a"
+    }
+    if (!b) {
+        b = ""
+        wildcardCount++
+        lastWildcard = "b"
+    }
+    if (!c) {
+        c = ""
+        wildcardCount++
+        lastWildcard = "c"
+    }
+    const result = filterTriples({a, b, c}, triples)
+    if (wildcardCount === 1) return result.map(triple => triple[lastWildcard])
+    return result
 }
 
 function last(triples) {
-    if (triples.length === 0) return {a: "", b: "", c: ""}
+    if (triples.length === 0) return ""
     return triples[triples.length - 1]
 }
 
@@ -155,15 +171,15 @@ function last(triples) {
 function viewIBISDiagram(leader, id) {
     console.log("viewIBISDiagram", id)
     return m("div.ml4",
-        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, last(find(id, "label")).c || "Unlabelled"),
+        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, last(find(id, "label")) || "Unlabelled"),
         // triples[id]["+"].map(...)
         // triples[id]["+"].last()
         // triples[id]["+"]["some data"].store()
         // triples.o100000676.plus.102323232.store()
-        find(id, "+").map(triple => viewIBISDiagram(m("span.mr1", "+"), triple.c)),
-        find(id, "-").map(triple => viewIBISDiagram(m("span.mr1", "-"), triple.c)),
-        find(id, "!").map(triple => viewIBISDiagram(m("span.mr1", "*"), triple.c)),
-        find(id, "?").map(triple => viewIBISDiagram(m("span.mr1", "?"), triple.c)),
+        find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
+        find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
+        find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),
+        find(id, "?").map(childId => viewIBISDiagram(m("span.mr1", "?"), childId)),
     )
 }
 
