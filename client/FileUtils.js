@@ -34,6 +34,13 @@ export const FileUtils = {
             fileControl.addEventListener("change", function (event) {
                 if (event.target.files.length < 1) return
                 const file = event.target.files[0]
+                const size = Math.round(this.files[0].size / 1024 / 1024)
+                const uploadLimit = 50
+                if (size > uploadLimit) {
+                    alert("File size is " + size + " MB, please select a file smaller than " + uploadLimit + " MB.")
+                    return
+                }
+
                 const reader = new FileReader()
                 reader.onload = function() {
                     let contents

@@ -151,6 +151,8 @@ async function appendFile(fileName, stringToAppend, encoding) {
 let isUploading = false
 
 async function uploadFile() {
+    // Could improve so does not read file into memory first so could handle larger files
+    showStatus("Reading file from local disk... Please wait...")
     FileUtils.loadFromFile(true, async (filename, contents) => {
         m.redraw()
         // console.log("loadFromFile result", filename, contents, bytes)
@@ -186,6 +188,8 @@ async function uploadFile() {
             } else {
                 if (!errorMessage) showError("Upload failed; problem renaming file")
             } 
+        } else {
+            showStatus("")
         }
 
         isUploading = false
