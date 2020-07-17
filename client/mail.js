@@ -1,6 +1,7 @@
 /* global m */
 import "./vendor/mithril.js"
 import { twirlip15ApiCall } from "./twirlip15-support.js"
+import { MailParser } from "./vendor/mail-parser.js"
 
 let errorMessage = ""
 let chosenFileName = ""
@@ -30,14 +31,27 @@ async function loadFileContents(newFileName) {
 function splitEmails() {
     const emailsRaw  = mboxContents.split("From ")
     emailsRaw.splice(0, 1)
-    emails = emailsRaw
+    emails = emailsRaw.map(emailRaw => processEmail("From " + emailRaw))
+}
+
+function processEmail(text) {
+    const result = {}
+    result.raw = text
+    result.lines = text.split("\n")
+    console.log("lines", result.lines)
+    try {
+        result.headers = MailParser().processHeaders(result.lines)
+        console.log("headers", result.headers)
+        return result
+    } catch {
+        return result
+    }
 }
 
 function viewFileContents() {
     return m("div", emails.map(email => {
-        const lines = email.split("\n")
         return m("div", 
-            m("pre", "From " + lines.slice(0, 4).join("\n")), 
+            m("pre", email.lines.slice(0, 4).join("\n")), 
             m("hr")
         )
     }))
