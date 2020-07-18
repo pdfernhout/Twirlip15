@@ -174,6 +174,8 @@ app.post("/twirlip15-api", function(request, response) {
         requestFileMove(request, response)
     } else if (request.body.request === "file-delete") {
         requestFileDelete(request, response)
+    } else if (request.body.request === "file-stats") {
+        requestFileStats(request, response)
     } else if (request.body.request === "file-directory") {
         requestFileDirectory(request, response)
     } else if (request.body.request === "file-new-directory") {
@@ -400,6 +402,18 @@ async function requestFileDelete(request, response) {
     }
 
     response.json({ok: true})
+}
+
+async function requestFileStats(request, response) {
+    if (failForRequiredField(request, response, "fileName")) return
+    try {
+        const filePath = path.join(baseDir, request.body.fileName)
+        const stats = await fs.promises.lstat(filePath)
+        response.json({ok: true, stats, fileName: request.body.fileName})
+    } catch (err) {
+        console.log(err)
+        return response.json({ok: false, errorMessage: "file stat failed for: " + JSON.stringify(request.body.fileName)})
+    }    
 }
 
 async function requestFileDirectory(request, response) {

@@ -3,28 +3,85 @@ import "./vendor/mithril.js"
 import { twirlip15ApiCall } from "./twirlip15-support.js"
 
 let errorMessage = ""
+let statusMessage = ""
 let chosenFileName = ""
 let mboxContents = null
 let chosenFileLoaded = false
 
 let emails = []
 
+let searchString = ""
+let searchIgnoreCase = true
+let searchInvert = false
+
 function showError(error) {
     errorMessage = error
+}
+
+function showStatus(messageText) {
+    statusMessage = messageText
+}
+
+async function loadPartialFile(fileName, start, length) {
+    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length}, showError)
+    if (apiResult) {
+        return apiResult.data
+    }
+    return false
+}
+
+function hexDecode(text) {
+    const hexes = text.match(/.{1,2}/g) || []
+    var result = ""
+    for (let j = 0; j<hexes.length; j++) {
+        result += String.fromCharCode(parseInt(hexes[j], 16))
+    }
+
+    return result
 }
 
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     mboxContents = null
     chosenFileLoaded = false
-    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
-    if (apiResult) {
-        mboxContents = apiResult.contents
-        chosenFileLoaded = true
-    } else {
-        mboxContents = ""
+
+    const apiResult = await twirlip15ApiCall({request: "file-stats", fileName: chosenFileName}, showError)
+    if (!apiResult) return
+
+    const fileSize = apiResult.stats.size
+
+    if (!fileSize) return
+
+    const segments = []
+    const chunkSize = 1000000
+    let start = 0
+    while (start < fileSize) {
+        console.log("start < fileSize", start < fileSize, start, fileSize)
+        showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
+        const countToRead = Math.min(chunkSize, fileSize - start)
+        console.log("countToRead", countToRead)
+        const data = await loadPartialFile(chosenFileName, start, countToRead)
+        if (data === false) {
+            console.log("got false")
+            showStatus("")
+            showError("reading failed at end")
+            return
+        }
+        segments.push(hexDecode(data))
+        start += chunkSize
     }
-    splitEmails()
+
+    showStatus("done loading data; processing")
+
+    // Give the UI a chance to update through using a timeout
+    setTimeout(() => {
+        mboxContents = segments.join("")
+        chosenFileLoaded = true
+
+        splitEmails()
+        showStatus("")
+        m.redraw()
+    }, 10)
 }
 
 function splitEmails() {
@@ -123,8 +180,12 @@ function parseEmail(email) {
 const expandedMessage = {}
 
 function viewFileContents() {
+    if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
         const message = email.message
+        const searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+        if (!searchInvert && searchResult === -1) return []
+        if (searchInvert && searchString && searchResult !== -1) return []
         return m("div", 
             m("div", 
                 m("div.ml4", message.sent),
@@ -137,10 +198,35 @@ function viewFileContents() {
     }))
 }
 
+function viewFileSearch() {
+    return m("div",
+        m("span.mr2", "Search:"),
+        m("input", {
+            value: searchString, 
+            onchange: event => { searchString = event.target.value}
+        }),
+        m("label.ml1", 
+            m("input[type=checkbox].mr1", {
+                checked: searchIgnoreCase,
+                onclick: () => searchIgnoreCase = !searchIgnoreCase
+            }),
+            "Ignore case"
+        ),
+        m("label.ml1", 
+            m("input[type=checkbox].mr1", {
+                checked: searchInvert,
+                onclick: () => searchInvert = !searchInvert
+            }),
+            "Invert"
+        )
+    )
+}
+
 const ViewMail = {
     view: () => {
         return m("div.ma2",
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+            errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+            statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
             !chosenFileName && m("div",
                 "file not specified in URL querystring"
             ),
@@ -148,6 +234,7 @@ const ViewMail = {
                 "Loading..."
             ),
             chosenFileName && chosenFileLoaded && m("div",
+                viewFileSearch(),
                 viewFileContents()
             )
         )
