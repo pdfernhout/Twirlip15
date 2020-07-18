@@ -4,8 +4,6 @@ import { twirlip15ApiCall } from "./twirlip15-support.js"
 
 import parse from "./vendor/emailjs/mimeparser.js"
 
-console.log("parse", parse)
-
 let errorMessage = ""
 let statusMessage = ""
 let chosenFileName = ""
@@ -60,13 +58,11 @@ async function loadFileContents(newFileName) {
     const chunkSize = 1000000
     let start = 0
     while (start < fileSize) {
-        console.log("start < fileSize", start < fileSize, start, fileSize)
         showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
         const countToRead = Math.min(chunkSize, fileSize - start)
-        console.log("countToRead", countToRead)
         const data = await loadPartialFile(chosenFileName, start, countToRead)
         if (data === false) {
-            console.log("got false")
+            console.log("Unexpected: got false")
             showStatus("")
             showError("reading failed at end")
             return
@@ -105,6 +101,7 @@ function rtrim(string) {
 
 let unknownIndex = 0
 
+// eslint-disable-next-line no-unused-vars
 function parseEmailRoughAndReady(email) {
     // Derived from Twirlip7 viewer.js
 
@@ -179,6 +176,20 @@ function parseEmailRoughAndReady(email) {
 
 const expandedMessage = {}
 
+let showRaw = false
+
+function getFromField(message) {
+    const from = message.headers.from[0]
+    const address = from.value[0].address
+    const name = from.value[0].name
+    if (!address && name.includes(" at ") && from.initial.includes(")")) {
+        const addressDerivedFromName = name.replace(" at ", "@")
+        const nameInsideParens = from.initial.match(/\(([^)]*)\)/)[1]
+        return nameInsideParens.trim() + " <" + addressDerivedFromName.trim() + ">"
+    }
+    return name + " <" + address + ">"
+}
+
 function viewFileContents() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
@@ -186,16 +197,32 @@ function viewFileContents() {
         const searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
         if (!searchInvert && searchResult === -1) return []
         if (searchInvert && searchString && searchResult !== -1) return []
-        const subject = message.headers.subject[0].initial
-        const from = message.headers.from[0].initial
-        const date = message.headers.date[0].initial
+        const subject = message.headers.subject[0].value
+        const from = getFromField(message)
+        const date = message.headers.date[0].value
         const messageId = message.headers["message-id"][0].initial
+        const body = message.content
+            ? new TextDecoder("utf-8").decode(message.content)
+            : new TextDecoder("utf-8").decode(message.childNodes[0].content)
         return m("div", 
             m("div", 
                 m("div.ml4", date),
                 m("div.ml4", from),
-                m("div.ml4", { onclick: () => expandedMessage[messageId] = !expandedMessage[messageId] }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
-                expandedMessage[messageId] && m("pre.ml5.measure-wide", message.raw),
+                m("div.ml4", { onclick: () => {
+                    expandedMessage[messageId] = !expandedMessage[messageId]
+                    // if (expandedMessage[messageId]) console.log("message", message)
+                } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
+                expandedMessage[messageId] && m("div",
+                    m("div.ml5", m("label", 
+                        m("input[type=checkbox].mr1", {
+                            checked: showRaw,
+                            onclick: () => showRaw = !showRaw
+                        }),
+                        "Show Raw"
+                    )),
+                    !showRaw && m("pre.ml5.measure-wide", body),
+                    showRaw && m("pre.ml5.measure-wide", message.raw),
+                ),
             ),
             m("hr")
         )
