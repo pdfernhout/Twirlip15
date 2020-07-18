@@ -1,6 +1,8 @@
-import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
-import { encode, decode, convert, arr2str } from './charset'
-import { pipe } from 'ramda'
+/* eslint-disable no-extra-semi */
+/* eslint-disable quotes */
+import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from './base64.js'
+import { encode, decode, convert, arr2str } from './charset.js'
+import { pipe } from './ramda.js'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
 // http://tools.ietf.org/html/rfc2045#section-6.7

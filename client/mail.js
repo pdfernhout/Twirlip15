@@ -2,6 +2,10 @@
 import "./vendor/mithril.js"
 import { twirlip15ApiCall } from "./twirlip15-support.js"
 
+import parse from "./vendor/emailjs/mimeparser.js"
+
+console.log("parse", parse)
+
 let errorMessage = ""
 let statusMessage = ""
 let chosenFileName = ""
@@ -91,11 +95,7 @@ function splitEmails() {
 }
 
 function processEmail(text) {
-    const result = {}
-    result.raw = text
-    result.lines = text.split("\n")
-    result.message = parseEmail(text)
-    return result
+    return parse(text)
 }
 
 function rtrim(string) {
@@ -105,7 +105,7 @@ function rtrim(string) {
 
 let unknownIndex = 0
 
-function parseEmail(email) {
+function parseEmailRoughAndReady(email) {
     // Derived from Twirlip7 viewer.js
 
     let headers = ""
@@ -182,16 +182,20 @@ const expandedMessage = {}
 function viewFileContents() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
-        const message = email.message
+        const message = email
         const searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
         if (!searchInvert && searchResult === -1) return []
         if (searchInvert && searchString && searchResult !== -1) return []
+        const subject = message.headers.subject[0].initial
+        const from = message.headers.from[0].initial
+        const date = message.headers.date[0].initial
+        const messageId = message.headers["message-id"][0].initial
         return m("div", 
             m("div", 
-                m("div.ml4", message.sent),
-                m("div.ml4", message.username),
-                m("div.ml4", { onclick: () => expandedMessage[message.id] = !expandedMessage[message.id] }, expandedMessage[message.id] ? "▼ " : "➤ ", message.title),
-                expandedMessage[message.id] && m("pre.ml5.measure-wide", message.body),
+                m("div.ml4", date),
+                m("div.ml4", from),
+                m("div.ml4", { onclick: () => expandedMessage[messageId] = !expandedMessage[messageId] }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
+                expandedMessage[messageId] && m("pre.ml5.measure-wide", message.raw),
             ),
             m("hr")
         )

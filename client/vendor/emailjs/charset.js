@@ -1,4 +1,6 @@
-import { TextDecoder, TextEncoder } from 'text-encoding'
+/* eslint-disable no-empty */
+/* eslint-disable no-extra-semi */
+/* eslint-disable quotes */
 
 /**
  * Encodes an unicode string into an Uint8Array object as UTF-8

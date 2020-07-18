@@ -1,3 +1,5 @@
+/* eslint-disable no-extra-semi */
+/* eslint-disable quotes */
 export const OUTPUT_STRING = 'OUTPUT_STRING'
 export const OUTPUT_TYPED_ARRAY = 'OUTPUT_TYPED_ARRAY'
 

@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 export default {
   'ACDT': '+1030',
   'ACST': '+0930',

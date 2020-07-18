@@ -1,3 +1,5 @@
+/* eslint-disable no-extra-semi */
+/* eslint-disable quotes */
 const LOOKUP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('')
 const MAX_CHUNK_LENGTH = 16383 // must be multiple of 3
 

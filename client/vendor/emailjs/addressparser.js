@@ -1,3 +1,5 @@
+/* eslint-disable no-extra-semi */
+/* eslint-disable quotes */
 /**
  * Parses structured e-mail addresses from an address field
  *

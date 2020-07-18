@@ -1,8 +1,8 @@
-import { pathOr } from 'ramda'
-import timezone from './timezones'
-import { decode, base64Decode, convert, parseHeaderValue, mimeWordsDecode } from 'emailjs-mime-codec'
-import { TextEncoder } from 'text-encoding'
-import parseAddress from 'emailjs-addressparser'
+/* eslint-disable quotes */
+import { pathOr } from './ramda.js'
+import timezone from './timezones.js'
+import { decode, base64Decode, convert, parseHeaderValue, mimeWordsDecode } from './mimecodec.js'
+import parseAddress from './addressparser.js'
 
 /*
  * Counts MIME nodes to prevent memory exhaustion attacks (CWE-400)
