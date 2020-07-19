@@ -32,16 +32,6 @@ async function loadPartialFile(fileName, start, length) {
     return false
 }
 
-function hexDecode(text) {
-    const hexes = text.match(/.{1,2}/g) || []
-    var result = ""
-    for (let j = 0; j<hexes.length; j++) {
-        result += String.fromCharCode(parseInt(hexes[j], 16))
-    }
-
-    return result
-}
-
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     mboxContents = null
@@ -74,20 +64,35 @@ async function loadFileContents(newFileName) {
     showStatus("done loading data; processing")
 
     // Give the UI a chance to update through using a timeout
-    setTimeout(() => {
+    setTimeout(async () => {
         mboxContents = segments.join("")
-        chosenFileLoaded = true
 
-        splitEmails()
+        await splitEmails()
         showStatus("")
+        chosenFileLoaded = true
         m.redraw()
     }, 10)
 }
 
-function splitEmails() {
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function splitEmails() {
     const emailsRaw  = mboxContents.split(/^From /m)
     emailsRaw.splice(0, 1)
-    emails = emailsRaw.map(emailRaw => processEmail("From " + emailRaw))
+    const result = []
+    for (let i = 0; i < emailsRaw.length; i++) {
+        const emailRaw = emailsRaw[i]
+        result.push(processEmail("From " + emailRaw))
+        if (i % 10 === 9) {
+            showStatus("processing email " + (i + 1) + " of " + emailsRaw.length)
+            m.redraw()
+            await timeout(1)
+        }
+    }
+    emails = result
+    // emails = emailsRaw.map(emailRaw => processEmail("From " + emailRaw))
 }
 
 function processEmail(text) {
@@ -190,6 +195,20 @@ function getFromField(message) {
     return name + " <" + address + ">"
 }
 
+// Recursive
+function getTextPlain(message) {
+    if (message.contentType.value === "text/plain") {
+        return new TextDecoder("utf-8").decode(message.content)
+    }
+    // if (message.content) return new TextDecoder("utf-8").decode(message.content)
+    for (let i = 0; i < message.childNodes.length; i++) {
+        const node = message.childNodes[i]
+        const text = getTextPlain(node)
+        if (text) return text
+    }
+    return ""
+}
+
 function viewFileContents() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
@@ -201,9 +220,7 @@ function viewFileContents() {
         const from = getFromField(message)
         const date = message.headers.date[0].value
         const messageId = message.headers["message-id"][0].initial
-        const body = message.content
-            ? new TextDecoder("utf-8").decode(message.content)
-            : new TextDecoder("utf-8").decode(message.childNodes[0].content)
+        const body = getTextPlain(message)
         return m("div", 
             m("div", 
                 m("div.ml4", date),
@@ -220,8 +237,8 @@ function viewFileContents() {
                         }),
                         "Show Raw"
                     )),
-                    !showRaw && m("pre.ml5.measure-wide", body),
-                    showRaw && m("pre.ml5.measure-wide", message.raw),
+                    !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
+                    showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
                 ),
             ),
             m("hr")
