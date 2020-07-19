@@ -66,12 +66,15 @@ async function loadFileContents(newFileName) {
     // Give the UI a chance to update through using a timeout
     setTimeout(async () => {
         mboxContents = segments.join("")
-
-        await splitEmails()
-        showStatus("")
-        chosenFileLoaded = true
-        m.redraw()
+        processEmails()
     }, 10)
+}
+
+async function processEmails() {
+    await splitEmails()
+    showStatus("")
+    chosenFileLoaded = true
+    m.redraw()
 }
 
 function timeout(ms) {
