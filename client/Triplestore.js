@@ -23,7 +23,7 @@ export function Triplestore(showError, fileName) {
         if (apiResult) {
             const chosenFileContents = apiResult.contents
             const lines = chosenFileContents.split("\n")
-            const newTriples = []
+            triples = []
             let index = 1
             for (const line of lines) {
                 if (line.trim()) {
@@ -35,10 +35,9 @@ export function Triplestore(showError, fileName) {
                         continue
                     }
                     triple.index = index++
-                    newTriples.push(triple)
+                    addTriple(triple, false)
                 }
             }
-            triples = newTriples
             isFileLoaded = true
         }
     }
@@ -54,16 +53,41 @@ export function Triplestore(showError, fileName) {
         }
     }
 
-    function addTriple(triple) {
-        if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
-        triple.index = triples.length + 1
-        triples.push(triple)
-        appendFile(JSON.stringify(triple) + "\n")
+    function _removeTriple(triple) {
+        for (let i = triples.length - 1; i > 0; i--) {
+            const existingTriple = triples[i]
+            if (existingTriple.a === triple.a && existingTriple.b === triple.b && existingTriple.c === triple.c) {
+                existingTriple.ignore = true
+                return
+            }
+        }
     }
 
-    function filterTriples(filterTriple) {
+    function _replaceTriple(triple) {
+        for (let i = triples.length - 1; i > 0; i--) {
+            const existingTriple = triples[i]
+            if (existingTriple.a === triple.a && existingTriple.b === triple.b) {
+                existingTriple.ignore = true
+            }
+        }
+    }
+
+    function addTriple(triple, write=true) {
+        if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
+        triple.index = triples.length + 1
+        if (triple.o === "remove") {
+            _removeTriple(triple)
+        } else if (triple.o === "replace" || !triple.o) {
+            _replaceTriple(triple)
+        }
+        triples.push(triple)
+        if (write) appendFile(JSON.stringify(triple) + "\n")
+    }
+
+    function filterTriples(filterTriple, showIgnored=false) {
         const result = []
         for (const triple of triples) {
+            if (!showIgnored && (triple.ignore || triple.o === "remove")) continue
             if (filterTriple.a && filterTriple.a !== triple.a) continue
             if (filterTriple.b && filterTriple.b !== triple.b) continue
             if (filterTriple.c && filterTriple.c !== triple.c) continue
@@ -72,7 +96,7 @@ export function Triplestore(showError, fileName) {
         return result
     }
 
-    function find(a, b, c) {
+    function find(a, b, c, showIgnored=false) {
         if (a === "" || b === "") {
             throw new Error("triple a and b fields can't be empty strings; use null for query")
         }
@@ -93,7 +117,7 @@ export function Triplestore(showError, fileName) {
             wildcardCount++
             lastWildcard = "c"
         }
-        const result = filterTriples({a, b, c})
+        const result = filterTriples({a, b, c}, showIgnored)
         if (wildcardCount === 1) return result.map(triple => triple[lastWildcard])
         return result
     }

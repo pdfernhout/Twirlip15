@@ -42,3 +42,13 @@
 {"a":"7","b":"-","c":"","index":42}
 {"a":"7","b":"-","c":"9","index":43}
 {"a":"9","b":"label","c":"Flabby","index":44}
+{"a":"test","b":"type","c":"operation-replace","o":"replace","index":45}
+{"a":"test","b":"type","c":"operation-insert","o":"insert","index":46}
+{"a":"test","b":"type","c":"operation-insert2","o":"insert","index":47}
+{"a":"test","b":"type","c":"operation-replace2","o":"replace","index":48}
+{"a":"7","b":"-","c":"","o":"remove","index":49}
+{"a":"test","b":"something","c":"else2","o":"replace","index":52}
+{"a":"0","b":"!","c":"1","o":"insert","index":51}
+{"a":"0","b":"!","c":"4","o":"insert","index":52}
+{"a":"1","b":"+","c":"cheap","o":"insert","index":53}
+{"a":"4","b":"+","c":"5","o":"insert","index":54}

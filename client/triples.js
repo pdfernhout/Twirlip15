@@ -2,6 +2,8 @@
 import "./vendor/mithril.js"
 import { Triplestore } from "./Triplestore.js"
 
+let showIgnoredTriples = true
+
 let errorMessage = ""
 
 function showError(error) {
@@ -12,10 +14,13 @@ const t = Triplestore(showError)
 
 function viewTriple(triple) {
     return m("tr", 
-        m("td", triple.index),
+        m("td", { onclick: () => {
+            editedTriple = {a: triple.a, b: triple.b, c: triple.c, o: triple.o || "replace"} 
+        } }, (triple.ignore ? "−" : "+") + triple.index),
         m("td", triple.a),
         m("td", triple.b),
         m("td", triple.c),
+        m("td", triple.o),
     )
 }
 
@@ -35,14 +40,15 @@ function viewTriples() {
                 m("th", "A"),
                 m("th", "B"),
                 m("th", "C"),
+                m("th", "O"),
             ),
             viewTripleFilter()
         ),
-        m("tbody", t.filterTriples(cleanup(filterTriple)).map(triple => viewTriple(triple)))
+        m("tbody", t.filterTriples(cleanup(filterTriple), showIgnoredTriples).map(triple => viewTriple(triple)))
     )
 }
 
-let editedTriple = {a: "", b: "", c: ""}
+let editedTriple = {a: "", b: "", c: "", o: "replace"}
 
 function viewTripleEditorField(fieldName) {
     return m("div.ml2",
@@ -54,12 +60,37 @@ function viewTripleEditorField(fieldName) {
     )
 }
 
+function viewCheckbox(label, value, callback) {
+    return m("label.ml1", 
+        m("input[type=checkbox].mr1", {
+            checked: value,
+            onclick: event => callback(event.target.checked)
+        }),
+        label
+    )
+}
+
+function viewSelect(options, value, callback) {
+    return m("select", { value, onchange: event => callback(event.target.value) },
+        options.map(option => {
+            if (option.label) {
+                return m("option", { value: option.value }, option.label)
+            } else {
+                return m("option", { value: option }, option)
+            }
+        })
+    )
+}
+
+const tripleOperations = ["replace", "insert", "remove"]
+
 function viewTripleEditor() {
     return m("div.mt2", 
         m("div", "New Triple"),
         viewTripleEditorField("a"),
         viewTripleEditorField("b"),
         viewTripleEditorField("c"),
+        m("div", viewSelect(tripleOperations, editedTriple.o, newValue => editedTriple.o = newValue)),
         m("button", {
             onclick: () => {
                 if (!editedTriple.a || !editedTriple.b) {
@@ -67,7 +98,7 @@ function viewTripleEditor() {
                     return
                 }
                 t.addTriple(editedTriple)
-                editedTriple = {a: "", b: "", c: ""}
+                editedTriple = {a: "", b: "", c: "", o: "replace"}
             }
         }, "Add triple")
     )
@@ -83,6 +114,7 @@ function viewTripleFilterField(fieldName) {
         })
     )
 }
+
 function viewTripleFilter() {
     return m("tr",
         m("td", {title: "filter"}, "⧩"),
@@ -115,6 +147,9 @@ const TriplesApp = {
                 "Loading..."
             ),
             t.getLoadingState().isFileLoaded && m("div",
+                m("div",
+                    viewCheckbox("Show ignored triples", showIgnoredTriples, () => showIgnoredTriples = !showIgnoredTriples),
+                ),
                 viewTriples(),
                 viewTripleEditor(),
                 !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
