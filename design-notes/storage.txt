@@ -1,0 +1,103 @@
+2020-07-19 07:51am ET
+
+Primary vs. derived.
+Remembering why I turned off Thunderbird "Gloda" (Global Search Database)
+https://support.mozilla.org/en-US/kb/global-search
+
+Because it was a multi-gigabyte index file that kept changing
+and which Mac TimeMachine kept backing up each time....
+Causing long delays and bloating backups and chewing up backup drive disk space.
+
+I am often thinking (and constrained) by concern of how to make Twirlip/Pointrel archives
+easy to backup incrementally. Challenging as hard to have changing indexes then...
+Of course, you can selectively exclude files from backups.
+And maybe that is the answer?
+To exclude backing up big files that are derived -- tradeoff of storage vs. time.
+
+In rough calculations, on Lenovo flex14 laptop, 
+Thunderbird is indexing about 50 messages per second.
+Thunderbird is adding (initially) about 10K (20K?) per message to global-messages-db.sqlite.
+It seems it will take about five hours to index a million messages.
+It will end up with a ~10GB index file.
+The "Activity Manager" explains what is going on.
+It says how many emails have been indexed of how many total and how long it took.
+
+So, is that acceptable? Interesting how people must think it is.
+
+Laptop getting warm as it runs the indexing process... 
+Thunderbird running at 7% CPU load.
+~20% load overall. Maybe one full vcpu thread of eight?
+How much heat from flash drive itself?
+
+Later, about 110K messages indexed so far in about 33 minutes and about 450MB.
+So, about 55 messages a second, and about 4K per message of indexing.
+Maybe my Sent messages where is started are longer than average. :-)
+
+Ideally Linux would have some way of labelling derived files 
+or putting them in a special folder (under /var?) that is not backed up.
+
+Until then: https://linuxize.com/post/how-to-exclude-files-and-directories-with-rsync/
+$ rsync -a --exclude 'file.txt' src_directory/ dst_directory/
+$ rsync -a --exclude '*.jpg*' src_directory/ dst_directory/
+$ rsync -a --exclude={'file1.txt','dir1/*','dir2'} src_directory/ dst_directory/
+$ rsync -a --exclude-from='exclude-file.txt' src_directory/ dst_directory/
+Where exclude-file.txt is:
+file1.txt
+dir1/*
+dir2
+
+Maybe I need to accept there will eb a large index file somewhere which is derived
+and which optionally will not be backed up?
+Although five house (in this case) is a long time to wait until something is operational again.
+What if it was ten million messages or a billion messages?
+
+----
+
+Have been thinking recently about storage similar to TimeMachine and such like so:
+Directories for each time period (week, day, hour, minute, whatever).
+Subdirectories reflecting a hierarchy of "streams" (which can be whatever -- discussions, text files, images, etc.)
+A stream can have substreams (/somewhere/mystream/mysubstream-a,b,c).
+Each stream is one file with incremental transactions.
+A stream could also be a directory with one transaction per file, but too much overhead of file system?
+To find everything in a stream, you move across multiple time top-level directories,
+and you collect all the transactions related to that stream.
+
+Where is the index for a stream (or hierarchy of streams?).
+If could be in a separate index directory parallelling all the streams.
+But if you have a global stream directory with everything -- so you need oen per stream?
+So could maybe just have one big index file? W
+
+That index file is perhaps not backed up as it is derived...
+But is would take a long time to rebuild.
+Would be nice if could backup index file incrementally too.
+The CouchDB approach to a growing index with the end referring to immutable beginning?
+But done as segments of the index in different files?
+Maybe work in progress index segment and then permanent segments?
+Nice idea but too much for now? Distraction from UI and apps.
+
+---
+
+So just use one big SQLite file?
+And have SQL API to use it by the client to the server?
+
+Alternative is a triplestore index approach (with or without SQLite) with a triples API.
+
+Or could use CouchDB and have a document store of transactions...
+
+SQL API to sqlite files is more general?
+Then can open any SQLite file on the server.
+
+---
+
+The reason for some index is to support Twirlip apps making sense of data on rest of disk.
+
+---
+
+Looking at sqlite wrappers, it seems like sqlite has about 80 API functions that need to be wrapped.
+http://spiderape.sourceforge.net/plugins/sqlite/
+
+That gives me pause. Maybe easier to just use Pointrel API with a few API functions
+like addTriple (or addTransaction) and findTriple? And maybe a few others.
+ALso sqlite requires (for efficiency) a connection and a cursor.
+Maybe no way around cursor? Unless use original Pointrel approach of linked list of same field?
+Then a cursor is just a pointer to the file position of the last triple returned.
