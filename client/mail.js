@@ -1,8 +1,8 @@
 /* global m */
 import "./vendor/mithril.js"
 import { twirlip15ApiCall } from "./twirlip15-support.js"
-
 import parse from "./vendor/emailjs/mimeparser.js"
+import { base64decode } from "./vendor/base64.js"
 
 let errorMessage = ""
 let statusMessage = ""
@@ -57,7 +57,9 @@ async function loadFileContents(newFileName) {
             showStatus("reading failed at end")
             return
         }
-        segments.push(atob(data))
+        // new TextDecoder("utf-8").decode(uint8array)
+        // iso8859-1
+        segments.push(base64decode(data, new TextDecoder("ascii")))
         start += chunkSize
     }
 
@@ -66,23 +68,30 @@ async function loadFileContents(newFileName) {
     // Give the UI a chance to update through using a timeout
     setTimeout(async () => {
         mboxContents = segments.join("")
-        processEmails()
+        if (chosenFileName.endsWith(".msf")) {
+            await processMailSummaryFile()
+        } else {
+            await processEmails()
+        }
+        showStatus("")
+        chosenFileLoaded = true
+        m.redraw()
     }, 10)
 }
 
-async function processEmails() {
-    await splitEmails()
-    showStatus("")
-    chosenFileLoaded = true
-    m.redraw()
+async function processMailSummaryFile() {
+    console.log("mboxContents", mboxContents)
+    const lines = mboxContents.split("\r")
+    console.log("lines", lines)
+    emails = []
 }
 
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function splitEmails() {
-    const emailsRaw  = mboxContents.split(/^From /m)
+async function processEmails() {
+    const emailsRaw = mboxContents.split(/^From /m)
     emailsRaw.splice(0, 1)
     const result = []
     for (let i = 0; i < emailsRaw.length; i++) {
