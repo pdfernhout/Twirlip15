@@ -25,7 +25,7 @@ function showStatus(messageText) {
 }
 
 async function loadPartialFile(fileName, start, length) {
-    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length}, showError)
+    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length, encoding: "base64"}, showError)
     if (apiResult) {
         return apiResult.data
     }
@@ -55,7 +55,7 @@ async function loadFileContents(newFileName) {
     if (!fileSize) return
 
     const segments = []
-    const chunkSize = 1000000
+    const chunkSize = 1200000
     let start = 0
     while (start < fileSize) {
         showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
@@ -64,10 +64,10 @@ async function loadFileContents(newFileName) {
         if (data === false) {
             console.log("Unexpected: got false")
             showStatus("")
-            showError("reading failed at end")
+            showStatus("reading failed at end")
             return
         }
-        segments.push(hexDecode(data))
+        segments.push(atob(data))
         start += chunkSize
     }
 
@@ -210,7 +210,7 @@ function viewFileContents() {
                 m("div.ml4", from),
                 m("div.ml4", { onclick: () => {
                     expandedMessage[messageId] = !expandedMessage[messageId]
-                    // if (expandedMessage[messageId]) console.log("message", message)
+                    if (expandedMessage[messageId]) console.log("message", message)
                 } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
                 expandedMessage[messageId] && m("div",
                     m("div.ml5", m("label", 
