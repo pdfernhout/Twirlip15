@@ -52,3 +52,6 @@
 {"a":"0","b":"!","c":"4","o":"insert","index":52}
 {"a":"1","b":"+","c":"cheap","o":"insert","index":53}
 {"a":"4","b":"+","c":"5","o":"insert","index":54}
+{"a":"3","b":"!","c":"Maybe","o":"insert","index":55}
+{"a":"3","b":"!","c":"10","o":"insert","index":56}
+{"a":"3","b":"!","c":"","o":"clear","index":57,"ignore":true}

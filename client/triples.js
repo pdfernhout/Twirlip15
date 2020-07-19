@@ -82,7 +82,7 @@ function viewSelect(options, value, callback) {
     )
 }
 
-const tripleOperations = ["replace", "insert", "remove"]
+const tripleOperations = ["replace", "insert", "remove", "clear"]
 
 function viewTripleEditor() {
     return m("div.mt2", 
@@ -98,7 +98,7 @@ function viewTripleEditor() {
                     return
                 }
                 t.addTriple(editedTriple)
-                editedTriple = {a: "", b: "", c: "", o: "replace"}
+                editedTriple = {a: "", b: "", c: "", o: "insert"}
             }
         }, "Add triple")
     )
@@ -129,7 +129,7 @@ function viewIBISDiagram(leader, id) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
-        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.last(t.find(id, "label")) || "Unlabelled"),
+        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.findLast(id, "label") || "Unlabelled"),
         t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
         t.find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
         t.find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),

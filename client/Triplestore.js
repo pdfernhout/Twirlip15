@@ -77,8 +77,12 @@ export function Triplestore(showError, fileName) {
         triple.index = triples.length + 1
         if (triple.o === "remove") {
             _removeTriple(triple)
+            triple.ignore = true
         } else if (triple.o === "replace" || !triple.o) {
             _replaceTriple(triple)
+        } else if (triple.o === "clear") {
+            _replaceTriple(triple)
+            triple.ignore = true
         }
         triples.push(triple)
         if (write) appendFile(JSON.stringify(triple) + "\n")
@@ -125,7 +129,11 @@ export function Triplestore(showError, fileName) {
     function last(triples) {
         if (triples.length === 0) return null
         return triples[triples.length - 1]
-    }    
+    }
+
+    function findLast(a, b, c) {
+        return this.last(this.find(a, b, c, false))
+    }
 
     function getLoadingState() {
         return {
@@ -142,6 +150,7 @@ export function Triplestore(showError, fileName) {
         filterTriples,
         find,
         last,
+        findLast,
         getLoadingState,
     }
 }
