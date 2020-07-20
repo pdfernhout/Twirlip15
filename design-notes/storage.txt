@@ -24,6 +24,12 @@ It says how many emails have been indexed of how many total and how long it took
 
 So, is that acceptable? Interesting how people must think it is.
 
+[In the end, the resulting index file is just under 4.1 GB.
+It took about 8.5 hours including indexing RSS feeds of 100ks of tweets.
+For some reason one rss feed at the end took 30 minutes to index ~100K messages
+-- maybe the laptop was sleeping?
+It was unfortunate I could not copy and paste from the Activity Manager window.]
+
 Laptop getting warm as it runs the indexing process... 
 Thunderbird running at 7% CPU load.
 ~20% load overall. Maybe one full vcpu thread of eight?
@@ -46,7 +52,7 @@ file1.txt
 dir1/*
 dir2
 
-Maybe I need to accept there will eb a large index file somewhere which is derived
+Maybe I need to accept there will be a large index file somewhere which is derived
 and which optionally will not be backed up?
 Although five house (in this case) is a long time to wait until something is operational again.
 What if it was ten million messages or a billion messages?
@@ -65,7 +71,7 @@ and you collect all the transactions related to that stream.
 Where is the index for a stream (or hierarchy of streams?).
 If could be in a separate index directory parallelling all the streams.
 But if you have a global stream directory with everything -- so you need oen per stream?
-So could maybe just have one big index file? W
+So could maybe just have one big index file?
 
 That index file is perhaps not backed up as it is derived...
 But is would take a long time to rebuild.
