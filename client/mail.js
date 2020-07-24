@@ -99,7 +99,7 @@ async function processEmails() {
         const emailRaw = emailsRaw[i]
         const parsedEmail = processEmail("From " + emailRaw)
         // console.log(parsedEmail.headers.subject[0].value)
-        logMimeParts(parsedEmail)
+        // logMimeParts(parsedEmail)
         result.push(parsedEmail)
         if (i % 10 === 9) {
             showStatus("processing email " + (i + 1) + " of " + emailsRaw.length)
@@ -107,7 +107,7 @@ async function processEmails() {
             await timeout(1)
         }
     }
-    console.log("mimeTypeCounts", JSON.stringify(mimeTypeCounts, null, 4))
+    // console.log("mimeTypeCounts", JSON.stringify(mimeTypeCounts, null, 4))
     // console.log("mimeLog", mimeLog)
     emails = result
     // emails = emailsRaw.map(emailRaw => processEmail("From " + emailRaw))
@@ -215,16 +215,17 @@ function getFromField(message) {
 
 // Recursive
 function getTextPlain(message) {
+    let result = ""
     if (message.contentType.value === "text/plain") {
-        return new TextDecoder("utf-8").decode(message.content)
+        result += new TextDecoder("utf-8").decode(message.content)
     }
     // if (message.content) return new TextDecoder("utf-8").decode(message.content)
     for (let i = 0; i < message.childNodes.length; i++) {
         const node = message.childNodes[i]
         const text = getTextPlain(node)
-        if (text) return text
+        if (text) result += "\n" + text
     }
-    return ""
+    return result
 }
 
 let mimeTypeCounts = {}
@@ -246,10 +247,10 @@ function logMimeParts(message, indent=4) {
     mimeLog += paddingString.substring(0, indent) + message.contentType.value + "\n"
     for (let i = 0; i < message.childNodes.length; i++) {
         const node = message.childNodes[i]
+        // eslint-disable-next-line no-unused-vars
         logMimeParts(node, indent + 4)
     }
 }
-
 
 function viewFileContents() {
     if (!searchString && !searchInvert) return []
@@ -271,7 +272,7 @@ function viewFileContents() {
                     expandedMessage[messageId] = !expandedMessage[messageId]
                     if (expandedMessage[messageId]) {
                         console.log("message", message)
-                        logMimeParts(message)
+                        // logMimeParts(message)
                     }
                 } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
                 expandedMessage[messageId] && m("div",
