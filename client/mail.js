@@ -80,6 +80,7 @@ async function loadFileContents(newFileName) {
 }
 
 async function processMailSummaryFile() {
+    // Unfinished -- maybe not worth dealing with complex format
     console.log("mboxContents", mboxContents)
     const lines = mboxContents.split("\r")
     console.log("lines", lines)
@@ -96,13 +97,18 @@ async function processEmails() {
     const result = []
     for (let i = 0; i < emailsRaw.length; i++) {
         const emailRaw = emailsRaw[i]
-        result.push(processEmail("From " + emailRaw))
+        const parsedEmail = processEmail("From " + emailRaw)
+        // console.log(parsedEmail.headers.subject[0].value)
+        logMimeParts(parsedEmail)
+        result.push(parsedEmail)
         if (i % 10 === 9) {
             showStatus("processing email " + (i + 1) + " of " + emailsRaw.length)
             m.redraw()
             await timeout(1)
         }
     }
+    console.log("mimeTypeCounts", JSON.stringify(mimeTypeCounts, null, 4))
+    // console.log("mimeLog", mimeLog)
     emails = result
     // emails = emailsRaw.map(emailRaw => processEmail("From " + emailRaw))
 }
@@ -221,6 +227,30 @@ function getTextPlain(message) {
     return ""
 }
 
+let mimeTypeCounts = {}
+let mimeLog = ""
+const paddingString = "                                                               "
+
+// Recursive
+function logMimeParts(message, indent=4) {
+    /*
+    if (message.contentType.value === "text/plain") {
+        console.log("text/plain contents: ", new TextDecoder("utf-8").decode(message.content))
+    } else {
+        console.log("not text/plain", message.contentType.value, message.content)
+    }
+    */
+    if (!mimeTypeCounts[message.contentType.value]) mimeTypeCounts[message.contentType.value] = 0
+    mimeTypeCounts[message.contentType.value]++
+    // eslint-disable-next-line no-unused-vars
+    mimeLog += paddingString.substring(0, indent) + message.contentType.value + "\n"
+    for (let i = 0; i < message.childNodes.length; i++) {
+        const node = message.childNodes[i]
+        logMimeParts(node, indent + 4)
+    }
+}
+
+
 function viewFileContents() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
@@ -239,7 +269,10 @@ function viewFileContents() {
                 m("div.ml4", from),
                 m("div.ml4", { onclick: () => {
                     expandedMessage[messageId] = !expandedMessage[messageId]
-                    if (expandedMessage[messageId]) console.log("message", message)
+                    if (expandedMessage[messageId]) {
+                        console.log("message", message)
+                        logMimeParts(message)
+                    }
                 } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
                 expandedMessage[messageId] && m("div",
                     m("div.ml5", m("label", 
