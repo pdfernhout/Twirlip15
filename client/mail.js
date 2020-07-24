@@ -3,6 +3,7 @@ import "./vendor/mithril.js"
 import { twirlip15ApiCall } from "./twirlip15-support.js"
 import parse from "./vendor/emailjs/mimeparser.js"
 import { base64decode } from "./vendor/base64.js"
+import base64encode from "./vendor/emailjs/base64-encode.js"
 
 let errorMessage = ""
 let statusMessage = ""
@@ -200,6 +201,7 @@ function parseEmailRoughAndReady(email) {
 const expandedMessage = {}
 
 let showRaw = false
+let showImages = false
 
 function getFromField(message) {
     const from = message.headers.from[0]
@@ -222,6 +224,7 @@ function getTextPlain(message) {
     // if (message.content) return new TextDecoder("utf-8").decode(message.content)
     for (let i = 0; i < message.childNodes.length; i++) {
         const node = message.childNodes[i]
+        // eslint-disable-next-line no-unused-vars
         const text = getTextPlain(node)
         if (text) result += "\n" + text
     }
@@ -258,6 +261,10 @@ function viewEmailPart(message) {
     if (message.contentType.value === "text/plain") {
         result.push(m("pre.ml5.pre-wrap", new TextDecoder("utf-8").decode(message.content)))
     }
+    if (showImages && message.contentType.value.startsWith("image/")) {
+        const encodedImage = base64encode(message.content)
+        result.push(m("img", {src: "data:" + message.contentType.value + ";base64, " + encodedImage}))
+    }
     for (let i = 0; i < message.childNodes.length; i++) {
         const node = message.childNodes[i]
         result.push(viewEmailPart(node))
@@ -284,12 +291,19 @@ function viewEmail(message) {
                 }
             } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
             expandedMessage[messageId] && m("div",
-                m("div.ml5", m("label", 
+                m("div.dib.ml5", m("label", 
                     m("input[type=checkbox].mr1", {
                         checked: showRaw,
                         onclick: () => showRaw = !showRaw
                     }),
                     "Show Raw"
+                )),
+                m("div.dib.ml3", m("label", 
+                    m("input[type=checkbox].mr1", {
+                        checked: showImages,
+                        onclick: () => showImages = !showImages
+                    }),
+                    "Show Attached Images"
                 )),
                 // !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
                 !showRaw && body,
