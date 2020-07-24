@@ -252,43 +252,48 @@ function logMimeParts(message, indent=4) {
     }
 }
 
-function viewFileContents() {
+function viewEmail(message) {
+    const subject = message.headers.subject[0].value
+    const from = getFromField(message)
+    const date = message.headers.date[0].value
+    const messageId = message.headers["message-id"][0].initial
+    const body = getTextPlain(message)
+    return m("div", 
+        m("div", 
+            m("div.ml4", date),
+            m("div.ml4", from),
+            m("div.ml4", { onclick: () => {
+                expandedMessage[messageId] = !expandedMessage[messageId]
+                if (expandedMessage[messageId]) {
+                    console.log("message", message)
+                    // logMimeParts(message)
+                }
+            } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
+            expandedMessage[messageId] && m("div",
+                m("div.ml5", m("label", 
+                    m("input[type=checkbox].mr1", {
+                        checked: showRaw,
+                        onclick: () => showRaw = !showRaw
+                    }),
+                    "Show Raw"
+                )),
+                !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
+                showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
+            )
+        )
+    )
+}
+
+function viewEmails() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
-        const message = email
         const searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
         if (!searchInvert && searchResult === -1) return []
         if (searchInvert && searchString && searchResult !== -1) return []
-        const subject = message.headers.subject[0].value
-        const from = getFromField(message)
-        const date = message.headers.date[0].value
-        const messageId = message.headers["message-id"][0].initial
-        const body = getTextPlain(message)
-        return m("div", 
-            m("div", 
-                m("div.ml4", date),
-                m("div.ml4", from),
-                m("div.ml4", { onclick: () => {
-                    expandedMessage[messageId] = !expandedMessage[messageId]
-                    if (expandedMessage[messageId]) {
-                        console.log("message", message)
-                        // logMimeParts(message)
-                    }
-                } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
-                expandedMessage[messageId] && m("div",
-                    m("div.ml5", m("label", 
-                        m("input[type=checkbox].mr1", {
-                            checked: showRaw,
-                            onclick: () => showRaw = !showRaw
-                        }),
-                        "Show Raw"
-                    )),
-                    !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
-                    showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
-                ),
-            ),
+        return [
+            viewEmail(email),
             m("hr")
-        )
+        ]
     }))
 }
 
@@ -329,7 +334,7 @@ const ViewMail = {
             ),
             chosenFileName && chosenFileLoaded && m("div",
                 viewFileSearch(),
-                viewFileContents()
+                viewEmails()
             )
         )
     }
