@@ -263,7 +263,12 @@ function viewEmailPart(message) {
     }
     if (showImages && message.contentType.value.startsWith("image/")) {
         const encodedImage = base64encode(message.content)
-        result.push(m("img", {src: "data:" + message.contentType.value + ";base64, " + encodedImage}))
+        const alt = (message.contentType.params && message.contentType.params.name) || "An unspecified image"
+        result.push(m("img[alt='a title']", {
+            src: "data:" + message.contentType.value + ";base64, " + encodedImage,
+            alt,
+            title: alt
+        }))
     }
     for (let i = 0; i < message.childNodes.length; i++) {
         const node = message.childNodes[i]
