@@ -252,12 +252,26 @@ function logMimeParts(message, indent=4) {
     }
 }
 
+// Recursive
+function viewEmailPart(message) {
+    let result = []
+    if (message.contentType.value === "text/plain") {
+        result.push(m("pre.ml5.pre-wrap", new TextDecoder("utf-8").decode(message.content)))
+    }
+    for (let i = 0; i < message.childNodes.length; i++) {
+        const node = message.childNodes[i]
+        result.push(viewEmailPart(node))
+    }
+    return result
+}
+
 function viewEmail(message) {
     const subject = message.headers.subject[0].value
     const from = getFromField(message)
     const date = message.headers.date[0].value
     const messageId = message.headers["message-id"][0].initial
-    const body = getTextPlain(message)
+    // const body = getTextPlain(message)
+    const body = viewEmailPart(message)
     return m("div", 
         m("div", 
             m("div.ml4", date),
@@ -277,7 +291,8 @@ function viewEmail(message) {
                     }),
                     "Show Raw"
                 )),
-                !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
+                // !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
+                !showRaw && body,
                 showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
             )
         )
