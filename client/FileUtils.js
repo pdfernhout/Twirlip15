@@ -82,7 +82,13 @@ export const FileUtils = {
         }
 
         const downloadLink = document.createElement("a")
-        downloadLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(fileContents))
+        if (fileContents instanceof Uint8Array) {
+            const blob = new Blob([fileContents], {type: "octet/stream"})
+            const url = window.URL.createObjectURL(blob)
+            downloadLink.setAttribute("href", url)
+        } else {
+            downloadLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(fileContents))
+        }
         downloadLink.setAttribute("download", fileName)
         downloadLink.style.display = "none"
         document.body.appendChild(downloadLink)

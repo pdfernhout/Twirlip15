@@ -4,6 +4,7 @@ import { twirlip15ApiCall } from "./twirlip15-support.js"
 import parse from "./vendor/emailjs/mimeparser.js"
 import { base64decode } from "./vendor/base64.js"
 import base64encode from "./vendor/emailjs/base64-encode.js"
+import { FileUtils } from "./FileUtils.js"
 
 let errorMessage = ""
 let statusMessage = ""
@@ -260,6 +261,11 @@ function viewEmailPart(message) {
     let result = []
     if (message.contentType.value === "text/plain") {
         result.push(m("pre.ml5.pre-wrap", new TextDecoder("utf-8").decode(message.content)))
+    }
+    if (message.contentType.value.startsWith("application/")) {
+        const fileName = (message.contentType.params && message.contentType.params.name) || "unspecified.dat"
+        console.log("save", message)
+        result.push(m("div.ml5", m("button", { onclick: () => FileUtils.saveToFile(fileName, message.content) }, "Export: " + fileName)))
     }
     if (showImages && message.contentType.value.startsWith("image/")) {
         const encodedImage = base64encode(message.content)
