@@ -324,18 +324,23 @@ function viewEmail(message) {
     )
 }
 
+function doesEmailContainSearchString(email) {
+    let searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+    // Might need recursive search to do this completely
+    if (searchResult === -1 && email.contentType.value === "text/plain"
+        && email.contentTransferEncoding && email.contentTransferEncoding.value === "base64") {
+        const content = new TextDecoder("utf-8").decode(email.content)
+        searchResult = content.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+    }
+    if (!searchInvert && searchResult === -1) return false
+    if (searchInvert && searchString && searchResult !== -1) return false
+    return true
+}
+
 function viewEmails() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
-        let searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
-        // Might need recursive search to do this completley
-        if (searchResult === -1 && email.contentType.value === "text/plain"
-            && email.contentTransferEncoding && email.contentTransferEncoding.value === "base64") {
-            const content = new TextDecoder("utf-8").decode(email.content)
-            searchResult = content.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
-        }
-        if (!searchInvert && searchResult === -1) return []
-        if (searchInvert && searchString && searchResult !== -1) return []
+        if (!doesEmailContainSearchString(email)) return []
         return [
             viewEmail(email),
             m("hr")
