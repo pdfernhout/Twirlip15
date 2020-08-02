@@ -264,7 +264,7 @@ function viewEmailPart(message) {
     }
     if (message.contentType.value.startsWith("application/")) {
         const fileName = (message.contentType.params && message.contentType.params.name) || "unspecified.dat"
-        console.log("save", message)
+        // console.log("application/", message.contentType.value)
         result.push(m("div.ml5", m("button", { onclick: () => FileUtils.saveToFile(fileName, message.content) }, "Export: " + fileName)))
     }
     if (showImages && message.contentType.value.startsWith("image/")) {
@@ -327,7 +327,13 @@ function viewEmail(message) {
 function viewEmails() {
     if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
-        const searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+        let searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+        // Might need recursive search to do this completley
+        if (searchResult === -1 && email.contentType.value === "text/plain"
+            && email.contentTransferEncoding && email.contentTransferEncoding.value === "base64") {
+            const content = new TextDecoder("utf-8").decode(email.content)
+            searchResult = content.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+        }
         if (!searchInvert && searchResult === -1) return []
         if (searchInvert && searchString && searchResult !== -1) return []
         return [
