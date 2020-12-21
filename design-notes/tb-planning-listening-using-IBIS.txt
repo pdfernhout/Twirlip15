@@ -1,0 +1,163 @@
+How can we work together towards a common goal?
+    Who are "we"?
+
+    What common goals should we have?
+        Thunderbird serves its end users well
+        Thunderbird works in the way they like it
+        Thunderbird project is a rewarding place for contributors
+
+    What do we want Thunderbird to be?
+        Driven by Company and its employees hired by managers appointed by TB constructively
+            How much influence would community have in that structure?
+            How would community stop bad decisions by staff?
+        Driven by Community
+            Benefits?
+                Ideas and insight and patches will come from all over the Internet
+                Anybody who cares and wants to contribute constructively to a solution can do so
+
+    How can we achieve our goals?
+        Respect each other's needs
+        Discover and resolve pain points with solutions
+                How can we discover and resolve pain points?
+                    Actively interview random end users
+                    Ask them where they need improvements
+                        How would we ask them?
+                            Survey
+                            Ask for stories
+                                What are tools for collecting stories?
+                                    NarraFirma
+                    Fulfill expressed needs
+                        How much money will this take?
+                        Who decides which of many needs to fulfill?
+                            Discussion
+                        How do we meet needs?
+                            Develop single best solution
+                                Is is feasible to find one best solution?
+                                Why is this better than multiplicity?
+                                    Only way to make progress
+                                        Why?
+                                            Unproductive torn between A & B
+                                            
+                            Why can't commercial software meet needs?
+                                Take it or leave it attitude of companies
+                                    Is this true for all companies?
+                                    Do non-commercial groups do this too?
+                                Impossibility to add new features
+                                    What of tools supporting plugins?
+                                Polishing is impossible with closed source
+
+                            Ensure Open Source
+                                What are examples open source success?
+                                    Watches
+                                    Routers
+                                    Supercomputers
+                                    Cloud
+                                    Linux
+                                        Would Linux have been successful if only a desktop OS?
+                                            No
+                                            Why?
+                                                Less contributors
+                                                        Why are contributors important?
+                                                            They build things that are useful to end users.
+                                            Would a manifesto and a business plan have been enough otherwise?
+                                                No
+                                                    What are examples of such failures?
+
+                    Support users fulfilling their own needs
+                        What prevents that now?
+                            Roadblocks
+                                What are examples of roadblocks?
+
+        Listen to each other
+            What is the current state of listening?
+                Completely lost on tb-planning
+                Lost around the world
+
+            Why should we listen?
+                Need to distinguish open source from open projects
+                    What is an open project?
+                        An open project is open to contributors everywhere
+                        An open project supports users "scratching their itch"
+                        An open project listens to contributors
+                            Does an open project listen to users?
+                        An open source license is not enough
+                            What is an example?much 
+                                MS Outlook for Windows under MIT license but managed by Microsoft would not be much better
+
+            How to listen to the community?
+                Use Dialogue Mapping with IBIS
+                    + Well-defined methodology
+                    + Easy to understand for users
+                    + Helps explore "Wicked" problems
+                    - Unfamiliar
+                    - Benefits from adept practitioner
+                    - Not supported natively in Thunderbird
+                        How could IBIS be added to THunderbird?
+                            As a plugin
+                                + Can be developed modularly by any person
+                                - Few people may try it
+                            Natively
+                                + Helps with widespread adoption
+                                + More secure
+                                - Complicates an already complex codebase
+                                - Requires collective buy-in
+                                
+                Use a community-driven process of steps
+                    What are the steps?
+                        1. Problem statement on tb-planning
+                            Why is it called tb-planning?
+                                Supposed to be the place where the plans for the future TB are discussed and made
+                        2. TB community discusses problem statement
+                            What does this entail?
+                                People suggest ideas, share insights about pros and cons of various solutions, based on their experience
+                                    Why are diverse experiences important?
+                                        Multiple viewpoints help to make wiser decisions
+                                        See point above on open projects
+                                        People can build on each others ideas
+                        3. After time period TB Council reviews the discussion and makes a decision
+                            What is a typical time period for discussions?
+                                1 to 2 weeks
+                                    Is this always enough?
+                                    Who decides when to end discussion?
+                            What is the criterion for a decision?
+                                The most reasonable solution should be chosen that best serves the goal
+                                    Who decides what is a reasonable solution?
+                                    Who decides which solution best serves the goal?
+                        4. The solution is implemented
+                            Who will implement the solution?
+                                TB company / MZLA Tech Inc employees then go and implement that solution
+                                A contributor/volunteer is permitted to implement it
+                                    Who provides permission?
+                                    What are the consequences for working on the problem without permission?
+
+                    What is a prerequisite of such discussions?
+                        The discussions MUST be civil
+                        Do not attack other people's point of views
+                        Do not shoot each other's ideas and viewpoints down
+                            At what point does constructive criticism come in?
+                        Accepting the needs of others as a given
+                        Rational and constructive in nature
+                        Support finding the best solution together
+                        Transparency
+                            Why is transparency important?
+                                Transparency needed to weight in or contribute ideas or insight
+                                Otherwise community is *systematically* locked out
+                                Knowing what's going on is first step in any useful contribution
+                                Also needed for test of community-driven process
+
+                    When is the community-driven approach appropriate?
+                        Big decisions
+                            Who decides what is a big decision?
+                        Any decision that the community cares about
+                            How is it decided that the community cares about something?
+                                How significant does the caring have to be to be actionable?
+                        Not small questions
+                            How do we know something is a small question?
+                            What happens if we later decide a small question is really a big one?
+                    
+                    + Hopefully a solution will emerge that considers everybody's needs
+                    + Will be superior to closed source software
+                    + Everybody's contribution is welcome
+                        How will problematical contributions be weeded out?
+                    + Decisions are made by many people
+                    + Decisions consider the needs of many people
