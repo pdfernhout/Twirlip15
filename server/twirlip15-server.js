@@ -190,9 +190,22 @@ function requestEcho(request, response) {
     response.json({ok: true, echo: request.body})
 }
 
+// Fails if required field is missing or empty
 function failForRequiredField(request, response, fieldName) {
     const value = request.body[fieldName]
-    if (!request.body[fieldName] || !typeof value === "string") {
+    if (!request.body[fieldName] || typeof value !== "string") {
+        const errorMessage = "API call missing required field: " + fieldName
+        console.log("Error:", errorMessage)
+        response.json({ok: false, errorMessage})
+        return true
+    }
+    return false
+}
+
+// Similar to failForRequiredField but accepts empty strings
+function failForMissingRequiredField(request, response, fieldName) {
+    const value = request.body[fieldName]
+    if (typeof value !== "string") {
         const errorMessage = "API call missing required field: " + fieldName
         console.log("Error:", errorMessage)
         response.json({ok: false, errorMessage})
@@ -299,7 +312,7 @@ async function requestFileSave(request, response) {
     console.log("POST file-save", request.body)
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
-    if (failForRequiredField(request, response, "contents")) return
+    if (failForMissingRequiredField(request, response, "contents")) return
     const fileContents = request.body.contents
     const encoding = request.body.encoding || "utf8"
     try {
