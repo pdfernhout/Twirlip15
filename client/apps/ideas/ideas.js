@@ -1,8 +1,8 @@
 /* global m, showdown, cytoscape */
-import "./vendor/mithril.js"
-import { twirlip15ApiCall } from "./twirlip15-support.js"
-import "./vendor/showdown.js"
-import "./vendor/cytoscape.umd.js"
+import "../../vendor/mithril.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import "../../vendor/showdown.js"
+import "../../vendor/cytoscape.umd.js"
 
 const baseStorageKeyForNodes = "twirlip15-ideas--nodes"
 

@@ -1,6 +1,6 @@
 /* global m */
-import "./vendor/mithril.js"
-import { Triplestore } from "./Triplestore.js"
+import "../../vendor/mithril.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
 let showIgnoredTriples = true
 

@@ -1,10 +1,10 @@
 /* global m */
-import "./vendor/mithril.js"
-import { twirlip15ApiCall } from "./twirlip15-support.js"
-import parse from "./vendor/emailjs/mimeparser.js"
-import { base64decode } from "./vendor/base64.js"
-import base64encode from "./vendor/emailjs/base64-encode.js"
-import { FileUtils } from "./FileUtils.js"
+import "../../vendor/mithril.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import parse from "../../vendor/emailjs/mimeparser.js"
+import { base64decode } from "../../vendor/base64.js"
+import base64encode from "../../vendor/emailjs/base64-encode.js"
+import { FileUtils } from "../../common/FileUtils.js"
 
 let errorMessage = ""
 let statusMessage = ""

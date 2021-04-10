@@ -1,6 +1,6 @@
 /* global m */
-import "./vendor/mithril.js"
-import { twirlip15ApiCall } from "./twirlip15-support.js"
+import "../../vendor/mithril.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
 
 let errorMessage = ""
 let chosenFileName = ""

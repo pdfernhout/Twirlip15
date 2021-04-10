@@ -488,7 +488,7 @@ app.use((req, res, next) => {
         // Special handling for urls with a querystring like: /some/path/something?twirlip=editor
         const appName = twirlip.replace(/[^0-9a-z-]/gi, "")
         console.log("send app file for twirlip", appName)
-        res.sendFile(process.cwd() + "/client/" + appName + ".html")
+        res.sendFile(process.cwd() + "/client/apps/" + appName + "/" + appName + ".html")
     } else if (req.url.endsWith("/") && !req.query.twirlip) {
         // Use the filer app to handle interacting with directories
         res.status(301).redirect(req.url + "?twirlip=filer")

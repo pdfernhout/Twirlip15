@@ -1,7 +1,7 @@
 /* global m, showdown */
-import "./vendor/mithril.js"
-import { twirlip15ApiCall } from "./twirlip15-support.js"
-import "./vendor/showdown.js"
+import "../../vendor/mithril.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import "../../vendor/showdown.js"
 
 let errorMessage = ""
 let chosenFileName = ""

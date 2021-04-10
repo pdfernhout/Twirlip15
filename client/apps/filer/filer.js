@@ -1,8 +1,8 @@
 /* global m */
-import "./vendor/mithril.js"
-import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "./twirlip15-support.js"
-import Dexie from "./vendor/dexie.mjs"
-import { FileUtils } from "./FileUtils.js"
+import "../../vendor/mithril.js"
+import { twirlip15ApiCall, Twirlip15Preferences, menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "../../common/twirlip15-support.js"
+import Dexie from "../../vendor/dexie.mjs"
+import { FileUtils } from "../../common/FileUtils.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
