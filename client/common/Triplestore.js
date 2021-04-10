@@ -1,4 +1,4 @@
-import { twirlip15ApiCall } from "./twirlip15-support.js"
+import { twirlip15ApiCall } from "./twirlip15-api.js"
 
 // Future design ideas for API:
 // triples[id]["+"].map(...)

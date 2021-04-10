@@ -1,6 +1,6 @@
 /* global m, showdown, cytoscape */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
 import "../../vendor/showdown.js"
 import "../../vendor/cytoscape.umd.js"
 

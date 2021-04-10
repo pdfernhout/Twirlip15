@@ -1,6 +1,6 @@
 /* global m, showdown */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
 import "../../vendor/showdown.js"
 
 let errorMessage = ""

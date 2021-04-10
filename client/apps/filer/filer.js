@@ -1,6 +1,6 @@
 /* global m */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-support.js"
+import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
 import { menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "../../common/menu.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
