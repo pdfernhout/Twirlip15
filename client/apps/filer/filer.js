@@ -1,10 +1,11 @@
-/* global m */
+/* global m, md5 */
 import "../../vendor/mithril.js"
 import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
 import { menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "../../common/menu.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
 import { FileUtils } from "../../common/FileUtils.js"
+import "../../vendor/md5.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -423,7 +424,9 @@ function viewerForURL(url) {
     if (url.endsWith(".md")) {
         return url + "?twirlip=view-md"
     } else {
-        return url
+        let subdomain = ""
+        if (url.toLowerCase().includes("download")) subdomain = md5(url) + ".unsafe."
+        return window.location.protocol + "//" + subdomain + window.location.host + url
     }
 }
 
