@@ -287,7 +287,12 @@ function viewEmail(message) {
     const subject = message.headers.subject[0].value
     const from = getFromField(message)
     const date = message.headers.date[0].value
-    const messageId = message.headers["message-id"][0].initial
+    const rawMessageId = message.headers["message-id"] || message.headers["Message-Id"]
+    if (!rawMessageId || !rawMessageId[0]) {
+        console.log("Issue with messageId for: ", message.headers)
+        return m("pre", "Issue with messageId for: " + JSON.stringify(message.headers, null, 4))
+    }
+    const messageId = rawMessageId[0].initial
     // const body = getTextPlain(message)
     const body = viewEmailPart(message)
     return m("div", 
