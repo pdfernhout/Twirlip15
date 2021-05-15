@@ -1,6 +1,6 @@
 /* global m */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 
 let errorMessage = ""
 let chosenFileName = ""
@@ -16,8 +16,10 @@ function showError(error) {
     errorMessage = error
 }
 
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+
 async function loadPartialFileTest(fileName) {
-    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName: fileName, length: 4096}, showError)
+    const apiResult = await TwirlipServer.fileReadBytes(fileName, 4096)
     if (apiResult) {
         partialFileTest = apiResult.data
     }
@@ -28,7 +30,7 @@ async function loadFileContents(newFileName) {
     chosenFileContents = null
     chosenFileLoaded = false
     partialFileTest = ""
-    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
+    const apiResult = await TwirlipServer.fileContents(chosenFileName)
     if (apiResult) {
         chosenFileContents = apiResult.contents
         chosenFileLoaded = true
@@ -40,7 +42,7 @@ async function loadFileContents(newFileName) {
 async function appendFile(fileName, stringToAppend, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
+    const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
     fileSaveInProgress = false
     if (apiResult) {
         successCallback()
@@ -50,7 +52,7 @@ async function appendFile(fileName, stringToAppend, successCallback) {
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents}, showError)
+    const apiResult = await TwirlipServer.fileSave(fileName, contents)
     fileSaveInProgress = false
     if (apiResult) {
         successCallback()

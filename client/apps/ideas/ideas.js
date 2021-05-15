@@ -1,6 +1,6 @@
 /* global m, showdown, cytoscape */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import "../../vendor/showdown.js"
 import "../../vendor/cytoscape.umd.js"
 
@@ -23,6 +23,8 @@ function showError(error) {
     errorMessage = error
 }
 
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+
 async function loadDirectory(newPath) {
     loadingAllFiles = true
     triples = []
@@ -32,7 +34,7 @@ async function loadDirectory(newPath) {
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
-    const apiResult = await twirlip15ApiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true}, showError)
+    const apiResult = await TwirlipServer.fileDirectory(directoryPath, true)
     if (apiResult) {
         directoryFiles = apiResult.files.filter(
             fileInfo => !fileInfo.isDirectory 
@@ -59,7 +61,7 @@ async function addFile() {
             newFileName =  newFileName + ".md"
         }
         const fileName = directoryPath + newFileName
-        const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents: ""}, showError)
+        const apiResult = await TwirlipServer.fileSave(fileName, "")
         if (apiResult) {
             window.location.assign(fileName + "?twirlip=view-edit")
         }
@@ -96,7 +98,7 @@ function parseTriples(fileInfo) {
 }
 
 async function loadFileContents(fileInfo) {
-    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: directoryPath + fileInfo.name}, showError)
+    const apiResult = await TwirlipServer.fileContents(directoryPath + fileInfo.name)
     if (apiResult) {
         fileInfo.contents = apiResult.contents
         parseTriples(fileInfo)

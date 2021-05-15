@@ -398,6 +398,7 @@ async function requestFileDelete(request, response) {
     }
 
     // TODO: better handling and reporting if some files deleted but others are not
+    // TODO: better reporting when directory can't be deleted because it is not empty
     for (let fileName of deleteFiles) {
         try {
             const filePath = path.join(baseDir, fileName)

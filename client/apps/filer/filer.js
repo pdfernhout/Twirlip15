@@ -1,6 +1,6 @@
 /* global m, md5 */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "../../common/menu.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
@@ -42,6 +42,7 @@ function showStatus(messageText) {
     statusMessage = messageText
 }
 
+const TwirlipServer = new Twirlip15ServerAPI(showError)
 
 async function loadDirectory(newPath, saveState) {
     clearPreviewFetchQueue()
@@ -65,7 +66,7 @@ async function loadDirectory(newPath, saveState) {
     directoryPath = newPath
     directoryFiles = null
     errorMessage = ""
-    const apiResult = await twirlip15ApiCall({request: "file-directory", directoryPath: directoryPath, includeStats: true}, showError)
+    const apiResult = await TwirlipServer.fileDirectory(directoryPath, true)
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
@@ -112,7 +113,7 @@ async function fetchFilePreview(fileName) {
         previews[fileName] = cacheEntry.base64Data
         return false
     }
-    const apiResult = await twirlip15ApiCall({request: "file-preview", fileName, resizeOptions}, showError)
+    const apiResult = await TwirlipServer.filePreview(fileName, resizeOptions)
     if (apiResult) {
         const base64Data = apiResult.base64Data
         previews[fileName] = base64Data
@@ -137,14 +138,14 @@ async function newFile() {
     const newFileName = prompt("New file name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
-        const apiResult = await twirlip15ApiCall({request: "file-save", fileName, contents: ""}, showError)
+        const apiResult = await TwirlipServer.fileSave(fileName, "")
         if (apiResult) loadDirectory(directoryPath, false)
     }
 }
 
 
 async function appendFile(fileName, stringToAppend, encoding) {
-    const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend, encoding}, showError)
+    const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend, encoding)
     if (apiResult) {
         return true
     }
@@ -184,7 +185,7 @@ async function uploadFile() {
 
         if (success) {
             showStatus("File uploaded almost done; finishing up")
-            const apiResult = await twirlip15ApiCall({request: "file-rename", renameFiles: [{oldFileName: tempFileName, newFileName: finalFileName}]}, showError)
+            const apiResult = await TwirlipServer.fileRenameOne(tempFileName, finalFileName)
             if (apiResult) {
                 loadDirectory(directoryPath, false)
                 if (!errorMessage) showStatus("Upload finished OK")
@@ -203,7 +204,7 @@ async function newDirectory() {
     const newFileName = prompt("New directory name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
-        const apiResult = await twirlip15ApiCall({request: "file-new-directory", directoryPath: fileName, contents: ""}, showError)
+        const apiResult = await TwirlipServer.fileNewDirectory(fileName)
         if (apiResult) loadDirectory(directoryPath, false)
     }
 }
@@ -218,7 +219,7 @@ async function renameFile() {
     if (fileNameAfter) {
         const oldFileName = directoryPath + fileNameBefore
         const newFileName = directoryPath + fileNameAfter
-        const apiResult = await twirlip15ApiCall({request: "file-rename", renameFiles: [{oldFileName, newFileName}]}, showError)
+        const apiResult = await TwirlipServer.fileRenameOne(oldFileName, newFileName)
         if (apiResult) {
             selectedFiles = {}
             loadDirectory(directoryPath, false)
@@ -232,7 +233,7 @@ async function copyFile() {
     const copyToFileName = prompt("New file name for copy?", copyFromFileName)
     if (copyToFileName) {
         const copyToFilePath = directoryPath + copyToFileName
-        const apiResult = await twirlip15ApiCall({request: "file-copy", copyFromFilePath, copyToFilePath}, showError)
+        const apiResult = await TwirlipServer.fileCopy(copyFromFilePath, copyToFilePath)
         if (apiResult) {
             selectedFiles = {}
             loadDirectory(directoryPath, false)
@@ -244,7 +245,7 @@ async function deleteFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
     if (!proceed) return
-    const apiResult = await twirlip15ApiCall({request: "file-delete", deleteFiles: Object.keys(selectedFiles)}, showError)
+    const apiResult = await TwirlipServer.fileDelete(Object.keys(selectedFiles))
     if (apiResult) {
         selectedFiles = {}
         loadDirectory(directoryPath, false)
@@ -255,7 +256,7 @@ async function moveFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
     const proceed = confirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
     if (!proceed) return
-    const apiResult = await twirlip15ApiCall({request: "file-move", moveFiles: Object.keys(selectedFiles), newLocation: directoryPath}, showError)
+    const apiResult = await TwirlipServer.fileMove(Object.keys(selectedFiles), directoryPath)
     if (apiResult) {
         selectedFiles = {}
         loadDirectory(directoryPath, false)

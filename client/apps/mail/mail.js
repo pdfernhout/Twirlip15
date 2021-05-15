@@ -1,6 +1,6 @@
 /* global m */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import parse from "../../vendor/emailjs/mimeparser.js"
 import { base64decode } from "../../vendor/base64.js"
 import base64encode from "../../vendor/emailjs/base64-encode.js"
@@ -26,8 +26,10 @@ function showStatus(messageText) {
     statusMessage = messageText
 }
 
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+
 async function loadPartialFile(fileName, start, length) {
-    const apiResult = await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length, encoding: "base64"}, showError)
+    const apiResult = await TwirlipServer.fileReadBytes(fileName, start, length, "base64")
     if (apiResult) {
         return apiResult.data
     }
@@ -39,11 +41,10 @@ async function loadFileContents(newFileName) {
     mboxContents = null
     chosenFileLoaded = false
 
-    const apiResult = await twirlip15ApiCall({request: "file-stats", fileName: chosenFileName}, showError)
+    const apiResult = await TwirlipServer.fileStats(chosenFileName)
     if (!apiResult) return
 
     const fileSize = apiResult.stats.size
-
     if (!fileSize) return
 
     const segments = []

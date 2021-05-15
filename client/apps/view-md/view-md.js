@@ -1,6 +1,6 @@
 /* global m, showdown */
 import "../../vendor/mithril.js"
-import { twirlip15ApiCall } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import "../../vendor/showdown.js"
 
 let errorMessage = ""
@@ -12,11 +12,13 @@ function showError(error) {
     errorMessage = error
 }
 
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
     chosenFileLoaded = false
-    const apiResult = await twirlip15ApiCall({request: "file-contents", fileName: chosenFileName}, showError)
+    const apiResult = await TwirlipServer.fileContents(chosenFileName)
     if (apiResult) {
         chosenFileContents = apiResult.contents
         chosenFileLoaded = true

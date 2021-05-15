@@ -1,4 +1,4 @@
-import { twirlip15ApiCall } from "./twirlip15-api.js"
+import { Twirlip15ServerAPI } from "./twirlip15-api.js"
 
 // Future design ideas for API:
 // triples[id]["+"].map(...)
@@ -12,6 +12,8 @@ export function Triplestore(showError, fileName) {
     let isFileLoaded = false
     let isFileSaveInProgress = false
 
+    const TwirlipServer = new Twirlip15ServerAPI(showError)
+
     function setFileName(newFileName) {
         fileName = newFileName
     }
@@ -19,7 +21,7 @@ export function Triplestore(showError, fileName) {
     async function loadFileContents() {
         if (!fileName) throw new Error("fileName not set yet")
         isFileLoaded = false
-        const apiResult = await twirlip15ApiCall({request: "file-contents", fileName}, showError)
+        const apiResult = await TwirlipServer.fileContents(fileName)
         if (apiResult) {
             const chosenFileContents = apiResult.contents
             const lines = chosenFileContents.split("\n")
@@ -46,7 +48,7 @@ export function Triplestore(showError, fileName) {
         if (!fileName) throw new Error("fileName not set yet")
         if (isFileSaveInProgress) throw new Error("Error: Previous file save still in progress!")
         isFileSaveInProgress = true
-        const apiResult = await twirlip15ApiCall({request: "file-append", fileName, stringToAppend}, showError)
+        const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
         isFileSaveInProgress = false
         if (apiResult && successCallback) {
             successCallback()
