@@ -21,3 +21,23 @@ export function menuCheckbox(label, checked, action, disabled) {
         label
     )
 }
+
+export function interceptSaveKey(onSaveHandler) {
+    return (evt) => {
+        // derived from: https://stackoverflow.com/questions/2903991/how-to-detect-ctrlv-ctrlc-using-javascript
+        const c = evt.keyCode
+        const ctrlDown = evt.ctrlKey || evt.metaKey // Mac support
+
+        // Check for Alt+Gr (http://en.wikipedia.org/wiki/AltGr_key)
+        if (ctrlDown && evt.altKey) return true
+
+        // Check for ctrl+s
+        if (ctrlDown && c == 83) {
+            onSaveHandler()
+            return false
+        }
+
+        // Otherwise allow
+        return true
+    }
+}

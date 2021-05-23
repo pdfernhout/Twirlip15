@@ -10,7 +10,6 @@ let chosenFileContents = null
 let chosenFileLoaded = false
 let editing = false
 let editedContents = ""
-let partialFileTest = ""
 let fileSaveInProgress = false
 
 function showError(error) {
@@ -19,34 +18,16 @@ function showError(error) {
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
-async function loadPartialFileTest(fileName) {
-    const apiResult = await TwirlipServer.fileReadBytes(fileName, 4096)
-    if (apiResult) {
-        partialFileTest = apiResult.data
-    }
-}
-
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     chosenFileContents = null
     chosenFileLoaded = false
-    partialFileTest = ""
     const apiResult = await TwirlipServer.fileContents(chosenFileName)
     if (apiResult) {
         chosenFileContents = apiResult.contents
         chosenFileLoaded = true
     } else {
         chosenFileContents = ""
-    }
-}
-
-async function appendFile(fileName, stringToAppend, successCallback) {
-    if (fileSaveInProgress) return
-    fileSaveInProgress = true
-    const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
-    fileSaveInProgress = false
-    if (apiResult) {
-        successCallback()
     }
 }
 
@@ -92,13 +73,6 @@ function viewFileContents() {
             m("button.ml1", {onclick: () => {
                 setMode("edit")
             }, disabled:  editing}, "Edit"),
-            m("button.ml1", {onclick: () => { 
-                appendFile(chosenFileName, editedContents, () => {
-                    chosenFileContents = chosenFileContents + editedContents
-                    editedContents = ""
-                    contentsSaved = ""
-                })
-            }, disabled: !editing || fileSaveInProgress}, "Append"),
             m("button.ml1", {
                 onclick: onSaveFileClick,
                 disabled: !editing || fileSaveInProgress || editedContents === contentsSaved
@@ -119,16 +93,12 @@ function viewFileContents() {
     )
 }
 
-const ViewEdit = {
+const Archiver = {
     view: () => {
         return m("div.ma2.measure-wide",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileLoaded && chosenFileContents === null && m("div",
                 "Loading..."
-            ),
-            (!chosenFileLoaded && chosenFileContents === "") && m("div", 
-                m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
-                partialFileTest && m("div.break-word", partialFileTest)
             ),
             chosenFileLoaded && m("div",
                 viewFileContents()
@@ -146,4 +116,4 @@ if (filePathFromParams) {
     })
 }
 
-m.mount(document.body, ViewEdit)
+m.mount(document.body, Archiver)
