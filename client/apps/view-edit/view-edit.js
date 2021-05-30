@@ -106,7 +106,9 @@ function viewFileContents() {
             m("button.ml1", {onclick: () => {
                 history.back()
             }, disabled: fileSaveInProgress || (editing && editedContents !== contentsSaved)}, "Close"),
-            fileSaveInProgress && m("span.yellow", "Saving...")
+            m("span.yellow", { style: { 
+                visibility: (fileSaveInProgress ? "visible" : "hidden") 
+            }}, "Saving...")
         ),
         editing
             ? m("textarea.w-90", {
