@@ -264,7 +264,7 @@ async function moveFiles() {
 }
 
 function openAsIdeas() {
-    window.location.assign(directoryPath + "?twirlip=ideas")
+    window.location = directoryPath + "?twirlip=ideas"
 }
 
 function showSelectedFiles() {

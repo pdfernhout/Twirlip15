@@ -75,9 +75,10 @@ async function addFile() {
             showError("File exists: " + fileName)
             return
         }
-        const apiResult = await TwirlipServer.fileSave(fileName, "")
+        const initialContents = removeExtension(newFileName) + "\n\n"
+        const apiResult = await TwirlipServer.fileSave(fileName, initialContents)
         if (apiResult) {
-            window.location.assign(fileName + "?twirlip=view-edit")
+            window.location = fileName + "?twirlip=view-edit"
         }
     }
 }
@@ -301,7 +302,7 @@ const Ideas = {
                 m("div.ma1", 
                     m("button", {onclick: () => navigate = "graph"}, "Graph"),
                     m("button.ml2", {onclick: () => navigate = "table"}, "Table"),
-                    m("button.ml4", {onclick: () => window.location.assign(directoryPath + "?twirlip=filer")}, "Open Filer"),
+                    m("button.ml4", {onclick: () => window.location = directoryPath + "?twirlip=filer"}, "Open Filer"),
                     m("button.ml2", {onclick: () => addFile()}, "+ New File")
                 ),
                 viewTriples(),
@@ -331,7 +332,7 @@ function makeDirectoryFileNameDict() {
 
 function openOrFilter(id) {
     if (id.startsWith("http:") || id.startsWith("https:")) {
-        window.location.assign(id)
+        window.location = id
     } else {
         updateFilter(id)
     }
