@@ -54,13 +54,27 @@ async function loadDirectory(newPath) {
     renderCytoscape()
 }
 
+function addLeadingZeros(n) {
+    if (n <= 9) {
+      return "0" + n
+    }
+    return n
+}
+
 async function addFile() {
-    let newFileName = prompt("New file name?")
+    const today = new Date()
+    const suggestedFileName = today.getFullYear() + "-" + addLeadingZeros(today.getMonth() + 1) + "-" + addLeadingZeros(today.getDate())
+    let newFileName = prompt("New file name?", suggestedFileName)
     if (newFileName) {
         if (!newFileName.endsWith(".md")) {
             newFileName =  newFileName + ".md"
         }
         const fileName = directoryPath + newFileName
+        const apiStatsResult = await TwirlipServer.fileStats(fileName)
+        if (apiStatsResult && apiStatsResult.ok) {
+            showError("File exists: " + fileName)
+            return
+        }
         const apiResult = await TwirlipServer.fileSave(fileName, "")
         if (apiResult) {
             window.location.assign(fileName + "?twirlip=view-edit")
