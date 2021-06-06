@@ -11,6 +11,7 @@ let directoryFiles = null
 let errorMessage = ""
 let filter = ""
 let triples = []
+let allLinks = []
 let filterMode = "and"
 
 let navigate = "links" // "graph" "triples"
@@ -28,6 +29,7 @@ const TwirlipServer = new Twirlip15ServerAPI(showError)
 async function loadDirectory(newPath) {
     loadingAllFiles = true
     triples = []
+    allLinks = []
     if (!newPath.endsWith("/")) {
         newPath = newPath + "/"
     }
@@ -118,6 +120,9 @@ async function loadFileContents(fileInfo) {
         fileInfo.contents = apiResult.contents
         parseTriples(fileInfo)
         convertMarkdown(fileInfo)
+        for (let link of fileInfo.links) {
+            allLinks.push({name: fileInfo.name, url: link})
+        }
     }
 }
 
@@ -228,12 +233,12 @@ function viewDirectoryFiles() {
         : m("div", "Loading file data...")
 }
 
-let lastSort = "a"
+let lastSortTriples = "a"
 
 function sortTriples(field) {
-    lastSort === field
-        ? lastSort = field + "-reversed"
-        : lastSort = field
+    lastSortTriples === field
+        ? lastSortTriples = field + "-reversed"
+        : lastSortTriples = field
     const index = {
         a: 0,
         b: 1,
@@ -245,12 +250,33 @@ function sortTriples(field) {
         if (a[index].toLowerCase() > b[index].toLowerCase()) return 1
         throw new Error("sortTriples: unexpected sort case")
     })
-    if (lastSort === field + "-reversed") triples.reverse()
+    if (lastSortTriples === field + "-reversed") triples.reverse()
 }
 
-function sortArrow(field) {
-    if (field === lastSort) return "↓"
-    if (field + "-reversed" === lastSort) return "↑"
+let lastSortLinks = "name"
+
+function sortLinks(field) {
+    lastSortLinks === field
+        ? lastSortLinks = field + "-reversed"
+        : lastSortLinks = field
+    allLinks.sort((a, b) => {
+        if (a[field].toLowerCase() === b[field].toLowerCase()) return 0
+        if (a[field].toLowerCase() < b[field].toLowerCase()) return -1
+        if (a[field].toLowerCase() > b[field].toLowerCase()) return 1
+        throw new Error("sortLinks: unexpected sort case")
+    })
+    if (lastSortLinks === field + "-reversed") allLinks.reverse()
+}
+
+function sortArrowTriples(field) {
+    if (field === lastSortTriples) return "↓"
+    if (field + "-reversed" === lastSortTriples) return "↑"
+    return ""
+}
+
+function sortArrowLinks(field) {
+    if (field === lastSortLinks) return "↓"
+    if (field + "-reversed" === lastSortLinks) return "↑"
     return ""
 }
 
@@ -261,21 +287,14 @@ function viewLinks() {
             }
         },
         m("tr",
-            m("th.bg-light-silver", "File"),
-            m("th.bg-light-silver", "URL"),
+            m("th.bg-light-silver", {onclick: () => sortLinks("name")}, "File" + sortArrowLinks("name")),
+            m("th.bg-light-silver", {onclick: () => sortLinks("url")}, "URL" + sortArrowLinks("url")),
         ),
-        directoryFiles.map(fileInfo => 
-            fileInfo.links.length 
-                ? fileInfo.links.map(link => m("tr", 
-                    m("td.pointer", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, fileInfo.name),
-                    m("td.pl2.truncate", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, removeExtension(link)),
-                ))
-                : m("tr",
-                    m("td.pointer", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, fileInfo.name),
-                    m("td.pl2", "N/A"),
-                    /* m("td.pl2", triple[1]),
-                    m("td.pl2.pointer" + colorFiles(triple[2]), { onclick: () => openOrFilter(triple[2]) }, triple[2]) */
-                )
+        allLinks.map(link => 
+            m("tr", 
+                m("td.pointer", { onclick: () => openOrFilter(removeExtension(link.name)) }, link.name),
+                m("td.pl2.truncate", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(link.url)),
+            )
         )
     )
 }
@@ -294,9 +313,9 @@ function viewTriples() {
             }
         },
         m("tr",
-        m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
-        m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
-        m("th.bg-light-silver", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrowTriples("a")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrowTriples("b")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("c")}, "C" + sortArrowTriples("c")),
         ),
         triples.map(triple => 
             m("tr",
