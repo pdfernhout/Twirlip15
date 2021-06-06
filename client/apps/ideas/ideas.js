@@ -13,7 +13,7 @@ let filter = ""
 let triples = []
 let filterMode = "and"
 
-let navigate = "graph" // table
+let navigate = "links" // "graph" "triples"
 
 let cy
 
@@ -254,6 +254,32 @@ function sortArrow(field) {
     return ""
 }
 
+function viewLinks() {
+    return m("table", {
+            style: {
+                display: navigate === "links" ? "block" : "none"
+            }
+        },
+        m("tr",
+            m("th.bg-light-silver", "File"),
+            m("th.bg-light-silver", "URL"),
+        ),
+        directoryFiles.map(fileInfo => 
+            fileInfo.links.length 
+                ? fileInfo.links.map(link => m("tr", 
+                    m("td.pointer", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, fileInfo.name),
+                    m("td.pl2.truncate", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, removeExtension(link)),
+                ))
+                : m("tr",
+                    m("td.pointer", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, fileInfo.name),
+                    m("td.pl2", "N/A"),
+                    /* m("td.pl2", triple[1]),
+                    m("td.pl2.pointer" + colorFiles(triple[2]), { onclick: () => openOrFilter(triple[2]) }, triple[2]) */
+                )
+        )
+    )
+}
+
 function viewTriples() {
     const fileNames = makeDirectoryFileNameDict()
 
@@ -264,13 +290,13 @@ function viewTriples() {
 
     return m("table", {
             style: {
-                display: navigate === "table" ? "block" : "none"
+                display: navigate === "triples" ? "block" : "none"
             }
         },
         m("tr",
-            m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
-            m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
-            m("th.bg-light-silver", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("a")}, "A" + sortArrow("a")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("b")}, "B" + sortArrow("b")),
+        m("th.bg-light-silver", {onclick: () => sortTriples("c")}, "C" + sortArrow("c")),
         ),
         triples.map(triple => 
             m("tr",
@@ -300,11 +326,13 @@ const Ideas = {
         return m("div.flex.h-100.w-100",
             m("div.overflow-auto",
                 m("div.ma1", 
-                    m("button", {onclick: () => navigate = "graph"}, "Graph"),
-                    m("button.ml2", {onclick: () => navigate = "table"}, "Table"),
+                    m("button", {onclick: () => navigate = "links"}, "Links"),
+                    m("button.ml2", {onclick: () => navigate = "graph"}, "Graph"),
+                    m("button.ml2", {onclick: () => navigate = "triples"}, "Triples"),
                     m("button.ml4", {onclick: () => window.location = directoryPath + "?twirlip=filer"}, "Open Filer"),
                     m("button.ml2", {onclick: () => addFile()}, "+ New File")
                 ),
+                viewLinks(),
                 viewTriples(),
                 viewGraph()
             ),
