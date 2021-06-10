@@ -83,8 +83,8 @@ function setMode(mode) {
 }
 
 function viewFileContents() {
-    return m("div",
-        m("div",
+    return m("div.flex.flex-column.w-100.h-100.border-box.pa2",
+        m("div.flex-none",
             m("button", {
                 onclick: () => setMode("view"), 
                 disabled: !editing || (editing && editedContents !== contentsSaved)
@@ -110,20 +110,21 @@ function viewFileContents() {
                 visibility: (fileSaveInProgress ? "visible" : "hidden") 
             }}, "Saving...")
         ),
-        editing
-            ? m("textarea.w-90", {
-                style: {height: "400px"}, 
-                value: editedContents, 
-                oninput: event => editedContents = event.target.value,
-                onkeydown: interceptSaveKey(onSaveFileClick)
-            })
-            : m("pre.ml2.pre-wrap", chosenFileContents)
+        m("div.flex-grow-1.pt2",
+            editing
+                ? m("textarea.w-100.h-100", { 
+                    value: editedContents, 
+                    oninput: event => editedContents = event.target.value,
+                    onkeydown: interceptSaveKey(onSaveFileClick)
+                })
+                : m("pre.pre-wrap.measure-wide", chosenFileContents)
+        )
     )
 }
 
 const ViewEdit = {
     view: () => {
-        return m("div.ma2.measure-wide",
+        return m("div.w-100.h-100",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileLoaded && chosenFileContents === null && m("div",
                 "Loading..."
@@ -132,9 +133,7 @@ const ViewEdit = {
                 m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
                 partialFileTest && m("div.break-word", partialFileTest)
             ),
-            chosenFileLoaded && m("div",
-                viewFileContents()
-            )
+            chosenFileLoaded && viewFileContents()
         )
     }
 }
