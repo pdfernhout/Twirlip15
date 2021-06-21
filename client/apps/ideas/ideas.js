@@ -65,7 +65,7 @@ function addLeadingZeros(n) {
 
 async function addFile() {
     const today = new Date()
-    const suggestedFileName = today.getFullYear() + "-" + addLeadingZeros(today.getMonth() + 1) + "-" + addLeadingZeros(today.getDate())
+    const suggestedFileName = today.getFullYear() + "-" + addLeadingZeros(today.getMonth() + 1) + "-" + addLeadingZeros(today.getDate()) + "-ideas"
     let newFileName = prompt("New file name?", suggestedFileName)
     if (newFileName) {
         if (!newFileName.endsWith(".md")) {
