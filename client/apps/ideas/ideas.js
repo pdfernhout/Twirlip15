@@ -53,6 +53,7 @@ async function loadDirectory(newPath) {
         await loadFileContents(fileInfo)
     }
     loadingAllFiles = false
+    sortLinks("url")
     renderCytoscape()
 }
 
@@ -292,8 +293,8 @@ function viewLinks() {
         ),
         allLinks.map(link => 
             m("tr", 
-                m("td.pointer", { onclick: () => openOrFilter(removeExtension(link.name)) }, link.name),
-                m("td.pl2.truncate", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(link.url)),
+                m("td.pointer.w-30", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(link.name)),
+                m("td.pl2.w-70", m("a", {href: link.url, target: "_blank", rel: "noopener noreferrer"}, link.url)),
             )
         )
     )
@@ -342,8 +343,8 @@ function viewGraph() {
 
 const Ideas = {
     view: () => {
-        return m("div.flex.h-100.w-100",
-            m("div.overflow-auto",
+        return m("div.flex.flex-row.h-100.w-100",
+            m("div.flex-auto.overflow-y-auto",
                 m("div.ma1", 
                     m("button", {onclick: () => navigate = "links"}, "Links"),
                     m("button.ml2", {onclick: () => navigate = "graph"}, "Graph"),
@@ -355,7 +356,7 @@ const Ideas = {
                 viewTriples(),
                 viewGraph()
             ),
-            m("div.ma2.w-37rem.mw-37rem.overflow-y-auto",
+            m("div.ma2.flex-none.overflow-y-auto.w-37rem.mw-37rem", // .w-37rem.mw-37rem.
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 loadingAllFiles && m("div.absolute.ma2.pa2.ba.bw2.bg-yellow.flex.items-center", 
                     m("span", "Loading Markdown files..."), 
