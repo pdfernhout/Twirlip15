@@ -86,8 +86,8 @@ async function addFile() {
     }
 }
 
-function removeExtension(fileName) {
-    return fileName.split(".md")[0]
+function removeExtension(fileName, extension=".md") {
+    return fileName.split(extension)[0]
 }
 
 function parseTriples(fileInfo) {
@@ -293,8 +293,8 @@ function viewLinks() {
         ),
         allLinks.map(link => 
             m("tr", 
-                m("td.pointer.w-30", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(link.name)),
-                m("td.pl2.w-70", m("a", {href: link.url, target: "_blank", rel: "noopener noreferrer"}, link.url)),
+                m("td.pointer.w-10", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(removeExtension(link.name), "-ideas")),
+                m("td.pl2.w-90", m("a", {href: link.url, target: "_blank", rel: "noopener noreferrer"}, link.url)),
             )
         )
     )
