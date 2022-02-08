@@ -39,8 +39,13 @@ async function saveFile(fileName, contents, successCallback) {
     }
 }
 
+function needsTrailingNewline(text) {
+    const result = !!text.length && (text[text.length - 1] !== "\n")
+    return result
+}
+
 function onSaveFileClick() {
-    const needsNewLine = chosenFileContents.length && chosenFileContents[chosenFileContents.length-1] !== "\n"
+    const needsNewLine = needsTrailingNewline(chosenFileContents)
     const newContentsToSave = chosenFileContents + (needsNewLine ? "\n" : "") + editedContentsToAppend
     saveFile(chosenFileName, newContentsToSave, () => {
         chosenFileContents = newContentsToSave
@@ -52,6 +57,15 @@ function switchToEditor() {
     window.location = location.pathname + "?twirlip=view-edit&mode=edit"
 }
 
+function insertTimestamp() {
+    const newTimestamp = new Date().toISOString().replace("T", " ").replace(/\....Z$/,"")
+
+    if (needsTrailingNewline(editedContentsToAppend)) {
+        editedContentsToAppend += "\n"
+    }
+    editedContentsToAppend += "---- " + newTimestamp + " ----\n"
+}
+
 function viewFileContents() {
     return m("div",
         m("div.ma1",
@@ -59,6 +73,10 @@ function viewFileContents() {
                 onclick: onSaveFileClick,
                 disabled: fileSaveInProgress || !editedContentsToAppend
             }, "Append"),
+            m("button.ml3", {
+                onclick: insertTimestamp,
+                disabled: fileSaveInProgress
+            }, "Insert timestamp"),
             fileSaveInProgress && m("span.yellow", "Saving...")
         ),
         m("textarea.w-90", {
