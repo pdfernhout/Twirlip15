@@ -29,10 +29,10 @@ async function loadFileContents(newFileName) {
     }
 }
 
-async function saveFile(fileName, contents, successCallback) {
+async function appendToFile(fileName, contentsToAppend, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
-    const apiResult = await TwirlipServer.fileSave(fileName, contents)
+    const apiResult = await TwirlipServer.fileAppend(fileName, contentsToAppend)
     fileSaveInProgress = false
     if (apiResult) {
         successCallback()
@@ -44,11 +44,11 @@ function needsTrailingNewline(text) {
     return result
 }
 
-function onSaveFileClick() {
+function onAppendClick() {
     const needsNewLine = needsTrailingNewline(chosenFileContents)
-    const newContentsToSave = chosenFileContents + (needsNewLine ? "\n" : "") + editedContentsToAppend
-    saveFile(chosenFileName, newContentsToSave, () => {
-        chosenFileContents = newContentsToSave
+    const newContentsToAppend = (needsNewLine ? "\n" : "") + editedContentsToAppend
+    appendToFile(chosenFileName, newContentsToAppend, () => {
+        chosenFileContents += newContentsToAppend
         editedContentsToAppend = ""
     })
 }
@@ -70,7 +70,7 @@ function viewFileContents() {
     return m("div",
         m("div.ma1",
             m("button.ml1", {
-                onclick: onSaveFileClick,
+                onclick: onAppendClick,
                 disabled: fileSaveInProgress || !editedContentsToAppend
             }, "Append"),
             m("button.ml3", {
@@ -83,7 +83,7 @@ function viewFileContents() {
             style: {height: "400px"}, 
             value: editedContentsToAppend, 
             oninput: event => editedContentsToAppend = event.target.value,
-            onkeydown: interceptSaveKey(onSaveFileClick)
+            onkeydown: interceptSaveKey(onAppendClick)
         }),
         m("button.ma1", {
             onclick: switchToEditor,
