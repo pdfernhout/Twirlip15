@@ -40,16 +40,6 @@ async function loadFileContents(newFileName) {
     }
 }
 
-async function appendFile(fileName, stringToAppend, successCallback) {
-    if (fileSaveInProgress) return
-    fileSaveInProgress = true
-    const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
-    fileSaveInProgress = false
-    if (apiResult) {
-        successCallback()
-    }
-}
-
 async function saveFile(fileName, contents, successCallback) {
     if (fileSaveInProgress) return
     fileSaveInProgress = true
@@ -92,13 +82,6 @@ function viewFileContents() {
             m("button.ml1", {onclick: () => {
                 setMode("edit")
             }, disabled:  editing}, "Edit"),
-            m("button.ml1", {onclick: () => { 
-                appendFile(chosenFileName, editedContents, () => {
-                    chosenFileContents = chosenFileContents + editedContents
-                    editedContents = ""
-                    contentsSaved = ""
-                })
-            }, disabled: !editing || fileSaveInProgress}, "Append"),
             m("button.ml1", {
                 onclick: onSaveFileClick,
                 disabled: !editing || fileSaveInProgress || editedContents === contentsSaved
