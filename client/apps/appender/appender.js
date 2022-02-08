@@ -5,11 +5,9 @@ import { interceptSaveKey } from "../../common/menu.js"
 
 let errorMessage = ""
 let chosenFileName = ""
-let contentsSaved = ""
 let chosenFileContents = null
 let chosenFileLoaded = false
-let editing = false
-let editedContents = ""
+let editedContentsToAppend = ""
 let fileSaveInProgress = false
 
 function showError(error) {
@@ -42,54 +40,30 @@ async function saveFile(fileName, contents, successCallback) {
 }
 
 function onSaveFileClick() {
-    saveFile(chosenFileName, editedContents, () => {
-        chosenFileContents = editedContents
-        contentsSaved = editedContents
+    const needsNewLine = chosenFileContents.length && chosenFileContents[chosenFileContents.length-1] !== "\n"
+    const newContentsToSave = chosenFileContents + (needsNewLine ? "\n" : "") + editedContentsToAppend
+    saveFile(chosenFileName, newContentsToSave, () => {
+        chosenFileContents = newContentsToSave
+        editedContentsToAppend = ""
     })
-}
-
-function setMode(mode) {
-    if (mode === "edit") {
-        editing = true
-        editedContents = chosenFileContents
-        contentsSaved = editedContents
-    } else {
-        mode = "view"
-        editing = false
-    }
-
-    const urlParams = new URLSearchParams(window.location.search)
-    urlParams.set("mode", mode)
-    history.replaceState({}, location.pathname, location.pathname + "?" + urlParams.toString())
 }
 
 function viewFileContents() {
     return m("div",
-        m("div",
-            m("button", {
-                onclick: () => setMode("view"), 
-                disabled: !editing || (editing && editedContents !== contentsSaved)
-            }, "View"),
-            m("button.ml1", {onclick: () => {
-                setMode("edit")
-            }, disabled:  editing}, "Edit"),
+        m("div.ma1",
             m("button.ml1", {
                 onclick: onSaveFileClick,
-                disabled: !editing || fileSaveInProgress || editedContents === contentsSaved
-            }, "Save"),
-            m("button.ml1", {onclick: () => {
-                history.back()
-            }, disabled: fileSaveInProgress || (editing && editedContents !== contentsSaved)}, "Close"),
+                disabled: fileSaveInProgress || !editedContentsToAppend
+            }, "Append"),
             fileSaveInProgress && m("span.yellow", "Saving...")
         ),
-        editing
-            ? m("textarea.w-90", {
-                style: {height: "400px"}, 
-                value: editedContents, 
-                oninput: event => editedContents = event.target.value,
-                onkeydown: interceptSaveKey(onSaveFileClick)
-            })
-            : m("pre.ml2.pre-wrap", chosenFileContents)
+        m("textarea.w-90", {
+            style: {height: "400px"}, 
+            value: editedContentsToAppend, 
+            oninput: event => editedContentsToAppend = event.target.value,
+            onkeydown: interceptSaveKey(onSaveFileClick)
+        }),
+        m("pre.ml2.pre-wrap", chosenFileContents)
     )
 }
 
@@ -108,12 +82,9 @@ const Appender = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-const urlParams = new URLSearchParams(window.location.search)
 
 if (filePathFromParams) {
-    loadFileContents(filePathFromParams).then(() => {
-        setMode(urlParams.get("mode") || "view")
-    })
+    loadFileContents(filePathFromParams)
 }
 
 m.mount(document.body, Appender)
