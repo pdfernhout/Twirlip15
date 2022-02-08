@@ -93,7 +93,7 @@ function viewFileContents() {
     )
 }
 
-const Archiver = {
+const Appender = {
     view: () => {
         return m("div.ma2.measure-wide",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
@@ -116,4 +116,4 @@ if (filePathFromParams) {
     })
 }
 
-m.mount(document.body, Archiver)
+m.mount(document.body, Appender)
