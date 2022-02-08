@@ -48,6 +48,10 @@ function onSaveFileClick() {
     })
 }
 
+function switchToEditor() {
+    window.location = location.pathname + "?twirlip=view-edit&mode=edit"
+}
+
 function viewFileContents() {
     return m("div",
         m("div.ma1",
@@ -63,6 +67,10 @@ function viewFileContents() {
             oninput: event => editedContentsToAppend = event.target.value,
             onkeydown: interceptSaveKey(onSaveFileClick)
         }),
+        m("button.ma1", {
+            onclick: switchToEditor,
+            disabled: fileSaveInProgress || editedContentsToAppend
+        }, "Edit"),
         m("pre.ml2.pre-wrap", chosenFileContents)
     )
 }
