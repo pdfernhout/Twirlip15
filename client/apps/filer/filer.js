@@ -443,7 +443,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
             m("td", fileInfo.isDirectory
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
                 : m("span", 
-                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
+                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
                     m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name)
                 )
             ),
@@ -461,7 +461,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=view-edit", title: statsTitle(fileInfo.stats)}, "📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo.stats)}, "📄 "),
             m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
         )
 }

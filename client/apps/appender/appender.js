@@ -54,7 +54,7 @@ function onAppendClick() {
 }
 
 function switchToEditor() {
-    window.location = location.pathname + "?twirlip=view-edit&mode=edit"
+    window.location = location.pathname + "?twirlip=edit"
 }
 
 function insertTimestamp() {

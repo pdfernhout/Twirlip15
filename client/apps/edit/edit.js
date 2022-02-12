@@ -126,7 +126,7 @@ const urlParams = new URLSearchParams(window.location.search)
 
 if (filePathFromParams) {
     loadFileContents(filePathFromParams).then(() => {
-        setMode(urlParams.get("mode") || "view")
+        setMode(urlParams.get("mode") || "edit")
     })
 }
 

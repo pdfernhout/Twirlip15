@@ -81,7 +81,7 @@ async function addFile() {
         const initialContents = removeExtension(newFileName) + "\n\n"
         const apiResult = await TwirlipServer.fileSave(fileName, initialContents)
         if (apiResult) {
-            window.location = fileName + "?twirlip=view-edit"
+            window.location = fileName + "?twirlip=edit"
         }
     }
 }
@@ -196,8 +196,8 @@ function viewFileEntry(fileInfo) {
     }
     return m("div.ba.ma2.pa2.br3",
             m("div.mb1",
-                m("a.link", {href: fileInfo.name + "?twirlip=view-edit&mode=edit"}, "✎"),
-                m("a.link", {href: fileInfo.name + "?twirlip=view-edit&mode=view"}, "📄 "),
+                m("a.link", {href: fileInfo.name + "?twirlip=edit"}, "✎"),
+                m("a.link", {href: fileInfo.name + "?twirlip=edit&mode=view"}, "📄 "),
                 m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name))
             ),
             fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo))
