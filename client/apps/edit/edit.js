@@ -72,7 +72,18 @@ function setMode(mode) {
     history.replaceState({}, location.pathname, location.pathname + "?" + urlParams.toString())
 }
 
-function viewFileContents() {
+// Duplicated from filer.js
+function viewerForURL(url) {
+    if (url.endsWith(".md")) {
+        return url + "?twirlip=view-md"
+    } else {
+        let subdomain = ""
+        if (url.toLowerCase().includes("download")) subdomain = md5(url) + ".download."
+        return window.location.protocol + "//" + subdomain + window.location.host + url
+    }
+}
+
+function editFileContents() {
     return m("div.flex.flex-column.w-100.h-100.border-box.pa2",
         m("div.flex-none",
             m("button", {
@@ -93,6 +104,7 @@ function viewFileContents() {
                 visibility: (fileSaveInProgress ? "visible" : "hidden") 
             }}, "Saving...")
         ),
+        m("div.ma2s", m("a.link", {href: viewerForURL(chosenFileName)}, chosenFileName)),
         m("div.flex-grow-1.pt2",
             editing
                 ? m("textarea.w-100.h-100", { 
@@ -116,7 +128,7 @@ const ViewEdit = {
                 m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
                 partialFileTest && m("div.break-word", partialFileTest)
             ),
-            chosenFileLoaded && viewFileContents()
+            chosenFileLoaded && editFileContents()
         )
     }
 }
