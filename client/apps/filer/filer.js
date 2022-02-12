@@ -282,9 +282,9 @@ function selectAll() {
     })
 }
 
-function dropdownMenu(label, options, callback) {
+function dropdownMenu(label, options, callback, disabled) {
     return [
-        m("select", { value: "", onchange: event => {
+        m("select", { value: "", disabled, onchange: event => {
             callback(event.target.value) 
         }},
         m("option", { value: ""}, label),
@@ -306,7 +306,7 @@ function viewMenu() {
         menuButton("+ New file", () => newFile()),
         menuButton("⬆ Upload file", () => uploadFile(), isUploading),
         menuButton("+ New directory", () => newDirectory()),
-        dropdownMenu("Launch", applicationList, (id) => launchApplication(id)),
+        dropdownMenu("Launch", applicationList, (id) => launchApplication(id), selectedFileCount !== 1),
         menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("Move", () => moveFiles(), !selectedFileCount),
         menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
