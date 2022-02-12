@@ -263,8 +263,12 @@ async function moveFiles() {
     }
 }
 
-function openAsIdeas() {
-    window.location = directoryPath + "?twirlip=ideas"
+function launchApplication(id) {
+    if (Object.keys(selectedFiles).length !== 1) {
+        return alert("One file (and only one) must be selected to launch an application")
+    }
+    const fileName = Object.keys(selectedFiles)[0]
+    window.location = fileName + "?twirlip=" + id
 }
 
 function showSelectedFiles() {
@@ -278,13 +282,31 @@ function selectAll() {
     })
 }
 
+function dropdownMenu(label, options, callback) {
+    return [
+        m("select", { value: "", onchange: event => {
+            callback(event.target.value) 
+        }},
+        m("option", { value: ""}, label),
+        options.map(option => {
+            if (option.label) {
+                return m("option", { value: option.value }, option.label)
+            } else {
+                return m("option", { value: option }, option)
+            }
+        })
+    )]
+}
+
+const applicationList = ["appender", "archiver", "edit", "filer", "ideas", "mail", "triples", "view-md"]
+
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
         menuButton("+ New file", () => newFile()),
         menuButton("⬆ Upload file", () => uploadFile(), isUploading),
         menuButton("+ New directory", () => newDirectory()),
-        menuButton("Launch Ideas", () => openAsIdeas()),
+        dropdownMenu("Launch", applicationList, (id) => launchApplication(id)),
         menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("Move", () => moveFiles(), !selectedFileCount),
         menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
