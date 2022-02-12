@@ -296,7 +296,12 @@ function viewEmail(message) {
        console.log("missing subject", message)
     }
     const from = getFromField(message)
-    const date = message.headers.date[0].value
+    let date = "MISSING DATE"
+    try {
+        date = message.headers.date[0].value
+    } catch {
+        console.log("missing date", message)
+    }
     const rawMessageId = message.headers["message-id"] || message.headers["Message-Id"]
     if (!rawMessageId || !rawMessageId[0]) {
         console.log("Issue with messageId for: ", message.headers)
