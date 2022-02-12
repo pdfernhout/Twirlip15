@@ -100,10 +100,14 @@ async function processEmails() {
     const result = []
     for (let i = 0; i < emailsRaw.length; i++) {
         const emailRaw = emailsRaw[i]
-        const parsedEmail = processEmail("From " + emailRaw)
-        // console.log(parsedEmail.headers.subject[0].value)
-        // logMimeParts(parsedEmail)
-        result.push(parsedEmail)
+        try {
+            const parsedEmail = processEmail("From " + emailRaw)
+            // console.log(parsedEmail.headers.subject[0].value)
+            // logMimeParts(parsedEmail)
+            result.push(parsedEmail)
+        } catch {
+            console.log("Could not parse email", emailRaw)
+        }
         if (i % 10 === 9) {
             showStatus("processing email " + (i + 1) + " of " + emailsRaw.length)
             m.redraw()
@@ -285,7 +289,12 @@ function viewEmailPart(message) {
 }
 
 function viewEmail(message) {
-    const subject = message.headers.subject[0].value
+    let subject = "MISSING SUBJECT"
+    try {
+        subject = message.headers.subject[0].value
+    } catch {
+       console.log("missing subject", message)
+    }
     const from = getFromField(message)
     const date = message.headers.date[0].value
     const rawMessageId = message.headers["message-id"] || message.headers["Message-Id"]
