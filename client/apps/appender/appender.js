@@ -50,6 +50,11 @@ function onAppendClick() {
     appendToFile(chosenFileName, newContentsToAppend, () => {
         chosenFileContents += newContentsToAppend
         editedContentsToAppend = ""
+        setTimeout(() => {
+            // Scroll to bottom of window
+            const scrollHeight = document.body.scrollHeight
+            window.scrollTo(0, scrollHeight)
+        }, 100)
     })
 }
 
