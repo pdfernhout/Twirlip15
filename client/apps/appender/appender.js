@@ -39,14 +39,34 @@ async function appendToFile(fileName, contentsToAppend, successCallback) {
     }
 }
 
-function needsTrailingNewline(text) {
-    const result = !!text.length && (text[text.length - 1] !== "\n")
-    return result
+function countTrailingNewlines(text) {
+    let count = 0
+    for (let i = text.length - 1; i > 0; i--) {
+        if (text[i] !== "\n") break
+        count++
+    }
+    return count
+}
+
+function countLeadingNewlines(text) {
+    let count = 0
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] !== "\n") break
+        count++
+    }
+    return count
+}
+
+function makeSeparatingNewlines(leadingText, trailingText) {
+    if (!leadingText) return ""
+    const count = countTrailingNewlines(leadingText) + countLeadingNewlines(trailingText)
+    if (count >= 2) return ""
+    if (count == 1) return "\n"
+    return "\n\n"
 }
 
 function onAppendClick() {
-    const needsNewLine = needsTrailingNewline(chosenFileContents)
-    const newContentsToAppend = (needsNewLine ? "\n" : "") + editedContentsToAppend
+    const newContentsToAppend = makeSeparatingNewlines(chosenFileContents, editedContentsToAppend) + editedContentsToAppend
     appendToFile(chosenFileName, newContentsToAppend, () => {
         chosenFileContents += newContentsToAppend
         editedContentsToAppend = ""
@@ -64,11 +84,8 @@ function switchToEditor() {
 
 function insertTimestamp() {
     const newTimestamp = new Date().toISOString().replace("T", " ").replace(/\....Z$/,"")
-
-    if (needsTrailingNewline(editedContentsToAppend)) {
-        editedContentsToAppend += "\n"
-    }
-    editedContentsToAppend += "---- " + newTimestamp + " ----\n"
+    editedContentsToAppend += makeSeparatingNewlines(editedContentsToAppend, "")
+    editedContentsToAppend += "---- " + newTimestamp + " ----\n\n"
 }
 
 function viewFileContents() {
