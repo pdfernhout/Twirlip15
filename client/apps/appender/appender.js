@@ -77,6 +77,10 @@ function viewFileContents() {
                 onclick: insertTimestamp,
                 disabled: fileSaveInProgress
             }, "Insert timestamp"),
+            m("button.ml3", {
+                onclick: switchToEditor,
+                disabled: fileSaveInProgress || editedContentsToAppend
+            }, "Edit"),
             fileSaveInProgress && m("span.yellow", "Saving...")
         ),
         m("textarea.w-90", {
@@ -85,10 +89,6 @@ function viewFileContents() {
             oninput: event => editedContentsToAppend = event.target.value,
             onkeydown: interceptSaveKey(onAppendClick)
         }),
-        m("button.ma1", {
-            onclick: switchToEditor,
-            disabled: fileSaveInProgress || editedContentsToAppend
-        }, "Edit"),
         m("pre.ml2.pre-wrap", chosenFileContents)
     )
 }
