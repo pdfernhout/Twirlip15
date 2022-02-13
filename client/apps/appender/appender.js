@@ -68,6 +68,7 @@ function insertTimestamp() {
 
 function viewFileContents() {
     return m("div",
+        m("pre.ml2.pre-wrap", chosenFileContents),
         m("div.ma1",
             m("button.ml1", {
                 onclick: onAppendClick,
@@ -89,7 +90,6 @@ function viewFileContents() {
             oninput: event => editedContentsToAppend = event.target.value,
             onkeydown: interceptSaveKey(onAppendClick)
         }),
-        m("pre.ml2.pre-wrap", chosenFileContents)
     )
 }
 
