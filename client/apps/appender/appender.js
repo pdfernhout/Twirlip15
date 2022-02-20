@@ -83,7 +83,8 @@ function switchToEditor() {
 }
 
 function insertTimestamp() {
-    const newTimestamp = new Date().toISOString().replace("T", " ").replace(/\....Z$/,"") + " Z"
+    // Convert to local timestamp but using ISO format (used by Sweden)
+    const newTimestamp = new Date().toLocaleString("sv", { timeZoneName: "short" } )
     editedContentsToAppend += makeSeparatingNewlines(editedContentsToAppend, "")
     editedContentsToAppend += "---- " + newTimestamp + " ----\n\n"
 }
