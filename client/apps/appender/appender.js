@@ -83,7 +83,7 @@ function switchToEditor() {
 }
 
 function insertTimestamp() {
-    const newTimestamp = new Date().toISOString().replace("T", " ").replace(/\....Z$/,"")
+    const newTimestamp = new Date().toISOString().replace("T", " ").replace(/\....Z$/,"") + " Z"
     editedContentsToAppend += makeSeparatingNewlines(editedContentsToAppend, "")
     editedContentsToAppend += "---- " + newTimestamp + " ----\n\n"
 }
