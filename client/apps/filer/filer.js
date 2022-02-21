@@ -25,6 +25,7 @@ let showHiddenFiles = preferences.get("showHiddenFiles", false)
 let showPreview = false
 let previews = {}
 let previewsToFetch = []
+let filter = ""
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -321,6 +322,7 @@ function viewMenu() {
             queuePreviewsIfNeeded()
             // preferences.set("showPreview", showPreview)
         }),
+        m("label.ml3", "Filter:", m("input", { value: filter, oninput: event => { filter = event.target.value }}))
     ])
 }
 
@@ -384,6 +386,12 @@ function sortArrow(field) {
     return ""
 }
 
+function viewFileEntries() {
+    return directoryFiles
+        .filter(fileInfo => !filter || fileInfo.name.toLowerCase().includes(filter.toLowerCase()))
+        .map(fileInfo => viewFileEntry(fileInfo))
+}
+
 function viewDirectoryFiles() {
     return directoryFiles
         ? showMenu 
@@ -398,10 +406,10 @@ function viewDirectoryFiles() {
                     // m("th.sticky-header.bg-silver", "Menu")
                 ),
                 m("tbody",
-                    directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
+                    viewFileEntries()
                 )
             )
-            : m("div", directoryFiles.map(fileInfo => viewFileEntry(fileInfo)))
+            : m("div", viewFileEntries())
         : m("div", "Loading file data...")
 }
 
