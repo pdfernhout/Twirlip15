@@ -25,7 +25,7 @@ let showHiddenFiles = preferences.get("showHiddenFiles", false)
 let showPreview = false
 let previews = {}
 let previewsToFetch = []
-let filter = ""
+const filterStoragePrefix = "twirlip15_filter_"
 
 window.onpopstate = async function(event) {
     if (event.state) {
@@ -322,7 +322,12 @@ function viewMenu() {
             queuePreviewsIfNeeded()
             // preferences.set("showPreview", showPreview)
         }),
-        m("label.ml3", "Filter:", m("input", { value: filter, oninput: event => { filter = event.target.value }}))
+        m("label.ml3", "Filter:", m("input", { 
+            value: getFilterForCurrentDirectory(), 
+            oninput: event => {
+                setFilterForCurrentDirectory(event.target.value)
+            }
+        }))
     ])
 }
 
@@ -386,7 +391,20 @@ function sortArrow(field) {
     return ""
 }
 
+function getFilterForCurrentDirectory() {
+    return sessionStorage.getItem(filterStoragePrefix + directoryPath) || ""
+}
+
+function setFilterForCurrentDirectory(filter) {
+    if (filter) {
+        sessionStorage.setItem(filterStoragePrefix + directoryPath, filter)
+    } else {
+        sessionStorage.removeItem(filterStoragePrefix + directoryPath)
+    }
+}
+
 function viewFileEntries() {
+    const filter = getFilterForCurrentDirectory()
     return directoryFiles
         .filter(fileInfo => !filter || fileInfo.name.toLowerCase().includes(filter.toLowerCase()))
         .map(fileInfo => viewFileEntry(fileInfo))
