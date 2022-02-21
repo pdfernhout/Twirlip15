@@ -327,7 +327,10 @@ function viewMenu() {
             oninput: event => {
                 setFilterForCurrentDirectory(event.target.value)
             }
-        }))
+        }), m("span.ml1" + (getFilterForCurrentDirectory() ? ".pointer" : ""), {
+            onclick: () => setFilterForCurrentDirectory("")
+        }, "X")
+        )
     ])
 }
 
