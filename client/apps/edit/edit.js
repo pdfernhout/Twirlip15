@@ -1,7 +1,8 @@
-/* global m */
+/* global m, md5 */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { interceptSaveKey } from "../../common/menu.js"
+import "../../vendor/md5.js"
 
 let errorMessage = ""
 let chosenFileName = ""
