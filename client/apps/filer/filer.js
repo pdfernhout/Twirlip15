@@ -299,7 +299,7 @@ function dropdownMenu(label, options, callback, disabled) {
     )]
 }
 
-const applicationList = ["appender", "archiver", "edit", "filer", "ideas", "mail", "triples", "view-md"]
+const applicationList = ["appender", "archiver", "edit", "filer", "ideas", "mail", "search", "triples", "view-md"]
 
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
