@@ -78,11 +78,14 @@ export function Triplestore(showError, fileName) {
         if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
         triple.index = triples.length + 1
         if (triple.o === "remove") {
+            // removes the most recent exact a,b,c match
             _removeTriple(triple)
             triple.ignore = true
         } else if (triple.o === "replace" || !triple.o) {
+            // removes all a,b matches and sets c value
             _replaceTriple(triple)
         } else if (triple.o === "clear") {
+            // removes all a,b matches and leaves no c value
             _replaceTriple(triple)
             triple.ignore = true
         }
