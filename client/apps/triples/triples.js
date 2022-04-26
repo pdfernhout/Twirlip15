@@ -147,13 +147,15 @@ const TriplesApp = {
                 "Loading..."
             ),
             t.getLoadingState().isFileLoaded && m("div",
+                !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
+                rootId && viewIBISDiagram("", rootId),
+                m("hr"),
+                viewTripleEditor(),
+                m("hr"),
                 m("div",
                     viewCheckbox("Show ignored triples", showIgnoredTriples, () => showIgnoredTriples = !showIgnoredTriples),
                 ),
-                viewTriples(),
-                viewTripleEditor(),
-                !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
-                rootId && viewIBISDiagram("", rootId)
+                viewTriples()
             )
         )
     }
