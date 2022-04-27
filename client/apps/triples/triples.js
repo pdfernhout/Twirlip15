@@ -6,6 +6,8 @@ let showIgnoredTriples = true
 
 let errorMessage = ""
 
+let lastSelectedItem = null
+
 function showError(error) {
     errorMessage = error
 }
@@ -124,16 +126,68 @@ function viewTripleFilter() {
     )
 }
 
+function editClicked(id) {
+    const oldLabel = t.findLast(id, "label") || "Unlabelled"
+    const newLabel = prompt("New label for " + id + " ?", oldLabel)
+    if (newLabel) {
+        t.addTriple({
+            a: id,
+            b: "label",
+            c: newLabel,
+            o: "replace"
+        }) 
+    }
+}
+
+function deleteClicked(id) {
+    // Need to figure out parent or have passed in
+    alert("delete not implemented yet: " + id)
+}
+
+function addItem(type, parentId) {
+    const newLabel = prompt("Label for new [" + type + "] ?", "")
+    if (newLabel) {
+        const childId = Math.random()
+        t.addTriple({
+            a: parentId,
+            b: type,
+            c: childId,
+            o: "insert"
+        })
+        t.addTriple({
+            a: childId,
+            b: "label",
+            c: newLabel,
+            o: "insert"
+        }) 
+    }
+}
+
 // recursive
-function viewIBISDiagram(leader, id) {
+function viewIBISDiagram(type, id) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
-        m("div", { title: id, onclick: () => { editedTriple.a = id } }, leader, t.findLast(id, "label") || "Unlabelled"),
-        t.find(id, "+").map(childId => viewIBISDiagram(m("span.mr1", "+"), childId)),
-        t.find(id, "-").map(childId => viewIBISDiagram(m("span.mr1", "-"), childId)),
-        t.find(id, "!").map(childId => viewIBISDiagram(m("span.mr1", "*"), childId)),
-        t.find(id, "?").map(childId => viewIBISDiagram(m("span.mr1", "?"), childId)),
+        m("div", { title: id, 
+            onclick: () => { editedTriple.a = id } }, 
+            m("span.mr1", type),
+            m("span" /* + (lastSelectedItem === id ? ".ba" : "") */, 
+                { onclick: () => lastSelectedItem = id }, 
+                t.findLast(id, "label") || "Unlabelled"
+            ), 
+            (lastSelectedItem === id) && m("span",
+                m("button.ml1", {onclick: () => deleteClicked(id) }, "X"),
+                m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
+                m("button.ml1", {onclick: () => addItem("?", id) }, "?"),
+                (type === "?") && m("button.ml1", {onclick: () => addItem("*", id) }, "*"),
+                (type === "*") && m("button.ml1", {onclick: () => addItem("+", id) }, "+"),
+                (type === "*") && m("button.ml1", {onclick: () => addItem("-", id) }, "-")
+            )
+        ),
+        t.find(id, "+").map(childId => viewIBISDiagram("+", childId)),
+        t.find(id, "-").map(childId => viewIBISDiagram("-", childId)),
+        t.find(id, "!").map(childId => viewIBISDiagram("*", childId)),
+        t.find(id, "?").map(childId => viewIBISDiagram("?", childId)),
     )
 }
 
@@ -148,7 +202,7 @@ const TriplesApp = {
             ),
             t.getLoadingState().isFileLoaded && m("div",
                 !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
-                rootId && viewIBISDiagram("", rootId),
+                rootId && viewIBISDiagram("?", rootId),
                 m("hr"),
                 viewTripleEditor(),
                 m("hr"),

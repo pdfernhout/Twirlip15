@@ -55,3 +55,15 @@
 {"a":"3","b":"!","c":"Maybe","o":"insert","index":55}
 {"a":"3","b":"!","c":"10","o":"insert","index":56}
 {"a":"3","b":"!","c":"","o":"clear","index":57,"ignore":true}
+{"a":"1","b":"+","c":"Yet another pro","o":"insert","index":58}
+{"a":"1","b":"+","c":"Yet another pro","o":"remove","index":59,"ignore":true}
+{"a":"1","b":"+","c":"11","o":"insert","index":60}
+{"a":"11","b":"label","c":"Yet another pro","o":"insert","index":61}
+{"a":"4","b":"-","c":0.2193099557688355,"o":"insert","index":62}
+{"a":"11","b":"label","c":"Yet another pro that is longer","o":"replace","index":63}
+{"a":"11","b":"?","c":0.4851227118258178,"o":"insert","index":64}
+{"a":0.4851227118258178,"b":"label","c":"Should it be longer?","o":"replace","index":66}
+{"a":"4","b":"-","c":0.5940495778344923,"o":"insert","index":67}
+{"a":0.2193099557688355,"b":"label","c":"A con","o":"replace","index":69}
+{"a":0.5940495778344923,"b":"label","c":"Another con","o":"replace","index":68}
+{"a":"4","b":"-","c":0.5327191062381859,"o":"insert","index":69}
