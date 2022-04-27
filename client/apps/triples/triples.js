@@ -144,17 +144,17 @@ function deleteClicked(id) {
     alert("delete not implemented yet: " + id)
 }
 
-function addItem(type, parentId) {
+async function addItem(type, parentId) {
     const newLabel = prompt("Label for new [" + type + "] ?", "")
     if (newLabel) {
         const childId = Math.random()
-        t.addTriple({
+        await t.addTriple({
             a: parentId,
             b: type,
             c: childId,
             o: "insert"
         })
-        t.addTriple({
+        await t.addTriple({
             a: childId,
             b: "label",
             c: newLabel,

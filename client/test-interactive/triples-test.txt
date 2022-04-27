@@ -67,3 +67,6 @@
 {"a":0.2193099557688355,"b":"label","c":"A con","o":"replace","index":69}
 {"a":0.5940495778344923,"b":"label","c":"Another con","o":"replace","index":68}
 {"a":"4","b":"-","c":0.5327191062381859,"o":"insert","index":69}
+{"a":0.5327191062381859,"b":"label","c":"A longer con","o":"replace","index":70}
+{"a":"4","b":"-","c":0.030601292856757056,"o":"insert","index":71}
+{"a":0.030601292856757056,"b":"label","c":"Yet another con -- after fix","o":"insert","index":72}

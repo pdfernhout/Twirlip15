@@ -74,7 +74,7 @@ export function Triplestore(showError, fileName) {
         }
     }
 
-    function addTriple(triple, write=true) {
+    async function addTriple(triple, write=true, successCallback) {
         if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
         triple.index = triples.length + 1
         if (triple.o === "remove") {
@@ -90,7 +90,7 @@ export function Triplestore(showError, fileName) {
             triple.ignore = true
         }
         triples.push(triple)
-        if (write) appendFile(JSON.stringify(triple) + "\n")
+        if (write) await appendFile(JSON.stringify(triple) + "\n", successCallback)
     }
 
     function filterTriples(filterTriple, showIgnored=false) {
