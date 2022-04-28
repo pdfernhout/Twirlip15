@@ -171,7 +171,8 @@ function editClicked(type, id) {
 }
 
 async function deleteClicked(type, childId, parentId) {
-    if (!confirm("confirm delete item?")) return
+    const label = t.findLast(childId, "label") || "Unlabelled"
+    if (!confirm("confirm delete " + nameForType(type) + " \"" + label + "\"?")) return
     await t.addTriple({
         a: parentId,
         b: type,
