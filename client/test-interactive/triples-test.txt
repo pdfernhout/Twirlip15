@@ -72,3 +72,27 @@
 {"a":0.030601292856757056,"b":"label","c":"Yet another con -- after fix","o":"insert","index":72}
 {"a":"4","b":"-","c":0.5327191062381859,"o":"remove","index":73,"ignore":true}
 {"a":"4","b":"-","c":0.5940495778344923,"o":"remove","index":74,"ignore":true}
+{"a":0.2193099557688355,"b":"?","c":0.23230973909549857,"o":"insert","index":75}
+{"a":0.23230973909549857,"b":"label","c":"another question","o":"insert","index":76}
+{"a":0.23230973909549857,"b":"label","c":"another question?","o":"replace","index":77}
+{"a":0.23230973909549857,"b":"*","c":0.10578152847597744,"o":"insert","index":78}
+{"a":0.10578152847597744,"b":"label","c":"subitem?","o":"insert","index":79}
+{"a":0.23230973909549857,"b":"*","c":0.7102769674410606,"o":"insert","index":80}
+{"a":0.7102769674410606,"b":"label","c":"subitem2","o":"insert","index":81}
+{"a":0.23230973909549857,"b":"label","c":"another question 2?","o":"replace","index":82}
+{"a":0.23230973909549857,"b":"label","c":"another question? (2)","o":"replace","index":83}
+{"a":0.23230973909549857,"b":"label","c":"another question?","o":"replace","index":84}
+{"a":0.23230973909549857,"b":"?","c":0.3346989611778324,"o":"insert","index":85}
+{"a":0.3346989611778324,"b":"label","c":"Yet another question?","o":"insert","index":86}
+{"a":0.3346989611778324,"b":"*","c":0.5652519529736341,"o":"insert","index":87}
+{"a":0.5652519529736341,"b":"label","c":"test","o":"insert","index":88}
+{"a":0.3346989611778324,"b":"!","c":0.27104962525748455,"o":"insert","index":89}
+{"a":0.27104962525748455,"b":"label","c":"option","o":"insert","index":90}
+{"a":0.3346989611778324,"b":"!","c":0.7824355056975826,"o":"insert","index":91}
+{"a":0.7824355056975826,"b":"label","c":"second option","o":"insert","index":92}
+{"a":0.3346989611778324,"b":"!","c":0.7824355056975826,"o":"remove","index":93,"ignore":true}
+{"a":"11","b":"label","c":"Yet another pro that is somewhat longer","o":"replace","index":94}
+{"a":0.27104962525748455,"b":"+","c":0.2677935092479582,"o":"insert","index":95}
+{"a":0.2677935092479582,"b":"label","c":"pro","o":"insert","index":96}
+{"a":0.27104962525748455,"b":"-","c":0.5679905439160235,"o":"insert","index":97}
+{"a":0.5679905439160235,"b":"label","c":"con","o":"insert","index":98}

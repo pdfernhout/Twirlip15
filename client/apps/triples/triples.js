@@ -126,9 +126,40 @@ function viewTripleFilter() {
     )
 }
 
-function editClicked(id) {
+function warnIfInvalid(type, newLabel) {
+    if (newLabel === null) return true
+    let valid = false
+    if (newLabel === "") {
+        alert("Label cannot be empty")
+    } else if (type === "?" && !newLabel.includes("?")) {
+        alert("New label for a question must contain a question mark (\"?\") preferably at the end.")
+    } else if (type !== "?" && newLabel.includes("?")) {
+        alert("Label for a non-question should not contain a question mark (\"?\").")
+    } else {
+        valid = true
+    }
+    return valid
+}
+
+function nameForType(type) {
+    return {
+        "?": "question",
+        "*": "option",
+        "+": "pro",
+        "-": "con"
+    }[type]
+}
+
+function editClicked(type, id) {
     const oldLabel = t.findLast(id, "label") || "Unlabelled"
-    const newLabel = prompt("New label for " + id + " ?", oldLabel)
+    let valid = false
+    let newLabel = null
+    let labelForPrompt = oldLabel
+    while (!valid) {
+        newLabel = prompt("Edit label for " + nameForType(type) + ":", labelForPrompt)
+        valid = warnIfInvalid(type, newLabel)
+        labelForPrompt = newLabel
+    }
     if (newLabel) {
         t.addTriple({
             a: id,
@@ -140,6 +171,7 @@ function editClicked(id) {
 }
 
 async function deleteClicked(type, childId, parentId) {
+    if (!confirm("confirm delete item?")) return
     await t.addTriple({
         a: parentId,
         b: type,
@@ -149,7 +181,14 @@ async function deleteClicked(type, childId, parentId) {
 }
 
 async function addItem(type, parentId) {
-    const newLabel = prompt("Label for new [" + type + "] ?", "")
+    let valid = false
+    let newLabel = null
+    let labelForPrompt = ""
+    while (!valid) {
+        newLabel = prompt("Label for new " + nameForType(type) + ":", labelForPrompt)
+        valid = warnIfInvalid(type, newLabel)
+        labelForPrompt = newLabel
+    }
     if (newLabel) {
         const childId = Math.random()
         await t.addTriple({
@@ -174,7 +213,7 @@ function viewIBISDiagram(type, id, parent) {
     return m("div.ml4",
         m("div.relative", { title: id, 
             onclick: () => { editedTriple.a = id } }, 
-            m("span.mr1", type),
+            (type === "+" || type === "-") && m("span.mr1", type),
             m("span" /* + (lastSelectedItem === id ? ".ba" : "") */, 
                 { onclick: () => (lastSelectedItem === id)
                     ? lastSelectedItem = null 
@@ -185,16 +224,16 @@ function viewIBISDiagram(type, id, parent) {
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
                 { style: {top: "-0.4rem"} },
                 m("button.ml1", {onclick: () => deleteClicked(type, id, parent) }, "X"),
-                m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
+                m("button.ml1", {onclick: () => editClicked(type, id) }, "✎"),
                 m("button.ml1", {onclick: () => addItem("?", id) }, "?"),
-                (type === "?") && m("button.ml1", {onclick: () => addItem("*", id) }, "*"),
-                (type === "*") && m("button.ml1", {onclick: () => addItem("+", id) }, "+"),
-                (type === "*") && m("button.ml1", {onclick: () => addItem("-", id) }, "-")
+                (type === "?") && m("button.ml1", {onclick: () => addItem("!", id) }, "*"),
+                (type === "!") && m("button.ml1", {onclick: () => addItem("+", id) }, "+"),
+                (type === "!") && m("button.ml1", {onclick: () => addItem("-", id) }, "-")
             )
         ),
         t.find(id, "+").map(childId => viewIBISDiagram("+", childId, id)),
         t.find(id, "-").map(childId => viewIBISDiagram("-", childId, id)),
-        t.find(id, "!").map(childId => viewIBISDiagram("*", childId, id)),
+        t.find(id, "!").map(childId => viewIBISDiagram("!", childId, id)),
         t.find(id, "?").map(childId => viewIBISDiagram("?", childId, id)),
     )
 }
