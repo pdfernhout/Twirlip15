@@ -168,14 +168,18 @@ function viewIBISDiagram(type, id) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
-        m("div", { title: id, 
+        m("div.relative", { title: id, 
             onclick: () => { editedTriple.a = id } }, 
             m("span.mr1", type),
             m("span" /* + (lastSelectedItem === id ? ".ba" : "") */, 
-                { onclick: () => lastSelectedItem = id }, 
+                { onclick: () => (lastSelectedItem === id)
+                    ? lastSelectedItem = null 
+                    : lastSelectedItem = id
+                }, 
                 t.findLast(id, "label") || "Unlabelled"
             ), 
-            (lastSelectedItem === id) && m("span",
+            (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
+                { style: {top: "-0.4rem"} },
                 m("button.ml1", {onclick: () => deleteClicked(id) }, "X"),
                 m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
                 m("button.ml1", {onclick: () => addItem("?", id) }, "?"),
