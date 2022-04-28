@@ -139,9 +139,13 @@ function editClicked(id) {
     }
 }
 
-function deleteClicked(id) {
-    // Need to figure out parent or have passed in
-    alert("delete not implemented yet: " + id)
+async function deleteClicked(type, childId, parentId) {
+    await t.addTriple({
+        a: parentId,
+        b: type,
+        c: childId,
+        o: "remove"
+    })
 }
 
 async function addItem(type, parentId) {
@@ -164,7 +168,7 @@ async function addItem(type, parentId) {
 }
 
 // recursive
-function viewIBISDiagram(type, id) {
+function viewIBISDiagram(type, id, parent) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
@@ -180,7 +184,7 @@ function viewIBISDiagram(type, id) {
             ), 
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
                 { style: {top: "-0.4rem"} },
-                m("button.ml1", {onclick: () => deleteClicked(id) }, "X"),
+                m("button.ml1", {onclick: () => deleteClicked(type, id, parent) }, "X"),
                 m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
                 m("button.ml1", {onclick: () => addItem("?", id) }, "?"),
                 (type === "?") && m("button.ml1", {onclick: () => addItem("*", id) }, "*"),
@@ -188,10 +192,10 @@ function viewIBISDiagram(type, id) {
                 (type === "*") && m("button.ml1", {onclick: () => addItem("-", id) }, "-")
             )
         ),
-        t.find(id, "+").map(childId => viewIBISDiagram("+", childId)),
-        t.find(id, "-").map(childId => viewIBISDiagram("-", childId)),
-        t.find(id, "!").map(childId => viewIBISDiagram("*", childId)),
-        t.find(id, "?").map(childId => viewIBISDiagram("?", childId)),
+        t.find(id, "+").map(childId => viewIBISDiagram("+", childId, id)),
+        t.find(id, "-").map(childId => viewIBISDiagram("-", childId, id)),
+        t.find(id, "!").map(childId => viewIBISDiagram("*", childId, id)),
+        t.find(id, "?").map(childId => viewIBISDiagram("?", childId, id)),
     )
 }
 
@@ -206,7 +210,7 @@ const TriplesApp = {
             ),
             t.getLoadingState().isFileLoaded && m("div",
                 !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
-                rootId && viewIBISDiagram("?", rootId),
+                rootId && viewIBISDiagram("?", rootId, null),
                 m("hr"),
                 viewTripleEditor(),
                 m("hr"),

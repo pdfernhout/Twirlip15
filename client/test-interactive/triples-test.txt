@@ -70,3 +70,5 @@
 {"a":0.5327191062381859,"b":"label","c":"A longer con","o":"replace","index":70}
 {"a":"4","b":"-","c":0.030601292856757056,"o":"insert","index":71}
 {"a":0.030601292856757056,"b":"label","c":"Yet another con -- after fix","o":"insert","index":72}
+{"a":"4","b":"-","c":0.5327191062381859,"o":"remove","index":73,"ignore":true}
+{"a":"4","b":"-","c":0.5940495778344923,"o":"remove","index":74,"ignore":true}
