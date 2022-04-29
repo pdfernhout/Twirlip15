@@ -495,7 +495,7 @@ app.get("/favicon.ico", (req, res) => {
 app.use("/twirlip15", express.static(process.cwd() + "/client"))
 
 app.use((req, res, next) => {
-    logger.info("querystring %s %s", req.query, req.originalUrl)
+    logger.info("querystring %o %s", req.query, req.originalUrl)
     logger.info("req.url 1 %s", req.url)
     const twirlip = req.query.twirlip
     if (twirlip) {
