@@ -38,6 +38,10 @@ If you decide to open your server to the world via changing the code, https and 
 
 You can copy entries from preference-template.json to create a preferences.json file to modify some preferences.
 
+To look at a prettified log (which are written in JSON using pino):
+
+    cat logs/Twirlip15-$SOMELOGTIMESTAMP$.log | npx pino-pretty -t SYS:standard
+
 ## Licence 
 
 Twirlip 15 is under the MIT License
