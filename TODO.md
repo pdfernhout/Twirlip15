@@ -18,7 +18,7 @@ photo browser app
 run any command line app 
 generate command line from a command-specific UI derived from man page
 
-improve logging so uses file
+DONE improve logging so uses file
 
 ibis should have typed nodes
 ibis should deal with making new file when missing

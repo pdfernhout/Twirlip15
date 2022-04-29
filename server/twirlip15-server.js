@@ -1,5 +1,3 @@
-console.log("Twirlip15 starting up", new Date().toISOString())
-
 // WARNING: This server can read and modify files anywhere on the entire file system
 // that are accessible the the server process user id.
 // So, this server should only be made accessible to trusted clients.
@@ -17,12 +15,23 @@ const expressForceSSL = require("express-force-ssl")
 const expressBasicAuth = require("express-basic-auth")
 const bcrypt  = require("bcrypt")
 
+const pino = require("pino")
+const logger = pino(pino.destination("./logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log"))
+const pinoHTTP = require("pino-http")()
+
+function logStartupInfo(text) {
+    console.log(text)
+    logger.info(text)
+}
+
+logStartupInfo("Twirlip15 starting up: " + new Date().toISOString())
+
 let sharp
 try {
     // Sharp is not easily available on all platforms (like BSD)
     sharp = require("sharp")
 } catch {
-    console.log("sharp is not available on this platform")
+    logger.info("sharp is not available on this platform")
 }
 
 const preferencesFileName = "preferences.json"
@@ -31,7 +40,7 @@ let preferences = {}
 try {
     preferences = JSON.parse(fs.readFileSync(preferencesFileName))
 } catch (error) {
-    console.log("no preferences file")
+    logStartupInfo("no preferences file")
 }
 
 function getPreference(name, defaultValue) {
@@ -58,6 +67,7 @@ const redirectHttpToHttps = getPreference("redirectHttpToHttps", host !== "127.0
 const requireAuthentication = getPreference("requireAuthentication", redirectHttpToHttps)
 
 const app = express()
+app.use(pinoHTTP)
 
 const maxDataForResult = getPreference("maxDataForResult", 2000000)
 
@@ -96,18 +106,18 @@ try {
                 if (waitingOnWatchedFile) return
                 waitingOnWatchedFile = setTimeout(() => {
                     waitingOnWatchedFile = false
-                    console.log("Users file changes; rereading")
+                    logger.info("Users file changes; rereading")
                     try {
                         users = JSON.parse(fs.readFileSync(usersFileName))
                     } catch (error) {
-                        console.log("Problem reading " + usersFileName)
+                        logger.info("Problem reading %s", usersFileName)
                     }
                 }, 100)
             }
         })
     }
 } catch (error) {
-    console.log("A users file of " + usersFileName + " is required; use \"node server/add-user.js\" to make one")
+    logStartupInfo("A users file of " + usersFileName + " is required; use \"node server/add-user.js\" to make one")
     process.exit(-1)
 }
 
@@ -186,7 +196,7 @@ app.post("/twirlip15-api", function(request, response) {
 })
 
 function requestEcho(request, response) {
-    console.log("POST echo", request.body)
+    logger.info("POST echo %o", request.body)
     response.json({ok: true, echo: request.body})
 }
 
@@ -195,7 +205,7 @@ function failForRequiredField(request, response, fieldName) {
     const value = request.body[fieldName]
     if (!request.body[fieldName] || typeof value !== "string") {
         const errorMessage = "API call missing required field: " + fieldName
-        console.log("Error:", errorMessage)
+        logger.info("Error: %s", errorMessage)
         response.json({ok: false, errorMessage})
         return true
     }
@@ -207,7 +217,7 @@ function failForMissingRequiredField(request, response, fieldName) {
     const value = request.body[fieldName]
     if (typeof value !== "string") {
         const errorMessage = "API call missing required field: " + fieldName
-        console.log("Error:", errorMessage)
+        logger.info("Error: %s", errorMessage)
         response.json({ok: false, errorMessage})
         return true
     }
@@ -215,7 +225,7 @@ function failForMissingRequiredField(request, response, fieldName) {
 }
 
 async function requestFileContents(request, response) {
-    console.log("POST file-contents", request.body)
+    logger.info("POST file-contents %o", request.body)
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const encoding = request.body.encoding || "utf8"
@@ -229,11 +239,11 @@ async function requestFileContents(request, response) {
             const contents = await fs.promises.readFile(filePath, encoding)
             response.json({ok: true, contents: contents})
         } catch(err) {
-            console.log(err)
+            logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
         }
     } catch(error) {
-        console.log(error)
+        logger.info(error)
         response.json({ok: false, errorMessage: "Problem stat-ing file"})
     }
 }
@@ -241,7 +251,7 @@ async function requestFileContents(request, response) {
 const fsRead = util.promisify(fs.read)
 
 async function requestFileReadBytes(request, response) {
-    console.log("POST file-read-bytes", request.body)
+    logger.info("POST file-read-bytes %o", request.body)
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const start = request.body.start || 0
@@ -259,19 +269,19 @@ async function requestFileReadBytes(request, response) {
             const readResult = await fsRead(fileHandle.fd, buffer, 0, length, start)
             response.json({ok: true, data: buffer.toString(encoding), bytesRead: readResult.bytesRead})
         } catch(err) {
-            console.log(err)
+            logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
         } finally {
             await fileHandle.close()
         }
     } catch (err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem opening file"})
     }
 }
 
 async function requestFilePreview(request, response) {
-    console.log("POST file-preview", request.body)
+    logger.info("POST file-preview %o", request.body)
     if (!sharp) {
         response.json({ok: false, errorMessage: "Problem previewing file; sharp not available on server"})
         return
@@ -286,15 +296,18 @@ async function requestFilePreview(request, response) {
         .toFormat("jpeg")
         .toBuffer()
         .then(data => { response.json({ ok: true, base64Data: data.toString("base64") }) })
-        .catch(error => { console.log(error); response.json({ok: false, errorMessage: "Problem previewing file: " + error}) })
+        .catch(error => { 
+            logger.info(error)
+            response.json({ok: false, errorMessage: "Problem previewing file: " + error}) 
+        })
     } catch(err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem previewing file"})
     }
 }
 
 async function requestFileAppend(request, response) {
-    console.log("POST file-append", request.body)
+    logger.info("POST file-append %o", request.body)
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     const stringToAppend = request.body.stringToAppend
@@ -303,13 +316,13 @@ async function requestFileAppend(request, response) {
         await fs.promises.appendFile(filePath, stringToAppend, encoding)
         response.json({ok: true})
     } catch(err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem appending to file"})
     }
 }
 
 async function requestFileSave(request, response) {
-    console.log("POST file-save", request.body)
+    logger.info("POST file-save %o", request.body)
     if (failForRequiredField(request, response, "fileName")) return
     const filePath = path.join(baseDir, request.body.fileName)
     if (failForMissingRequiredField(request, response, "contents")) return
@@ -319,13 +332,13 @@ async function requestFileSave(request, response) {
         await fs.promises.writeFile(filePath, fileContents, encoding)
         response.json({ok: true})
     } catch(err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem writing file"})
     }
 }
 
 async function requestFileCopy(request, response) {
-    console.log("POST file-copy", request.body)
+    logger.info("POST file-copy %o", request.body)
     if (failForRequiredField(request, response, "copyFromFilePath")) return
     const copyFromFilePath = path.join(baseDir, request.body.copyFromFilePath)
     if (failForRequiredField(request, response, "copyToFilePath")) return
@@ -334,13 +347,13 @@ async function requestFileCopy(request, response) {
         await fs.promises.copyFile(copyFromFilePath, copyToFilePath)
         response.json({ok: true})
     } catch(err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem copying file"})
     }
 }
 
 async function requestFileRename(request, response) {
-    console.log("POST file-rename", request.body)
+    logger.info("POST file-rename %o", request.body)
     const renameFiles = request.body.renameFiles
     if (!renameFiles) {
         return response.json({ok: false, errorMessage: "renameFiles not specified"})
@@ -363,7 +376,7 @@ async function requestFileRename(request, response) {
 }
 
 async function requestFileMove(request, response) {
-    console.log("POST file-move", request.body)
+    logger.info("POST file-move %o", request.body)
     const moveFiles = request.body.moveFiles
     if (!moveFiles) {
         return response.json({ok: false, errorMessage: "moveFiles not specified"})
@@ -382,7 +395,7 @@ async function requestFileMove(request, response) {
             const newFileName = path.join(baseDir, newLocation, shortFileName)
             await fs.promises.rename(oldFileName, newFileName)
         } catch (err) {
-            console.log(err)
+            logger.info(err)
             return response.json({ok: false, errorMessage: "file move failed for: " + JSON.stringify(fileName)})
         }
     }
@@ -391,7 +404,7 @@ async function requestFileMove(request, response) {
 }
 
 async function requestFileDelete(request, response) {
-    console.log("POST file-delete", request.body)
+    logger.info("POST file-delete %o", request.body)
     const deleteFiles = request.body.deleteFiles
     if (!deleteFiles) {
         return response.json({ok: false, errorMessage: "deleteFiles not specified"})
@@ -410,7 +423,7 @@ async function requestFileDelete(request, response) {
                 await fs.promises.rmdir(filePath)
             }
         } catch (err) {
-            console.log(err)
+            logger.info(err)
             return response.json({ok: false, errorMessage: "file delete failed for: " + JSON.stringify(fileName)})
         }
     }
@@ -425,17 +438,17 @@ async function requestFileStats(request, response) {
         const stats = await fs.promises.lstat(filePath)
         response.json({ok: true, stats, fileName: request.body.fileName})
     } catch (err) {
-        console.log(err)
+        logger.info(err)
         return response.json({ok: false, errorMessage: "file stat failed for: " + JSON.stringify(request.body.fileName)})
     }    
 }
 
 async function requestFileDirectory(request, response) {
-    console.log("POST file-directory", request.body)
+    logger.info("POST file-directory %o", request.body)
     if (failForRequiredField(request, response, "directoryPath")) return
     const filePath = path.join(baseDir, request.body.directoryPath)
     const includeStats = request.body.includeStats || false
-    console.log("POST file-directory filePath", filePath)
+    logger.info("POST file-directory filePath %s", filePath)
     try {
         const entries = await fs.promises.readdir(filePath, {encoding: "utf8", withFileTypes: true})
         const files = []
@@ -456,21 +469,21 @@ async function requestFileDirectory(request, response) {
         }
         response.json({ok: true, files: files})
     } catch (err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem reading directory"})
     }
 }
 
 async function requestFileNewDirectory(request, response) {
-    console.log("POST file-new-directory", request.body)
+    logger.info("POST file-new-directory %o", request.body)
     if (failForRequiredField(request, response, "directoryPath")) return
     const filePath = path.join(baseDir, request.body.directoryPath)
-    console.log("POST file-new-directory filePath", filePath)
+    logger.info("POST file-new-directory filePath %s", filePath)
     try {
         await fs.promises.mkdir(filePath, {recursive: true})
         response.json({ok: true})
     } catch (err) {
-        console.log(err)
+        logger.info(err)
         response.json({ok: false, errorMessage: "Problem making new directory"})
      }
 }
@@ -482,13 +495,13 @@ app.get("/favicon.ico", (req, res) => {
 app.use("/twirlip15", express.static(process.cwd() + "/client"))
 
 app.use((req, res, next) => {
-    console.log("querystring", req.query, req.originalUrl)
-    console.log("req.url 1", req.url)
+    logger.info("querystring %s %s", req.query, req.originalUrl)
+    logger.info("req.url 1 %s", req.url)
     const twirlip = req.query.twirlip
     if (twirlip) {
         // Special handling for urls with a querystring like: /some/path/something?twirlip=editor
         const appName = twirlip.replace(/[^0-9a-z-]/gi, "")
-        console.log("send app file for twirlip", appName)
+        logger.info("send app file for twirlip: %s", appName)
         res.sendFile(process.cwd() + "/client/apps/" + appName + "/" + appName + ".html")
     } else if (req.url.endsWith("/") && !req.query.twirlip) {
         // Use the filer app to handle interacting with directories
@@ -500,10 +513,10 @@ app.use((req, res, next) => {
 
 app.use("/", express.static("/"))
 
-console.log("Twirlip serving from directory", process.cwd())
+logStartupInfo("Twirlip serving from directory: " + process.cwd())
 
 app.listen(httpPort, host)
-console.log("info", "Twirlip server listening at http://" + host + ":" + httpPort)
+logStartupInfo("Twirlip server listening at http://" + host + ":" + httpPort)
 
 function readOrCreateSSLCertificateKeys() {
     // load certificates if available or otherwise create them
@@ -515,14 +528,14 @@ function readOrCreateSSLCertificateKeys() {
         certificate = fs.readFileSync(sslDirName + sslCertFileName)
         keysPromise = Promise.resolve({serviceKey, certificate})
     } catch (error) {
-        console.log("Could not read certificate files; creating self-signed certificate")
+        logger.info("Could not read certificate files; creating self-signed certificate")
         if (!fs.existsSync(sslDirName)) {
             fs.mkdirSync(sslDirName)
         }
         keysPromise = new Promise((resolve, reject) => {
             pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
                 if (err) {
-                    console.log("Problem creating https certificate", err)
+                    logger.info(err, "Problem creating https certificate")
                     reject("Problem creating https certificate")
                 } 
                 fs.writeFileSync(sslDirName + sslKeyFileName, keys.serviceKey)
@@ -540,7 +553,7 @@ function startHttpsServer() {
         const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(httpsPort, host, function () {
             const host = httpsServer.address().address
             const port = httpsServer.address().port
-            console.log("info", "Twirlip server listening at https://" + host + ":" + port)
+            logStartupInfo("Twirlip server listening at https://" + host + ":" + port)
         })
     })
 }
