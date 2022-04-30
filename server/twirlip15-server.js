@@ -16,8 +16,9 @@ const expressBasicAuth = require("express-basic-auth")
 const bcrypt  = require("bcrypt")
 
 const pino = require("pino")
-const logger = pino(pino.destination("./logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log"))
-const pinoHTTP = require("pino-http")()
+const pinoDestination = pino.destination("./logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log")
+const logger = pino(pinoDestination)
+const pinoHTTP = require("pino-http")({}, pinoDestination)
 
 function logStartupInfo(text) {
     console.log(text)
