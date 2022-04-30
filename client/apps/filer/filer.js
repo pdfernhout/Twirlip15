@@ -285,7 +285,7 @@ function selectAll() {
 
 function dropdownMenu(label, options, callback, disabled) {
     return [
-        m("select", { value: "", disabled, onchange: event => {
+        m("select.ma2", { value: "", disabled, onchange: event => {
             callback(event.target.value) 
         }},
         m("option", { value: ""}, label),
@@ -304,14 +304,14 @@ const applicationList = ["appender", "archiver", "edit", "filer", "ibis", "ideas
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
-        menuButton("+ New file", () => newFile()),
-        menuButton("⬆ Upload file", () => uploadFile(), isUploading),
-        menuButton("+ New directory", () => newDirectory()),
-        dropdownMenu("Launch", applicationList, (id) => launchApplication(id), selectedFileCount !== 1),
-        menuButton("Rename", () => renameFile(), selectedFileCount !== 1),
-        menuButton("Move", () => moveFiles(), !selectedFileCount),
-        menuButton("Copy", () => copyFile(), selectedFileCount !== 1),
-        menuButton("Delete", () => deleteFiles(), !selectedFileCount),
+        menuButton("+New file", () => newFile()),
+        menuButton("⬆Upload file", () => uploadFile(), isUploading),
+        menuButton("+New directory", () => newDirectory()),
+        dropdownMenu("▶Launch", applicationList, (id) => launchApplication(id), selectedFileCount !== 1),
+        menuButton("✎Rename", () => renameFile(), selectedFileCount !== 1),
+        menuButton("➛Move", () => moveFiles(), !selectedFileCount),
+        menuButton("⎘Copy", () => copyFile(), selectedFileCount !== 1),
+        menuButton("✂Delete", () => deleteFiles(), !selectedFileCount),
         m("br"),
         menuCheckbox("Show hidden files", showHiddenFiles, () => {
             showHiddenFiles = !showHiddenFiles
