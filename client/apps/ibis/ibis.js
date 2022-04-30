@@ -98,13 +98,13 @@ function viewIBISDiagram(type, id, parent) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
     // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
     return m("div.ml4",
-        m("div.relative", { title: id }, 
+        m("div.relative",
+            { onclick: () => (lastSelectedItem === id)
+                ? lastSelectedItem = null 
+                : lastSelectedItem = id
+            }, 
             (type === "+" || type === "-") && m("span.mr1", type),
             m("span" /* + (lastSelectedItem === id ? ".ba" : "") */, 
-                { onclick: () => (lastSelectedItem === id)
-                    ? lastSelectedItem = null 
-                    : lastSelectedItem = id
-                }, 
                 t.findLast(id, "label") || "Unlabelled"
             ), 
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
