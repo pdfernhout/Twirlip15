@@ -96,3 +96,6 @@
 {"a":0.2677935092479582,"b":"label","c":"pro","o":"insert","index":96}
 {"a":0.27104962525748455,"b":"-","c":0.5679905439160235,"o":"insert","index":97}
 {"a":0.5679905439160235,"b":"label","c":"con","o":"insert","index":98}
+{"a":"4","b":"+","c":0.679463033838902,"o":"insert","index":99}
+{"a":0.679463033838902,"b":"label","c":"Another pro!","o":"insert","index":100}
+{"a":0.679463033838902,"b":"label","c":"Another better pro!","o":"replace","index":101}
