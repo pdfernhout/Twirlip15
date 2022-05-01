@@ -1,6 +1,7 @@
 /* global m */
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
+import { menuTopBar, menuButton } from "../../common/menu.js"
 
 let errorMessage = ""
 
@@ -124,18 +125,27 @@ function viewIBISDiagram(type, id, parent) {
     )
 }
 
+function viewMenu() {
+    return menuTopBar([
+        menuButton("Export", () => alert("Export WIP"))
+    ])
+}
+
 const IBISApp = {
     view: () => {
         const rootId = t.last((t.find("root", "value")))
         // console.log("rootId", rootId)
-        return m("div.ma2",
-            errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
-            !t.getLoadingState().isFileLoaded && m("div",
-                "Loading..."
-            ),
-            t.getLoadingState().isFileLoaded && m("div",
-                !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
-                rootId && viewIBISDiagram("?", rootId, null),
+        return m("div",
+            viewMenu(),
+            m("div.ma2",
+                errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+                !t.getLoadingState().isFileLoaded && m("div",
+                    "Loading..."
+                ),
+                t.getLoadingState().isFileLoaded && m("div",
+                    !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
+                    rootId && viewIBISDiagram("?", rootId, null),
+                )
             )
         )
     }
