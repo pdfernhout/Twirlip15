@@ -336,7 +336,7 @@ function viewMenu() {
 
 function viewSelectedFiles() {
     const selectedFileCount = Object.keys(selectedFiles).length
-    return showMenu && m("div.ma1.ml4",
+    return showMenu && m("div.ma1",
         "Selected file count: ",
         selectedFileCount,
         m("button.ml2", {onclick: () => selectAll(), }, "Select All"),
