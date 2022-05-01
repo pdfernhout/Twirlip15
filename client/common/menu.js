@@ -3,7 +3,7 @@
 export const menuHoverColor = ".hover-bg-orange"
 
 export function menuTopBar(parts) {
-    return m("div.ma1.bg-light-green", parts)
+    return m("div.bg-light-green", parts)
 }
 
 export function menuButton(label, action, disabled) {

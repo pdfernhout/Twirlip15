@@ -336,7 +336,7 @@ function viewMenu() {
 
 function viewSelectedFiles() {
     const selectedFileCount = Object.keys(selectedFiles).length
-    return showMenu && m("div.ma1",
+    return showMenu && m("div.ma1.pl2.pr2",
         "Selected file count: ",
         selectedFileCount,
         m("button.ml2", {onclick: () => selectAll(), }, "Select All"),
@@ -536,10 +536,10 @@ function viewPath(path) {
 
 const Filer = {
     view: () => {
-        return m("div.pa2.h-100.flex.flex-column",
+        return m("div.h-100.flex.flex-column",
             errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
             statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
-            m("div.flex-none", m("span.mr2", {
+            m("div.flex-none.pt1.pb1", m("span.ma2", {
                 onclick: () => {
                     showMenu = !showMenu
                     preferences.set("showMenu", showMenu)
@@ -547,7 +547,7 @@ const Filer = {
             ),
             m("div.flex-none", viewMenu()),
             m("div.flex-none", viewSelectedFiles()),
-            m("div.flex-auto.overflow-y-auto", viewDirectoryFiles())
+            m("div.pl2.pr2.flex-auto.overflow-y-auto", viewDirectoryFiles())
         )
     }
 }
