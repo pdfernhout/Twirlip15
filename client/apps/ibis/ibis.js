@@ -94,6 +94,26 @@ async function addItem(type, parentId) {
     }
 }
 
+function indent(indentLevel) {
+    return "    ".repeat(indentLevel)
+}
+
+// recursive
+function exportIBISDiagram(indentLevel, type, id, parent) {
+    if (id === "") return indent(indentLevel) + "Missing id in IBIS diagram\n"
+    // console.log("exportIBISDiagram", id, "label", t.find(id, "label") )
+    let result = indent(indentLevel) +
+        ((type === "+" || type === "-") ? (type + " ") : "") +
+        (t.findLast(id, "label") || "Unlabelled") + 
+        "\n"
+    const childIndentLevel = indentLevel + 1
+    t.find(id, "+").map(childId => result += exportIBISDiagram(childIndentLevel, "+", childId, id))
+    t.find(id, "-").map(childId => result += exportIBISDiagram(childIndentLevel, "-", childId, id))
+    t.find(id, "!").map(childId => result += exportIBISDiagram(childIndentLevel, "!", childId, id))
+    t.find(id, "?").map(childId => result += exportIBISDiagram(childIndentLevel, "?", childId, id))
+    return result
+}
+
 // recursive
 function viewIBISDiagram(type, id, parent) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
@@ -125,9 +145,18 @@ function viewIBISDiagram(type, id, parent) {
     )
 }
 
+function exportMenuAction() {
+    console.log("exportMenuAction")
+    const rootId = t.last((t.find("root", "value")))
+    if (!rootId) return alert("No IBIS root")
+    const result = exportIBISDiagram(0, "?", rootId, null)
+    console.log(result)
+    alert("Export results logged to console")
+}
+
 function viewMenu() {
     return menuTopBar([
-        menuButton("Export", () => alert("Export WIP"))
+        menuButton("Export", exportMenuAction)
     ])
 }
 
