@@ -18,9 +18,9 @@ function warnIfInvalid(type, newLabel) {
     let valid = false
     if (newLabel === "") {
         alert("Label cannot be empty")
-    } else if (type === "?" && !newLabel.includes("?")) {
+    } else if (type === "question" && !newLabel.includes("?")) {
         alert("New label for a question must contain a question mark (\"?\") preferably at the end.")
-    } else if (type !== "?" && newLabel.includes("?")) {
+    } else if (type !== "question" && newLabel.includes("?")) {
         alert("Label for a non-question should not contain a question mark (\"?\").")
     } else {
         valid = true
@@ -37,13 +37,14 @@ function nameForType(type) {
     }[type]
 }
 
-function editClicked(type, id) {
+function editClicked(id) {
+    const type = t.findLast(id, "type")
     const oldLabel = t.findLast(id, "label") || "Unlabelled"
     let valid = false
     let newLabel = null
     let labelForPrompt = oldLabel
     while (!valid) {
-        newLabel = prompt("Edit label for " + nameForType(type) + ":", labelForPrompt)
+        newLabel = prompt("Edit label for " + type + ":", labelForPrompt)
         valid = warnIfInvalid(type, newLabel)
         labelForPrompt = newLabel
     }
@@ -57,14 +58,21 @@ function editClicked(type, id) {
     }
 }
 
-async function deleteClicked(type, childId, parentId) {
-    const label = t.findLast(childId, "label") || "Unlabelled"
-    if (!confirm("confirm delete " + nameForType(type) + " \"" + label + "\"?")) return
+async function deleteClicked(id) {
+    const type = t.findLast(id, "type")
+    const label = t.findLast(id, "label") || "Unlabelled"
+    if (!confirm("confirm delete " + type + " \"" + label + "\"?")) return
     await t.addTriple({
-        a: parentId,
-        b: type,
-        c: childId,
-        o: "remove"
+        a: id,
+        b: "attachedTo",
+        c: "",
+        o: "replace"
+    })
+    await t.addTriple({
+        a: id,
+        b: "deleted",
+        c: true,
+        o: "insert"
     })
 }
 
@@ -80,9 +88,9 @@ async function addItem(type, parentId) {
     if (newLabel) {
         const childId = Math.random()
         await t.addTriple({
-            a: parentId,
-            b: type,
-            c: childId,
+            a: childId,
+            b: "type",
+            c: type,
             o: "insert"
         })
         await t.addTriple({
@@ -90,7 +98,13 @@ async function addItem(type, parentId) {
             b: "label",
             c: newLabel,
             o: "insert"
-        }) 
+        })
+        await t.addTriple({
+            a: childId,
+            b: "attachedTo",
+            c: parentId,
+            o: "insert"
+        })
     }
 }
 
@@ -99,49 +113,45 @@ function indent(indentLevel) {
 }
 
 // recursive
-function exportIBISDiagram(indentLevel, type, id, parent) {
+function exportIBISDiagram(indentLevel, id) {
     if (id === "") return indent(indentLevel) + "Missing id in IBIS diagram\n"
-    // console.log("exportIBISDiagram", id, "label", t.find(id, "label") )
+    const type = t.findLast(id, "type")
     let result = indent(indentLevel) +
-        ((type === "+" || type === "-") ? (type + " ") : "") +
+        ((type === "pro") ? ("+ ") : "") +
+        ((type === "con") ? ("- ") : "") +
         (t.findLast(id, "label") || "Unlabelled") + 
         "\n"
     const childIndentLevel = indentLevel + 1
-    t.find(id, "+").map(childId => result += exportIBISDiagram(childIndentLevel, "+", childId, id))
-    t.find(id, "-").map(childId => result += exportIBISDiagram(childIndentLevel, "-", childId, id))
-    t.find(id, "!").map(childId => result += exportIBISDiagram(childIndentLevel, "!", childId, id))
-    t.find(id, "?").map(childId => result += exportIBISDiagram(childIndentLevel, "?", childId, id))
+    t.find(null, "attachedTo", id).map(childId => result += exportIBISDiagram(childIndentLevel, childId))
     return result
 }
 
 // recursive
-function viewIBISDiagram(type, id, parent) {
+function viewIBISDiagram(id) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
-    // console.log("viewIBISDiagram", id, "label", t.find(id, "label") )
+    const type = t.findLast(id, "type")
     return m("div.ml4",
         m("div.relative",
             { onclick: () => (lastSelectedItem === id)
                 ? lastSelectedItem = null 
                 : lastSelectedItem = id
             }, 
-            (type === "+" || type === "-") && m("span.mr1", type),
-            m("span" /* + (lastSelectedItem === id ? ".ba" : "") */, 
+            (type === "pro") && m("span.mr1", "+"),
+            (type === "con") && m("span.mr1", "-"),
+            m("span",
                 t.findLast(id, "label") || "Unlabelled"
             ), 
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
                 { style: {top: "-0.4rem"} },
-                m("button.ml1", {onclick: () => deleteClicked(type, id, parent) }, "X"),
-                m("button.ml1", {onclick: () => editClicked(type, id) }, "✎"),
-                m("button.ml1", {onclick: () => addItem("?", id) }, "?"),
-                (type === "?") && m("button.ml1", {onclick: () => addItem("!", id) }, "*"),
-                (type === "!") && m("button.ml1", {onclick: () => addItem("+", id) }, "+"),
-                (type === "!") && m("button.ml1", {onclick: () => addItem("-", id) }, "-")
+                m("button.ml1", {onclick: () => deleteClicked(id) }, "X"),
+                m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
+                m("button.ml1", {onclick: () => addItem("question", id) }, "?"),
+                (type === "question") && m("button.ml1", {onclick: () => addItem("option", id) }, "*"),
+                (type === "option") && m("button.ml1", {onclick: () => addItem("pro", id) }, "+"),
+                (type === "option") && m("button.ml1", {onclick: () => addItem("con", id) }, "-")
             )
         ),
-        t.find(id, "+").map(childId => viewIBISDiagram("+", childId, id)),
-        t.find(id, "-").map(childId => viewIBISDiagram("-", childId, id)),
-        t.find(id, "!").map(childId => viewIBISDiagram("!", childId, id)),
-        t.find(id, "?").map(childId => viewIBISDiagram("?", childId, id)),
+        t.find(null, "attachedTo", id).map(childId => viewIBISDiagram(childId)),
     )
 }
 
@@ -149,7 +159,7 @@ function exportMenuAction() {
     console.log("exportMenuAction")
     const rootId = t.last((t.find("root", "value")))
     if (!rootId) return alert("No IBIS root")
-    const result = exportIBISDiagram(0, "?", rootId, null)
+    const result = exportIBISDiagram(0, rootId)
     console.log(result)
     alert("Export results logged to console")
 }
@@ -163,7 +173,6 @@ function viewMenu() {
 const IBISApp = {
     view: () => {
         const rootId = t.last((t.find("root", "value")))
-        // console.log("rootId", rootId)
         return m("div",
             viewMenu(),
             m("div.ma2",
@@ -173,7 +182,7 @@ const IBISApp = {
                 ),
                 t.getLoadingState().isFileLoaded && m("div",
                     !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
-                    rootId && viewIBISDiagram("?", rootId, null),
+                    rootId && viewIBISDiagram(rootId),
                 )
             )
         )

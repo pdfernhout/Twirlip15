@@ -99,3 +99,33 @@
 {"a":"4","b":"+","c":0.679463033838902,"o":"insert","index":99}
 {"a":0.679463033838902,"b":"label","c":"Another pro!","o":"insert","index":100}
 {"a":0.679463033838902,"b":"label","c":"Another better pro!","o":"replace","index":101}
+{"a":0.3053399899172159,"b":"type","c":"question","o":"insert","index":102}
+{"a":0.3053399899172159,"b":"label","c":"A question  about new test question with new items approach?","o":"insert","index":103}
+{"a":0.3053399899172159,"b":"attachedTo","c":"0","o":"insert","index":104}
+{"a":0.9535092439156513,"b":"type","c":"option","o":"insert","index":105}
+{"a":0.9535092439156513,"b":"label","c":"Option 1","o":"insert","index":106}
+{"a":0.9535092439156513,"b":"attachedTo","c":0.3053399899172159,"o":"insert","index":107}
+{"a":0.12410503876785861,"b":"type","c":"option","o":"insert","index":108}
+{"a":0.12410503876785861,"b":"label","c":"Option 2","o":"insert","index":109}
+{"a":0.12410503876785861,"b":"attachedTo","c":0.3053399899172159,"o":"insert","index":110}
+{"a":0.395706445405279,"b":"type","c":"pro","o":"insert","index":111}
+{"a":0.395706445405279,"b":"label","c":"A pro","o":"insert","index":112}
+{"a":0.395706445405279,"b":"attachedTo","c":0.12410503876785861,"o":"insert","index":113}
+{"a":0.8248494728146751,"b":"type","c":"pro","o":"insert","index":114}
+{"a":0.8248494728146751,"b":"label","c":"Another pro","o":"insert","index":115}
+{"a":0.8248494728146751,"b":"attachedTo","c":0.12410503876785861,"o":"insert","index":116}
+{"a":0.6682054777701786,"b":"type","c":"con","o":"insert","index":117}
+{"a":0.6682054777701786,"b":"label","c":"A con","o":"insert","index":118}
+{"a":0.6682054777701786,"b":"attachedTo","c":0.12410503876785861,"o":"insert","index":119}
+{"a":0.32296544202722466,"b":"type","c":"question","o":"insert","index":120}
+{"a":0.32296544202722466,"b":"label","c":"Is this reall a con?","o":"insert","index":121}
+{"a":0.32296544202722466,"b":"attachedTo","c":0.6682054777701786,"o":"insert","index":122}
+{"a":0.6761491936852434,"b":"type","c":"pro","o":"insert","index":123}
+{"a":0.6761491936852434,"b":"label","c":"Problem that a new pro will go under previous cons","o":"insert","index":124}
+{"a":0.6761491936852434,"b":"attachedTo","c":0.12410503876785861,"o":"insert","index":125}
+{"a":0.32296544202722466,"b":"label","c":"Is this really a con?","o":"replace","index":126}
+{"a":0.4186093527393314,"b":"type","c":"option","o":"insert","index":127}
+{"a":0.4186093527393314,"b":"label","c":"Maybe","o":"insert","index":128}
+{"a":0.4186093527393314,"b":"attachedTo","c":0.32296544202722466,"o":"insert","index":129}
+{"a":0.4186093527393314,"b":"attachedTo","c":"","o":"replace","index":130}
+{"a":0.4186093527393314,"b":"deleted","c":true,"o":"insert","index":131}
