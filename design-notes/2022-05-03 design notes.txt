@@ -1,0 +1,77 @@
+// Thoughts while working on revising how items are stored in the ibis.js app
+
+// defineTable("ibis-hierarchy", {parent: "string", child: "string"})
+
+async function addItem(type, parentId) {
+    let valid = false
+    let newLabel = null
+    let labelForPrompt = ""
+    while (!valid) {
+        newLabel = prompt("Label for new " + nameForType(type) + ":", labelForPrompt)
+        valid = warnIfInvalid(type, newLabel)
+        labelForPrompt = newLabel
+    }
+    if (newLabel) {
+        const childId = Math.random()
+        await t.addTriple({
+            a: childId,
+            b: "type",
+            c: type,
+            o: "insert"
+        })
+        await t.addTriple({
+            a: childId,
+            b: "label",
+            c: newLabel,
+            o: "insert"
+        })
+        // above uses triples to add properties
+
+        // below uses triple to add a relationship
+        await t.addTriple({
+            a: parentId,
+            b: "child",
+            c: childId,
+            o: "insert"
+        })
+
+        // Alternate for defining a relationship -- the way Bill Kent envisioned in Data & Reality
+        const relationId = Math.random()
+        await t.addTriple({
+            a: relationId,
+            b: "type",
+            c: "parent-child-relationship", // "parent-child-table", "hierarchy-table"
+            o: "insert"
+        })
+        await t.addTriple({
+            a: relationId,
+            b: "parent",
+            c: parentId,
+            o: "insert"
+        })
+        await t.addTriple({
+            a: relationId,
+            b: "child",
+            c: childId,
+            o: "insert"
+        })
+
+        // One advantage of this approach is it can have more than two columns as a table
+        // But maybe harder to find results as need to either get all type triples in table
+        // and then look for matches of parent or child,
+        // or need to look for all matches of parent or child and then filter by type
+        // One other possibility is another layer of indirection where names like "parent"
+        // are themselves objects which have labels so they can be easily renamed.
+        // Could also then have unique items for each column even if same name in different tables.
+        // (Using relational terminology with tables and columns vs. entity attribute value)
+        
+        // Could do this all via a functions: (using SQL-ish terms)
+        addRow("hierarchy-table", {parent: parentId, child: childId})
+
+        select("hierarchy-table", {parent: parentId}, {child: true})
+
+        updateRow("hierarchy-table", {parent: parentId, child: childId}, {parent: newParentId})
+
+        // Could still be schemaless -- but still flabby vs flexible?
+    }
+}
