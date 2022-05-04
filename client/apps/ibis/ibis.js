@@ -1,8 +1,9 @@
-/* global m */
+/* global m, showdown */
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
 import { menuTopBar, menuButton } from "../../common/menu.js"
 import { helpText } from "./ibis-help.js"
+import "../../vendor/showdown.js"
 
 let errorMessage = ""
 
@@ -166,9 +167,11 @@ function viewMenu() {
 }
 
 function viewHelp() {
-    return isHelpDisplayed && m("div.mt2.bg-light-gray",
+    const converter = new showdown.Converter({simplifiedAutoLink: true})
+    const htmlForHelpText = converter.makeHtml(helpText)
+    return isHelpDisplayed && m("div.pa2.bg-light-gray",
         m("div.mt1", m("span", {onclick: () => isHelpDisplayed = false }, "X "), m("span", "---- Dialogue Mapping with IBIS Help ----")),
-        m("div.pre.pa3", helpText)
+        m("div.pl3.pr3.pb3", m.trust(htmlForHelpText))
     )
 }
 
