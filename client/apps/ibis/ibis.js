@@ -2,10 +2,13 @@
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
 import { menuTopBar, menuButton } from "../../common/menu.js"
+import { helpText } from "./ibis-help.js"
 
 let errorMessage = ""
 
 let lastSelectedItem = null
+
+let isHelpDisplayed = false
 
 function showError(error) {
     errorMessage = error
@@ -157,8 +160,16 @@ function exportMenuAction() {
 
 function viewMenu() {
     return menuTopBar([
-        menuButton("Export", exportMenuAction)
+        menuButton("Export", exportMenuAction),
+        menuButton("Help", () => isHelpDisplayed = !isHelpDisplayed)
     ])
+}
+
+function viewHelp() {
+    return isHelpDisplayed && m("div.mt2.bg-light-gray",
+        m("div.mt1", m("span", {onclick: () => isHelpDisplayed = false }, "X "), m("span", "---- Dialogue Mapping with IBIS Help ----")),
+        m("div.pre.pa3", helpText)
+    )
 }
 
 const IBISApp = {
@@ -174,7 +185,8 @@ const IBISApp = {
                 t.getLoadingState().isFileLoaded && m("div",
                     !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
                     rootId && viewIBISDiagram(rootId),
-                )
+                ),
+                viewHelp()
             )
         )
     }
