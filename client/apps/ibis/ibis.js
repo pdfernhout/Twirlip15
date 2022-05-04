@@ -28,15 +28,6 @@ function warnIfInvalid(type, newLabel) {
     return valid
 }
 
-function nameForType(type) {
-    return {
-        "?": "question",
-        "*": "option",
-        "+": "pro",
-        "-": "con"
-    }[type]
-}
-
 function editClicked(id) {
     const type = t.findLast(id, "type")
     const oldLabel = t.findLast(id, "label") || "Unlabelled"
@@ -81,7 +72,7 @@ async function addItem(type, parentId) {
     let newLabel = null
     let labelForPrompt = ""
     while (!valid) {
-        newLabel = prompt("Label for new " + nameForType(type) + ":", labelForPrompt)
+        newLabel = prompt("Label for new " + type + ":", labelForPrompt)
         valid = warnIfInvalid(type, newLabel)
         labelForPrompt = newLabel
     }
