@@ -143,12 +143,12 @@ function viewIBISDiagram(id) {
             ), 
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
                 { style: {top: "-0.4rem"} },
-                m("button.ml1", {onclick: () => deleteClicked(id) }, "X"),
-                m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
-                m("button.ml1", {onclick: () => addItem("question", id) }, "?"),
                 (type === "question") && m("button.ml1", {onclick: () => addItem("option", id) }, "*"),
                 (type === "option") && m("button.ml1", {onclick: () => addItem("pro", id) }, "+"),
-                (type === "option") && m("button.ml1", {onclick: () => addItem("con", id) }, "-")
+                (type === "option") && m("button.ml1", {onclick: () => addItem("con", id) }, "-"),
+                m("button.ml1", {onclick: () => addItem("question", id) }, "?"),
+                m("button.ml1", {onclick: () => editClicked(id) }, "✎"),
+                m("button.ml1", {onclick: () => deleteClicked(id) }, "X")
             )
         ),
         t.find(null, "attachedTo", id).map(childId => viewIBISDiagram(childId)),
