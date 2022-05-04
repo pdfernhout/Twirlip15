@@ -20,7 +20,7 @@ generate command line from a command-specific UI derived from man page
 
 DONE improve logging so uses file
 
-ibis should have typed nodes
+DONE ibis should have typed nodes
 ibis should deal with making new file when missing
 ibis should deal with deleting top node
 ibis should export to text file
