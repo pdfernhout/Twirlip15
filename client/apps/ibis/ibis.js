@@ -170,7 +170,7 @@ function viewHelp() {
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const htmlForHelpText = converter.makeHtml(helpText)
     return isHelpDisplayed && m("div.pa2.bg-light-gray",
-        m("div.mt1", m("span", {onclick: () => isHelpDisplayed = false }, "X "), m("span", "---- Dialogue Mapping with IBIS Help ----")),
+        m("div.mt1", m("span", {onclick: () => isHelpDisplayed = false }, "X "), m("span", "---- What is some useful information about Dialogue Mapping with IBIS? ----")),
         m("div.pl3.pr3.pb3", m.trust(htmlForHelpText))
     )
 }
