@@ -23,9 +23,11 @@ function warnIfInvalid(type, newLabel) {
     if (newLabel === "") {
         alert("Label cannot be empty")
     } else if (type === "question" && !newLabel.includes("?")) {
-        alert("New label for a question must contain a question mark (\"?\") preferably at the end.")
+        const confirmResult = confirm("New label for a question should contain a question mark (\"?\") preferably at the end.\n\nProceed anyway?")
+        if (confirmResult) valid = true
     } else if (type !== "question" && newLabel.includes("?")) {
-        alert("Label for a non-question should not contain a question mark (\"?\").")
+        const confirmResult = confirm("Label for a non-question should not contain a question mark (\"?\").\n\nProceed anyway?")
+        if (confirmResult) valid = true
     } else {
         valid = true
     }

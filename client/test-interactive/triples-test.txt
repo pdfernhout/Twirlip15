@@ -129,3 +129,15 @@
 {"a":0.4186093527393314,"b":"attachedTo","c":0.32296544202722466,"o":"insert","index":129}
 {"a":0.4186093527393314,"b":"attachedTo","c":"","o":"replace","index":130}
 {"a":0.4186093527393314,"b":"deleted","c":true,"o":"insert","index":131}
+{"a":0.38282163017300663,"b":"type","c":"question","o":"insert","index":132}
+{"a":0.38282163017300663,"b":"label","c":"What are ideas from Glyma?","o":"insert","index":133}
+{"a":0.38282163017300663,"b":"attachedTo","c":"0","o":"insert","index":134}
+{"a":0.0931316508219101,"b":"type","c":"option","o":"insert","index":135}
+{"a":0.0931316508219101,"b":"label","c":"Embedding iframe that uses web service to transform other web resource","o":"insert","index":136}
+{"a":0.0931316508219101,"b":"attachedTo","c":0.38282163017300663,"o":"insert","index":137}
+{"a":0.18602523442254926,"b":"type","c":"question","o":"insert","index":138}
+{"a":0.18602523442254926,"b":"label","c":"Example?","o":"insert","index":139}
+{"a":0.18602523442254926,"b":"attachedTo","c":0.0931316508219101,"o":"insert","index":140}
+{"a":0.10925926687860388,"b":"type","c":"option","o":"insert","index":141}
+{"a":0.10925926687860388,"b":"label","c":"Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
+{"a":0.10925926687860388,"b":"attachedTo","c":0.18602523442254926,"o":"insert","index":143}
