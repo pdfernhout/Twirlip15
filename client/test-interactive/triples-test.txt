@@ -141,3 +141,11 @@
 {"a":0.10925926687860388,"b":"type","c":"option","o":"insert","index":141}
 {"a":0.10925926687860388,"b":"label","c":"Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
 {"a":0.10925926687860388,"b":"attachedTo","c":0.18602523442254926,"o":"insert","index":143}
+{"a":"0","b":"type","c":"question","o":"insert","index":144}
+{"a":0.5383832460735861,"b":"type","c":"pro","o":"insert","index":145}
+{"a":0.5383832460735861,"b":"label","c":"Pro again","o":"insert","index":146}
+{"a":0.5383832460735861,"b":"attachedTo","c":0.12410503876785861,"o":"insert","index":147}
+{"a":0.6761491936852434,"b":"label","c":"Problem that a new pro will go under previous cons (FIXED!)","o":"replace","index":148}
+{"a":0.6906403990997534,"b":"type","c":"question","o":"insert","index":149}
+{"a":0.6906403990997534,"b":"label","c":"A question about a question?","o":"insert","index":150}
+{"a":0.6906403990997534,"b":"attachedTo","c":0.3053399899172159,"o":"insert","index":151}

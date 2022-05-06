@@ -34,9 +34,21 @@ function warnIfInvalid(type, newLabel) {
     return valid
 }
 
+function typeForNode(id) {
+    return t.findLast(id, "type")
+}
+
+function labelForNode(id) {
+    return ("" + t.findLast(id, "label")) || "Unlabelled"
+}
+
+function childrenForNode(id) {
+    return t.find(null, "attachedTo", id)
+}
+
 function editClicked(id) {
-    const type = t.findLast(id, "type")
-    const oldLabel = t.findLast(id, "label") || "Unlabelled"
+    const type = typeForNode(id)
+    const oldLabel = labelForNode(id)
     let valid = false
     let newLabel = null
     let labelForPrompt = oldLabel
@@ -56,8 +68,8 @@ function editClicked(id) {
 }
 
 async function deleteClicked(id) {
-    const type = t.findLast(id, "type")
-    const label = t.findLast(id, "label") || "Unlabelled"
+    const type = typeForNode(id)
+    const label = labelForNode(id)
     if (!confirm("confirm delete " + type + " \"" + label + "\"?")) return
     await t.addTriple({
         a: id,
@@ -109,24 +121,47 @@ function indent(indentLevel) {
     return "    ".repeat(indentLevel)
 }
 
+function typeOrder(id) {
+    const type = typeForNode(id)
+    return {
+        "pro": 1,
+        "con": 2,
+        "option": 3,
+        "question": 4,
+    }[type] || 0
+}
+
+function sortChildren(children) {
+    children.sort((a, b) => {
+        const typeOrderA = typeOrder(a)
+        const typeOrderB = typeOrder(b)
+        if (typeOrderA !== typeOrderB) return typeOrderA - typeOrderB
+        return labelForNode(a).localeCompare(labelForNode(b))
+    })
+}
+
 // recursive
 function exportIBISDiagram(indentLevel, id) {
     if (id === "") return indent(indentLevel) + "Missing id in IBIS diagram\n"
-    const type = t.findLast(id, "type")
+    const type = typeForNode(id)
+    const children = childrenForNode(id)
+    sortChildren(children)
     let result = indent(indentLevel) +
         ((type === "pro") ? ("+ ") : "") +
         ((type === "con") ? ("- ") : "") +
-        (t.findLast(id, "label") || "Unlabelled") + 
+        labelForNode(id) + 
         "\n"
     const childIndentLevel = indentLevel + 1
-    t.find(null, "attachedTo", id).map(childId => result += exportIBISDiagram(childIndentLevel, childId))
+    children.map(childId => result += exportIBISDiagram(childIndentLevel, childId))
     return result
 }
 
 // recursive
 function viewIBISDiagram(id) {
     if (id === "") return m("div.ml4", "Missing id in IBIS diagram")
-    const type = t.findLast(id, "type")
+    const type = typeForNode(id)
+    const children = childrenForNode(id)
+    sortChildren(children)
     return m("div.ml4",
         m("div.relative",
             { onclick: () => (lastSelectedItem === id)
@@ -136,7 +171,7 @@ function viewIBISDiagram(id) {
             (type === "pro") && m("span.mr1", "+"),
             (type === "con") && m("span.mr1", "-"),
             m("span",
-                t.findLast(id, "label") || "Unlabelled"
+                labelForNode(id)
             ), 
             (lastSelectedItem === id) && m("span.absolute.bg-yellow.ml1.pa1.z-1",
                 { style: {top: "-0.4rem"} },
@@ -148,7 +183,7 @@ function viewIBISDiagram(id) {
                 m("button.ml1", {onclick: () => deleteClicked(id) }, "X")
             )
         ),
-        t.find(null, "attachedTo", id).map(childId => viewIBISDiagram(childId)),
+        children.map(childId => viewIBISDiagram(childId)),
     )
 }
 
