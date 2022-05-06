@@ -149,3 +149,12 @@
 {"a":0.6906403990997534,"b":"type","c":"question","o":"insert","index":149}
 {"a":0.6906403990997534,"b":"label","c":"A question about a question?","o":"insert","index":150}
 {"a":0.6906403990997534,"b":"attachedTo","c":0.3053399899172159,"o":"insert","index":151}
+{"a":"risky","b":"label","c":"Risky2","o":"replace","index":152}
+{"a":"test","b":"something","c":"else2","o":"replace","index":153}
+{"a":"test","b":"something","c":"else3","o":"replace","index":154}
+{"a":"test","b":"something","c":"else4","o":"replace","index":155}
+{"a":"test","b":"something","c":"else5","o":"replace","index":156}
+{"a":"test","b":"something","c":"else6","o":"replace","index":157}
+{"a":"test","b":"something","c":"else7","o":"replace","index":158}
+{"a":"test","b":"something","c":"else8","o":"replace","index":159}
+{"a":"test","b":"something","c":"else9","o":"replace","index":160}

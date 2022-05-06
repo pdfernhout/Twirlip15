@@ -51,6 +51,8 @@
     max-height: 20rem;
 }
 
+.w-99 { width: 99%; }
+
 .sticky-header {
     position: -webkit-sticky;
     position: sticky;

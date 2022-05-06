@@ -2,7 +2,8 @@
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
 
-let showIgnoredTriples = true
+let showIgnoredTriples = false
+let showTriplesInReverseOrder = true
 
 let errorMessage = ""
 
@@ -15,24 +16,34 @@ const t = Triplestore(showError)
 function viewTriple(triple) {
     return m("tr", 
         m("td", { onclick: () => {
-            editedTriple = {a: triple.a, b: triple.b, c: triple.c, o: triple.o || "replace"} 
+            filterTriple = {a: triple.a, b: triple.b, c: triple.c, o: triple.o || "replace"} 
         } }, (triple.ignore ? "−" : "+") + triple.index),
-        m("td", triple.a),
-        m("td", triple.b),
-        m("td", triple.c),
-        m("td", triple.o),
+        m("td", {
+            onclick: () => filterTriple.a = triple.a
+        }, triple.a),
+        m("td", {
+            onclick: () => filterTriple.b = triple.b
+        }, triple.b),
+        m("td", {
+            onclick: () => filterTriple.c = triple.c
+        }, triple.c),
+        m("td", {
+            onclick: () => filterTriple.o = triple.o
+        }, triple.o),
     )
 }
 
 function cleanup(triple) {
     return {
-        a: triple.a.trim(),
-        b: triple.b.trim(),
-        c: triple.c.trim(),
+        a: ("" + triple.a).trim(),
+        b: ("" + triple.b).trim(),
+        c: ("" + triple.c).trim(),
     }
 }
 
 function viewTriples() {
+    const triples = t.filterTriples(cleanup(filterTriple), showIgnoredTriples)
+    if (showTriplesInReverseOrder) triples.reverse()
     return m("table",
         m("thead", 
             m("tr",
@@ -44,25 +55,13 @@ function viewTriples() {
             ),
             viewTripleFilter()
         ),
-        m("tbody", t.filterTriples(cleanup(filterTriple), showIgnoredTriples).map(triple => viewTriple(triple)))
-    )
-}
-
-let editedTriple = {a: "", b: "", c: "", o: "replace"}
-
-function viewTripleEditorField(fieldName) {
-    return m("div.ml2",
-        m("span", fieldName.toUpperCase() + ":"),
-        m("input", {
-            value: editedTriple[fieldName], 
-            onchange: event => editedTriple[fieldName] = event.target.value
-        })
+        m("tbody", triples.map(triple => viewTriple(triple)))
     )
 }
 
 function viewCheckbox(label, value, callback) {
-    return m("label.ml1", 
-        m("input[type=checkbox].mr1", {
+    return m("label.ml3", 
+        m("input[type=checkbox].mr2", {
             checked: value,
             onclick: event => callback(event.target.checked)
         }),
@@ -84,31 +83,11 @@ function viewSelect(options, value, callback) {
 
 const tripleOperations = ["replace", "insert", "remove", "clear"]
 
-function viewTripleEditor() {
-    return m("div.mt2", 
-        m("div", "New Triple"),
-        viewTripleEditorField("a"),
-        viewTripleEditorField("b"),
-        viewTripleEditorField("c"),
-        m("div", viewSelect(tripleOperations, editedTriple.o, newValue => editedTriple.o = newValue)),
-        m("button", {
-            onclick: () => {
-                if (!editedTriple.a || !editedTriple.b) {
-                    showError("triples must have a an b fields as non-empty strings")
-                    return
-                }
-                t.addTriple(editedTriple)
-                editedTriple = {a: "", b: "", c: "", o: "insert"}
-            }
-        }, "Add triple")
-    )
-}
-
 let filterTriple = {a: "", b: "", c: ""}
 
-function viewTripleFilterField(fieldName) {
-    return m("td",
-        m("input", {
+function viewTripleFilterField(fieldName, extraClassForTD="", extraClassForInput="") {
+    return m("td" + extraClassForTD,
+        m("input" + extraClassForInput, {
             value: filterTriple[fieldName], 
             onchange: event => filterTriple[fieldName] = event.target.value
         })
@@ -120,7 +99,22 @@ function viewTripleFilter() {
         m("td", {title: "filter"}, "⧩"),
         viewTripleFilterField("a"),
         viewTripleFilterField("b"),
-        viewTripleFilterField("c"),
+        viewTripleFilterField("c", ".w-100", ".w-99"),
+        m("td", viewSelect(tripleOperations, filterTriple.o, newValue => filterTriple.o = newValue)),
+        m("td", m("button", {
+            onclick: () => {
+                if (!filterTriple.a || !filterTriple.b) {
+                    showError("triple must have a and b fields as non-empty strings")
+                    return
+                }
+                if (!filterTriple.o) {
+                    showError("triple must have operation field specified")
+                    return
+                }
+                t.addTriple(filterTriple)
+                // filterTriple = {a: "", b: "", c: "", o: "insert"}
+            }
+        }, "Add")),
     )
 }
 
@@ -132,10 +126,10 @@ const TriplesApp = {
                 "Loading..."
             ),
             t.getLoadingState().isFileLoaded && m("div",
-                viewTripleEditor(),
-                m("hr"),
                 m("div",
                     viewCheckbox("Show ignored triples", showIgnoredTriples, () => showIgnoredTriples = !showIgnoredTriples),
+                    viewCheckbox("Show triples in reverse order", showTriplesInReverseOrder, () => showTriplesInReverseOrder = !showTriplesInReverseOrder),
+                    m("button.ml3", { onclick: () => filterTriple = {a: "", b: "", c: ""} }, "Clear filter")
                 ),
                 viewTriples()
             )
