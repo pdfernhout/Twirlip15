@@ -171,3 +171,14 @@
 {"a":0.7238145430915051,"b":"label","c":"A con","o":"insert","index":171}
 {"a":0.7238145430915051,"b":"attachedTo","c":0.23612004982183254,"o":"insert","index":172}
 {"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":173}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":174}
+{"a":0.7238145430915051,"b":"type","c":"question","o":"replace","index":175}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":176}
+{"a":0.7238145430915051,"b":"type","c":"pro","o":"replace","index":177}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":178}
+{"a":0.7238145430915051,"b":"type","c":"con","o":"replace","index":179}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":180}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":181}
+{"a":0.7238145430915051,"b":"type","c":"answer","o":"replace","index":182}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":183}
+{"a":0.7238145430915051,"b":"type","c":"con","o":"replace","index":184}

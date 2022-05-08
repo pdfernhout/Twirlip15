@@ -4,7 +4,7 @@ import { Triplestore } from "../../common/Triplestore.js"
 import { menuTopBar, menuButton } from "../../common/menu.js"
 import { helpText } from "./ibis-help.js"
 import "../../vendor/showdown.js"
-import { ModalInputView, modalAlert, modalConfirm, modalPrompt } from "../../common/ModalInputView.js"
+import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
 
 let errorMessage = ""
 
@@ -47,22 +47,64 @@ function childrenForNode(id) {
     return t.find(null, "attachedTo", id)
 }
 
+// Copied from triples.js
+function viewSelect(options, value, callback) {
+    return m("select", { value, onchange: event => callback(event.target.value) },
+        options.map(option => {
+            if (option.label) {
+                return m("option", { value: option.value }, option.label)
+            } else {
+                return m("option", { value: option }, option)
+            }
+        })
+    )
+}
+
 async function editClicked(id) {
     const type = typeForNode(id)
     const oldLabel = labelForNode(id)
     let valid = false
     let newLabel = null
+    let newType = type
     let labelForPrompt = oldLabel
     while (!valid) {
-        newLabel = await modalPrompt("Edit label for " + type + ":", labelForPrompt)
-        valid = warnIfInvalid(type, newLabel)
+        newLabel = labelForPrompt
+        const ok = await customModal((resolve) => {
+            return m("div", 
+                m("label", 
+                    "Label: ",
+                    m("input", {value: newLabel, oninput: event => newLabel = event.target.value}),
+                ),
+                m("div.pa2"),
+                m("label",
+                    "Type: ",
+                    viewSelect(["question", "answer", "pro", "con"], newType, value => newType = value)
+                ),
+                m("div.pa2"),
+                m("div.ma2.flex.justify-end", 
+                    m("button", { onclick: () => resolve(false)}, "Cancel"),
+                    m("button.ml2", { onclick: () => resolve(true)}, "OK")
+                )
+            )
+        })
+        if (!ok) return
+        // newLabel = await modalPrompt("Edit label for " + type + ":", labelForPrompt)
+        valid = await warnIfInvalid(newType, newLabel)
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        t.addTriple({
+        await t.addTriple({
             a: id,
             b: "label",
             c: newLabel,
+            o: "replace"
+        }) 
+    }
+    if (type !== newType) {
+        await t.addTriple({
+            a: id,
+            b: "type",
+            c: newType,
             o: "replace"
         }) 
     }
