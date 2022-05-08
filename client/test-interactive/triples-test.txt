@@ -160,3 +160,14 @@
 {"a":"test","b":"something","c":"else9","o":"replace","index":160}
 {"a":0.6906403990997534,"b":"label","c":"A question about a question? (Updated but with triple editor and string id)","o":"replace","index":161}
 {"a":0.6906403990997534,"b":"label","c":"A question about a question? (Updated but with triple editor and really string id)","o":"replace","index":162}
+{"a":0.6906403990997534,"b":"label","c":"A question about a question? (Updated with triple editor and really string id)","o":"replace","index":163}
+{"a":0.23612004982183254,"b":"type","c":"option","o":"insert","index":164}
+{"a":0.23612004982183254,"b":"label","c":"An answer","o":"insert","index":165}
+{"a":0.23612004982183254,"b":"attachedTo","c":0.6906403990997534,"o":"insert","index":166}
+{"a":0.4157326364914913,"b":"type","c":"pro","o":"insert","index":167}
+{"a":0.4157326364914913,"b":"label","c":"A pro","o":"insert","index":168}
+{"a":0.4157326364914913,"b":"attachedTo","c":0.23612004982183254,"o":"insert","index":169}
+{"a":0.7238145430915051,"b":"type","c":"con","o":"insert","index":170}
+{"a":0.7238145430915051,"b":"label","c":"A con","o":"insert","index":171}
+{"a":0.7238145430915051,"b":"attachedTo","c":0.23612004982183254,"o":"insert","index":172}
+{"a":0.7238145430915051,"b":"label","c":"A sort of con","o":"replace","index":173}

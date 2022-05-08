@@ -4,6 +4,7 @@ import { Triplestore } from "../../common/Triplestore.js"
 import { menuTopBar, menuButton } from "../../common/menu.js"
 import { helpText } from "./ibis-help.js"
 import "../../vendor/showdown.js"
+import { ModalInputView, modalAlert, modalConfirm, modalPrompt } from "../../common/ModalInputView.js"
 
 let errorMessage = ""
 
@@ -17,16 +18,16 @@ function showError(error) {
 
 const t = Triplestore(showError)
 
-function warnIfInvalid(type, newLabel) {
+async function warnIfInvalid(type, newLabel) {
     if (newLabel === null) return true
     let valid = false
     if (newLabel === "") {
-        alert("Label cannot be empty")
+        await modalAlert("Label cannot be empty")
     } else if (type === "question" && !newLabel.includes("?")) {
-        const confirmResult = confirm("New label for a question should contain a question mark (\"?\") preferably at the end.\n\nProceed anyway?")
+        const confirmResult = await modalConfirm("New label for a question should contain a question mark (\"?\") preferably at the end.\n\nProceed anyway?")
         if (confirmResult) valid = true
     } else if (type !== "question" && newLabel.includes("?")) {
-        const confirmResult = confirm("Label for a non-question should not contain a question mark (\"?\").\n\nProceed anyway?")
+        const confirmResult = await modalConfirm("Label for a non-question should not contain a question mark (\"?\").\n\nProceed anyway?")
         if (confirmResult) valid = true
     } else {
         valid = true
@@ -46,14 +47,14 @@ function childrenForNode(id) {
     return t.find(null, "attachedTo", id)
 }
 
-function editClicked(id) {
+async function editClicked(id) {
     const type = typeForNode(id)
     const oldLabel = labelForNode(id)
     let valid = false
     let newLabel = null
     let labelForPrompt = oldLabel
     while (!valid) {
-        newLabel = prompt("Edit label for " + type + ":", labelForPrompt)
+        newLabel = await modalPrompt("Edit label for " + type + ":", labelForPrompt)
         valid = warnIfInvalid(type, newLabel)
         labelForPrompt = newLabel
     }
@@ -70,7 +71,7 @@ function editClicked(id) {
 async function deleteClicked(id) {
     const type = typeForNode(id)
     const label = labelForNode(id)
-    if (!confirm("confirm delete " + type + " \"" + label + "\"?")) return
+    if (!await modalConfirm("confirm delete " + type + " \"" + label + "\"?")) return
     await t.addTriple({
         a: id,
         b: "attachedTo",
@@ -90,7 +91,7 @@ async function addItem(type, parentId) {
     let newLabel = null
     let labelForPrompt = ""
     while (!valid) {
-        newLabel = prompt("Label for new " + type + ":", labelForPrompt)
+        newLabel = await modalPrompt("Label for new " + type + ":", labelForPrompt)
         valid = warnIfInvalid(type, newLabel)
         labelForPrompt = newLabel
     }
@@ -187,13 +188,13 @@ function viewIBISDiagram(id) {
     )
 }
 
-function exportMenuAction() {
+async function exportMenuAction() {
     console.log("exportMenuAction")
     const rootId = t.last((t.find("root", "value")))
-    if (!rootId) return alert("No IBIS root")
+    if (!rootId) return await modalAlert("No IBIS root")
     const result = exportIBISDiagram(0, rootId)
     console.log(result)
-    alert("Export results logged to console")
+    await modalAlert("Export results logged to console")
 }
 
 function viewMenu() {
@@ -217,6 +218,7 @@ const IBISApp = {
         const rootId = t.last((t.find("root", "value")))
         return m("div",
             viewMenu(),
+            m(ModalInputView),
             m("div.ma2",
                 errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
                 !t.getLoadingState().isFileLoaded && m("div",
