@@ -95,6 +95,18 @@ function standardModal(promptText, modalType, defaultText = "") {
     })
 }
 
+export function customModal(drawFunction, style) {
+    return new Promise((resolve, reject) => {
+        setModalCallback(() => m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3",
+            { style: style || "width: 24rem" },
+            drawFunction(
+                (value) => { setModalCallback(null); resolve(value) },
+                (value) => { setModalCallback(null); reject(value) }
+            ))
+        )
+    })
+}
+
 export class ModalInputView {
     view() {
         if (modalCallback) {
