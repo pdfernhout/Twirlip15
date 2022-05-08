@@ -1,4 +1,4 @@
-import * as m from "mithril"
+/* global m */
 
 // Only supports one modal at a time
 
@@ -11,11 +11,11 @@ import * as m from "mithril"
     ),
 */
 
-type ModalCallback = (() => m.Vnode) | null
+// type ModalCallback = (() => m.Vnode) | null
 
-let modalCallback: ModalCallback = null
+let modalCallback /* ModalCallback */ = null
 
-export function setModalCallback(callback: ModalCallback) {
+export function setModalCallback(callback) {
     if (callback && modalCallback) {
         alert("Only supports one modal at a time")
         throw new Error("Only supports one modal at a time")
@@ -24,25 +24,26 @@ export function setModalCallback(callback: ModalCallback) {
     m.redraw()
 }
 
-type ModalType = "alert" | "confirm" | "prompt"
+// type ModalType = "alert" | "confirm" | "prompt"
 
-export function modalAlert(promptText: string): Promise<string | null> {
+export function modalAlert(promptText) {
     // Promise result is "OK"
     return standardModal(promptText, "alert", "OK")
 }
 
-export function modalConfirm(promptText: string): Promise<string | null> {
+export function modalConfirm(promptText) {
     // Promise result is null or "OK"
     return standardModal(promptText, "confirm", "OK")
 }
 
-export function modalPrompt(promptText: string, defaultText: string = ""): Promise<string | null> {
+export function modalPrompt(promptText, defaultText = "") {
     // Promise result is null or entered text
     return standardModal(promptText, "prompt", defaultText)
 }
 
-function standardModal(promptText: string, modalType: ModalType, defaultText: string = ""): Promise<string | null> {
+function standardModal(promptText, modalType, defaultText = "") {
     let value = defaultText
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
         setModalCallback(() => {
             return m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3",
@@ -51,15 +52,15 @@ function standardModal(promptText: string, modalType: ModalType, defaultText: st
                 modalType === "prompt" && m("div.ma2",
                     m("input.w-100", {
                         value: value,
-                        oninput: (event: { target: HTMLInputElement }) => { value = event.target.value },
-                        oncreate: (vnode: any) => {
-                            const input = (<HTMLInputElement>(vnode.dom))
+                        oninput: (event) => { value = event.target.value },
+                        oncreate: (vnode) => {
+                            const input = vnode.dom
                             input.focus()
                             input.selectionStart = 0
                             input.selectionEnd = value.length
                         },
                         // TODO: Handle escape or enter even if no input
-                        onkeydown: (event: KeyboardEvent) => {
+                        onkeydown: (event) => {
                             if (event.keyCode === 13) {
                                 // enter
                                 setModalCallback(null)
