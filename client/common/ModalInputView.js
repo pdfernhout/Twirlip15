@@ -57,7 +57,7 @@ function standardModal(promptText, modalType, defaultText = "") {
     return new Promise((resolve, reject) => {
         setModalCallback(() => {
             return m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3.br3",
-                { style: "width: 32rem" },
+                { key: "standardModal", style: "width: 32rem" },
                 m("div.ma2", weaveIntoArray(promptText.split("\n"), m("br"))),
                 modalType === "prompt" && m("div.ma2",
                     m("input.w-100", {
@@ -108,7 +108,7 @@ function standardModal(promptText, modalType, defaultText = "") {
 export function customModal(drawFunction, style) {
     return new Promise((resolve, reject) => {
         setModalCallback(() => m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3.br3",
-            { style: style || "width: 32rem" },
+            { key: "customModal", style: style || "width: 32rem" },
             drawFunction(
                 (value) => { setModalCallback(null); resolve(value) },
                 (value) => { setModalCallback(null); reject(value) }
