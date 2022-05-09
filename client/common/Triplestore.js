@@ -10,6 +10,7 @@ export function Triplestore(showError, fileName) {
 
     let triples = []
     let isFileLoaded = false
+    let isFileLoading = false
     let isFileSaveInProgress = false
 
     const TwirlipServer = new Twirlip15ServerAPI(showError)
@@ -21,6 +22,7 @@ export function Triplestore(showError, fileName) {
     async function loadFileContents() {
         if (!fileName) throw new Error("fileName not set yet")
         isFileLoaded = false
+        isFileLoading = true
         const apiResult = await TwirlipServer.fileContents(fileName)
         if (apiResult) {
             const chosenFileContents = apiResult.contents
@@ -42,6 +44,8 @@ export function Triplestore(showError, fileName) {
             }
             isFileLoaded = true
         }
+        console.log("isFileLoading setting to false")
+        isFileLoading = false
     }
     
     async function appendFile(stringToAppend, successCallback) {
@@ -144,6 +148,7 @@ export function Triplestore(showError, fileName) {
         return {
             fileName,
             isFileLoaded,
+            isFileLoading,
             isFileSaveInProgress,
         }
     }

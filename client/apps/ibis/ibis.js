@@ -258,18 +258,20 @@ function viewHelp() {
 const IBISApp = {
     view: () => {
         const rootId = t.last((t.find("root", "value")))
+        const loadingState = t.getLoadingState()
         return m("div",
             viewMenu(),
             m(ModalInputView),
             m("div.ma2",
                 errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
-                !t.getLoadingState().isFileLoaded && m("div",
+                loadingState.isFileLoading && m("div",
                     "Loading..."
                 ),
-                t.getLoadingState().isFileLoaded && m("div",
+                loadingState.isFileLoaded && m("div",
                     !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
                     rootId && viewIBISDiagram(rootId),
                 ),
+                !loadingState.isFileLoading && !loadingState.isFileLoaded && m("div", "Problem loading file"),
                 viewHelp()
             )
         )
