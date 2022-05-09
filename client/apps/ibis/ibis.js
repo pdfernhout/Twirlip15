@@ -70,10 +70,11 @@ async function editClicked(id) {
     while (!valid) {
         newLabel = labelForPrompt
         const ok = await customModal((resolve) => {
-            return m("div", 
-                m("label", 
-                    "Label: ",
-                    m("input", {value: newLabel, oninput: event => newLabel = event.target.value}),
+            return m("div",
+                m("h3", "Edit node " +  id),
+                m("label.flex.items-center", 
+                    m("span.mr2", "Label: "),
+                    m("input.flex-grow-1", {value: newLabel, oninput: event => newLabel = event.target.value}),
                 ),
                 m("div.pa2"),
                 m("label",
