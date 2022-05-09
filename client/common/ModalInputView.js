@@ -41,6 +41,16 @@ export function modalPrompt(promptText, defaultText = "") {
     return standardModal(promptText, "prompt", defaultText)
 }
 
+function weaveIntoArray(array, item) {
+    const result = []
+    for (let element of array) {
+        result.push(element)
+        result.push(item)
+    }
+    if (result.length) result.pop()
+    return result
+}
+
 function standardModal(promptText, modalType, defaultText = "") {
     let value = defaultText
     // eslint-disable-next-line no-unused-vars
@@ -48,7 +58,7 @@ function standardModal(promptText, modalType, defaultText = "") {
         setModalCallback(() => {
             return m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3",
                 { style: "width: 24rem" },
-                m("div.ma2", promptText),
+                m("div.ma2", weaveIntoArray(promptText.split("\n"), m("br"))),
                 modalType === "prompt" && m("div.ma2",
                     m("input.w-100", {
                         value: value,
