@@ -19,6 +19,16 @@ export function Triplestore(showError, fileName) {
         fileName = newFileName
     }
 
+    async function createNewFile(successCallback) {
+        isFileSaveInProgress = true
+        const apiResult = await TwirlipServer.fileSave(fileName, "")
+        isFileSaveInProgress = false
+        if (apiResult && successCallback) {
+            successCallback()
+        }
+        return apiResult
+    }
+
     async function loadFileContents() {
         if (!fileName) throw new Error("fileName not set yet")
         isFileLoaded = false
@@ -155,6 +165,7 @@ export function Triplestore(showError, fileName) {
 
     return {
         setFileName,
+        createNewFile,
         loadFileContents,
         addTriple,
         filterTriples,

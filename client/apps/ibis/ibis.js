@@ -89,11 +89,10 @@ async function editClicked(id) {
             )
         })
         if (!ok) return
-        // newLabel = await modalPrompt("Edit label for " + type + ":", labelForPrompt)
         valid = await warnIfInvalid(newType, newLabel)
         labelForPrompt = newLabel
     }
-    if (newLabel) {
+    if (newLabel && newLabel !== oldLabel) {
         await t.addTriple({
             a: id,
             b: "label",
@@ -135,11 +134,11 @@ async function addItem(type, parentId) {
     let labelForPrompt = ""
     while (!valid) {
         newLabel = await modalPrompt("Label for new " + type + ":", labelForPrompt)
-        valid = warnIfInvalid(type, newLabel)
+        valid = await warnIfInvalid(type, newLabel)
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        const childId = Math.random()
+        const childId = "node:" + ("" + Math.random()).split(".")[1]
         await t.addTriple({
             a: childId,
             b: "type",
@@ -158,7 +157,9 @@ async function addItem(type, parentId) {
             c: parentId,
             o: "insert"
         })
+        return childId
     }
+    return null
 }
 
 function indent(indentLevel) {
@@ -256,6 +257,28 @@ function viewHelp() {
     )
 }
 
+async function createNewFile() {
+    const ok = await modalConfirm("Create new file?\n\nThe file will be called:\n" + filePathFromParams.split("/").pop())
+    if (!ok) return
+    await t.createNewFile(async () => {
+        await modalAlert("File created OK")
+        await t.loadFileContents()
+        m.redraw()
+    })
+}
+
+async function makeInitialQuestion() {
+    const id = await addItem("question", "")
+    if (id !== null) {
+        await t.addTriple({
+            a: "root",
+            b: "value",
+            c: id,
+            o: "insert"
+        })
+    }
+}
+
 const IBISApp = {
     view: () => {
         const rootId = t.last((t.find("root", "value")))
@@ -269,10 +292,16 @@ const IBISApp = {
                     "Loading..."
                 ),
                 loadingState.isFileLoaded && m("div",
-                    !rootId && m("div", "To display an IBIS diagram, a root value must be set with an initial node id."),
+                    !rootId && m("div",
+                        "To display an IBIS diagram, a root value must be set with an initial node id.",
+                        m("button.ma2", { onclick: makeInitialQuestion }, "Ask initial question")
+                    ),
                     rootId && viewIBISDiagram(rootId),
                 ),
-                !loadingState.isFileLoading && !loadingState.isFileLoaded && m("div", "Problem loading file"),
+                !errorMessage && !loadingState.isFileLoading && !loadingState.isFileLoaded && 
+                    m("div",
+                        "Problem loading file",
+                        m("button.ma2", { onclick: createNewFile }, "Create new file")),
                 viewHelp()
             )
         )

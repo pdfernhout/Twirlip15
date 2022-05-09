@@ -1,0 +1,9 @@
+{"a":"node:44675575777027077","b":"type","c":"question","o":"insert","index":1}
+{"a":"node:44675575777027077","b":"label","c":"Can entropy be reversed?","o":"insert","index":2}
+{"a":"node:44675575777027077","b":"attachedTo","c":"","o":"insert","index":3}
+{"a":"root","b":"value","c":"node:44675575777027077","o":"insert","index":4}
+{"a":"node:5633895133650388","b":"type","c":"option","o":"insert","index":5}
+{"a":"node:5633895133650388","b":"label","c":"See \"The Last Question\" by Isaac Asimov?","o":"insert","index":6}
+{"a":"node:5633895133650388","b":"attachedTo","c":"node:44675575777027077","o":"insert","index":7}
+{"a":"node:5633895133650388","b":"label","c":"See \"The Last Question\" by Isaac Asimov","o":"replace","index":8}
+{"a":"node:5633895133650388","b":"label","c":"See \"The Last Question\" by Isaac Asimov","o":"replace","index":9}
