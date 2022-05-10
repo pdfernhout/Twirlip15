@@ -8,6 +8,10 @@
 {"a":"node:5633895133650388","b":"label","c":"See \"The Last Question\" by Isaac Asimov","o":"replace","index":8}
 {"a":"node:5633895133650388","b":"label","c":"See \"The Last Question\" by Isaac Asimov","o":"replace","index":9}
 {"a":"node:44675575777027077","b":"attachedTo","c":"","o":"replace","index":10}
-{"a":"node:44675575777027077","b":"deleted","c":true,"o":"insert","index":11}
+{"a":"node:44675575777027077","b":"deleted","c":"true","o":"insert","index":11}
 {"a":"node:44675575777027077","b":"attachedTo","c":"","o":"replace","index":12}
 {"a":"node:44675575777027077","b":"deleted","c":"true","o":"insert","index":13}
+{"a":"node:44675575777027077","b":"attachedTo","c":"","o":"replace","index":14}
+{"a":"node:44675575777027077","b":"deleted","c":"true","o":"insert","index":15}
+{"a":"node:44675575777027077","b":"attachedTo","c":"","o":"replace","index":16}
+{"a":"node:44675575777027077","b":"deleted","c":"true","o":"insert","index":17}

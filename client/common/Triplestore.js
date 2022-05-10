@@ -6,6 +6,10 @@ import { Twirlip15ServerAPI } from "./twirlip15-api.js"
 // triples[id]["+"]["some data"].store()
 // triples.o100000676.plus.102323232.store()
 
+function isString(value) {
+    return typeof value === "string"
+}
+
 export function Triplestore(showError, fileName) {
 
     let triples = []
@@ -30,7 +34,7 @@ export function Triplestore(showError, fileName) {
     }
 
     async function loadFileContents() {
-        if (!fileName) throw new Error("fileName not set yet")
+        if (!fileName) return showError(new Error("fileName not set yet"))
         isFileLoaded = false
         isFileLoading = true
         const apiResult = await TwirlipServer.fileContents(fileName)
@@ -59,8 +63,8 @@ export function Triplestore(showError, fileName) {
     }
     
     async function appendFile(stringToAppend, successCallback) {
-        if (!fileName) throw new Error("fileName not set yet")
-        if (isFileSaveInProgress) throw new Error("Error: Previous file save still in progress!")
+        if (!fileName) return showError(new Error("fileName not set yet"))
+        if (isFileSaveInProgress) return showError(new Error("Previous file save still in progress!"))
         isFileSaveInProgress = true
         const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
         isFileSaveInProgress = false
@@ -89,7 +93,13 @@ export function Triplestore(showError, fileName) {
     }
 
     async function addTriple(triple, write=true, successCallback) {
-        if (!triple.a || !triple.b) throw new Error("Triple a and b fields must be non-empty")
+        if (!isString(triple.a) ||
+            !isString(triple.b) ||
+            !isString(triple.c)
+        ) {
+            return showError(new Error("triple fields must be strings: " + JSON.stringify(triple)))
+        }
+        if (!triple.a || !triple.b) return showError(new Error("Triple a and b fields must be non-empty"))
         triple.index = triples.length + 1
         if (triple.o === "remove") {
             // removes the most recent exact a,b,c match
@@ -104,7 +114,11 @@ export function Triplestore(showError, fileName) {
             triple.ignore = true
         }
         triples.push(triple)
-        if (write) await appendFile(JSON.stringify(triple) + "\n", successCallback)
+        try {
+            if (write) await appendFile(JSON.stringify(triple) + "\n", successCallback)
+        } catch(e) {
+            showError(e)
+        }
     }
 
     function filterTriples(filterTriple, showIgnored=false) {
@@ -121,7 +135,7 @@ export function Triplestore(showError, fileName) {
 
     function find(a, b, c, showIgnored=false) {
         if (a === "" || b === "") {
-            throw new Error("triple a and b fields can't be empty strings; use null for query")
+            return showError(new Error("triple a and b fields can't be empty strings; use null for query"))
         }
         let wildcardCount = 0
         let lastWildcard

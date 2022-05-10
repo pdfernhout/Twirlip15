@@ -13,7 +13,12 @@ let lastSelectedItem = null
 let isHelpDisplayed = false
 
 function showError(error) {
-    errorMessage = error
+    if (error.message) {
+        errorMessage = error.message
+        throw error
+    } else {
+        errorMessage = error
+    }
 }
 
 const t = Triplestore(showError)
@@ -123,7 +128,7 @@ async function deleteClicked(id) {
     await t.addTriple({
         a: id,
         b: "deleted",
-        c: "true",
+        c: true,
         o: "insert"
     })
 }
@@ -287,7 +292,7 @@ const IBISApp = {
             viewMenu(),
             m(ModalInputView),
             m("div.ma2",
-                errorMessage && m("div.red.fixed.bg-light-gray.pa2", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+                errorMessage && m("div.red.fixed.bg-light-gray.pa2.z-1", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
                 loadingState.isFileLoading && m("div",
                     "Loading..."
                 ),
