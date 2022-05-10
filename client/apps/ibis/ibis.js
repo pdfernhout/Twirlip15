@@ -123,7 +123,7 @@ async function deleteClicked(id) {
     await t.addTriple({
         a: id,
         b: "deleted",
-        c: true,
+        c: "true",
         o: "insert"
     })
 }
