@@ -21,6 +21,61 @@ const ibisItemSchema = {
     }
 }
 
+// eslint-disable-next-line no-unused-vars
+function validateFieldValue(value, fieldSchema) {
+    // TODO: enforce constraints
+    return true
+}
+
+// eslint-disable-next-line no-unused-vars
+class SchematizedDataItem {
+    constructor(schema) {
+        this.schema = schema
+        this.data = {}
+    }
+
+    getField(field) {
+        const fieldSchema = this.schema[field]
+        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+        return this.data[field]
+    }
+
+    setField(field, value) {
+        const fieldSchema = this.schema[field]
+        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+        if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + field + " of: " + JSON.stringify(value))
+        this.data[field] = value
+        return this
+    }
+}
+
+// eslint-disable-next-line no-unused-vars
+class SchematizedTriplestoreItem {
+    constructor(schema, triplestore, id) {
+        this.schema = schema
+        this.triplestore = triplestore
+        this.id = id
+    }
+
+    async getField(field) {
+        const fieldSchema = this.schema[field]
+        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+        return await this.triplestore.findLast(this.id, field)
+    }
+
+    async setField(field, value) {
+        const fieldSchema = this.schema[field]
+        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+        if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + field + " of: " + JSON.stringify(value))
+        await this.triplestore.addTriple({
+            a: this.id,
+            b: field,
+            c: value,
+            o: "replace"
+        })
+    }
+}
+
 let errorMessage = ""
 
 let lastSelectedItem = null
