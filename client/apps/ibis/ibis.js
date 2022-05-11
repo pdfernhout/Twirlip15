@@ -6,6 +6,21 @@ import { helpText } from "./ibis-help.js"
 import "../../vendor/showdown.js"
 import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
 
+// Experimenting with idea of schemas and Pointrel triples -- what might a schema look like?
+// It does add clarity to seeing what form the application's data is supposed to have.
+// eslint-disable-next-line no-unused-vars
+const ibisItemSchema = {
+    type: "IBISItem",
+    version: "1",
+    fields: {
+        id: "string",
+        type: { type: "enum", options: ["question", "answer", "pro", "con"] },
+        label: "string",
+        attachedTo: "string:IBISItem.id",
+        deleted: "boolean"
+    }
+}
+
 let errorMessage = ""
 
 let lastSelectedItem = null
