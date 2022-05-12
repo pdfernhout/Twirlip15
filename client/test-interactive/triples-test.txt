@@ -182,3 +182,9 @@
 {"a":"0.7238145430915051","b":"type","c":"answer","o":"replace","index":182}
 {"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":183}
 {"a":"0.7238145430915051","b":"type","c":"con","o":"replace","index":184}
+{"a":"0","b":"label","c":"What to work on next? 0.7285893542130949","o":"replace","index":185}
+{"a":"0","b":"label","c":"What to work on next? 0.7023378814663096","o":"replace","index":186}
+{"a":"0","b":"label","c":"What to work on next? 0.9198210879728924","o":"replace","index":187}
+{"a":"0","b":"label","c":"What to work on next? 0.25453519461458185","o":"replace","index":188}
+{"a":"0","b":"label","c":"What to work on next? 0.4568337823234814","o":"replace","index":189}
+{"a":"0","b":"label","c":"What to work on next? 0.16094831848815638","o":"replace","index":190}
