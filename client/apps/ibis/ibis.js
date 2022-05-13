@@ -15,10 +15,18 @@ const ibisItemSchema = {
     version: "1",
     fields: {
         id: "string",
+        _id: "string",
+        _schemaVersion: "string",
+        _revision: "string",
         type: { type: "enum", options: ["question", "answer", "pro", "con"] },
         label: "string",
-        attachedTo: "string:IBISItem.id",
-        deleted: "boolean"
+        attachedTo: "IBISItem",
+        // IBISItem:12345678 _schemaVersion 1
+        // IBISItem:12345678 _schemaHash sha256-hash-of-schema
+        deleted: "boolean",
+        deletedX: { type: "boolean" },
+        deletedY: Boolean,
+        // extra: "json"
     }
 }
 
