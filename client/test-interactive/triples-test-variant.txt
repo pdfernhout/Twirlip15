@@ -1,4 +1,4 @@
-test|something|else|{jsonish:"metadata",uuid:"dffffddf",previous:"kjdkdj",timestamp:"2022-05-15T...",author:"pdf...",transaction:"uuid...",operation:"insert"}
+triple:28f056c6-fe7f-4fd2-a247-45e24cd57fd2|test|something|else
 test|other|thing
 test|more|another
 test2|something|else
