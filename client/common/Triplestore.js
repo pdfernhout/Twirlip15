@@ -102,7 +102,7 @@ export function Triplestore(showError, fileName) {
         if ( write && (
             !triple.a.includes(":") ||
             !triple.b.includes(":") ||
-                !triple.c.includes(":")
+            (triple.c && !triple.c.includes(":"))
             )
         ) {
             return showError(new Error("triple fields must have type at start with a colon: " + JSON.stringify(triple)))
