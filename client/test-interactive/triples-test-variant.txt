@@ -1,193 +1,193 @@
-test|something|else
-test|other|thing
-test|more|another
-test2|something|else
-1|name|
-1|label|string:a long label
-1|label|string:different label
-2|pro|1
-2|label|string:good!
-1|label|string:another label
-1|+|cheap
-2|label|string:the second
-1|+|2
-cheap|label|string:Cheap!
-cheap|?|3
-3|label|string:Is it really cheaper?
-1|label|string:A big idea
-1|-|risky
-risky|label|string:Risky
-2|label|string:another pro
-0|label|string:What to work on next?
-0|!|1
-0|!|4
-4|label|string:A small idea
-4|+|5
-5|label|string:6
-5|label|string:Really really cheap
-4|+|6
-6|label|string:Low risk
-0|!|7
-7|label|string:Triples
-7|label|string:Triplestore
-root|value|0
-root|value|1
-root|value|0
-root|value|
-root|value|7
-root|value|1
-root|value|0
-7|+|8
-8|label|string:Flexible
-7|-|
-7|-|9
-9|label|string:Flabby
-test|type|IBISNode.Type:operation-replace
-test|type|IBISNode.Type:operation-insert
-test|type|IBISNode.Type:operation-insert2
-test|type|IBISNode.Type:operation-replace2
-7|-|
-test|something|else2
-0|!|1
-0|!|4
-1|+|cheap
-4|+|5
-3|!|Maybe
-3|!|10
-3|!|
-1|+|Yet another pro
-1|+|Yet another pro
-1|+|11
-11|label|string:Yet another pro
-4|-|IBISNode:0.2193099557688355
-11|label|string:Yet another pro that is longer
-11|?|IBISNode:0.4851227118258178
-IBISNode:0.4851227118258178|label|string:Should it be longer?
-4|-|IBISNode:0.5940495778344923
-IBISNode:0.2193099557688355|label|string:A con
-IBISNode:0.5940495778344923|label|string:Another con
-4|-|IBISNode:0.5327191062381859
-IBISNode:0.5327191062381859|label|string:A longer con
-4|-|IBISNode:0.030601292856757056
-IBISNode:0.030601292856757056|label|string:Yet another con -- after fix
-4|-|IBISNode:0.5327191062381859
-4|-|IBISNode:0.5940495778344923
-IBISNode:0.2193099557688355|?|IBISNode:0.23230973909549857
-IBISNode:0.23230973909549857|label|string:another question
-IBISNode:0.23230973909549857|label|string:another question?
-IBISNode:0.23230973909549857|*|IBISNode:0.10578152847597744
-IBISNode:0.10578152847597744|label|string:subitem?
-IBISNode:0.23230973909549857|*|IBISNode:0.7102769674410606
-IBISNode:0.7102769674410606|label|string:subitem2
-IBISNode:0.23230973909549857|label|string:another question 2?
-IBISNode:0.23230973909549857|label|string:another question? (2)
-IBISNode:0.23230973909549857|label|string:another question?
-IBISNode:0.23230973909549857|?|IBISNode:0.3346989611778324
-IBISNode:0.3346989611778324|label|string:Yet another question?
-IBISNode:0.3346989611778324|*|IBISNode:0.5652519529736341
-IBISNode:0.5652519529736341|label|string:test
-IBISNode:0.3346989611778324|!|IBISNode:0.27104962525748455
-IBISNode:0.27104962525748455|label|string:option
-IBISNode:0.3346989611778324|!|IBISNode:0.7824355056975826
-IBISNode:0.7824355056975826|label|string:second option
-IBISNode:0.3346989611778324|!|IBISNode:0.7824355056975826
-11|label|string:Yet another pro that is somewhat longer
-IBISNode:0.27104962525748455|+|IBISNode:0.2677935092479582
-IBISNode:0.2677935092479582|label|string:pro
-IBISNode:0.27104962525748455|-|IBISNode:0.5679905439160235
-IBISNode:0.5679905439160235|label|string:con
-4|+|IBISNode:0.679463033838902
-IBISNode:0.679463033838902|label|string:Another pro!
-IBISNode:0.679463033838902|label|string:Another better pro!
-IBISNode:0.3053399899172159|type|IBISNode.Type:question
-IBISNode:0.3053399899172159|label|string:A question  about new test question with new items approach?
-IBISNode:0.3053399899172159|attachedTo|0
-IBISNode:0.9535092439156513|type|IBISNode.Type:option
-IBISNode:0.9535092439156513|label|string:Option 1
-IBISNode:0.9535092439156513|attachedTo|IBISNode:0.3053399899172159
-IBISNode:0.12410503876785861|type|IBISNode.Type:option
-IBISNode:0.12410503876785861|label|string:Option 2
-IBISNode:0.12410503876785861|attachedTo|IBISNode:0.3053399899172159
-IBISNode:0.395706445405279|type|IBISNode.Type:pro
-IBISNode:0.395706445405279|label|string:A pro
-IBISNode:0.395706445405279|attachedTo|IBISNode:0.12410503876785861
-IBISNode:0.8248494728146751|type|IBISNode.Type:pro
-IBISNode:0.8248494728146751|label|string:Another pro
-IBISNode:0.8248494728146751|attachedTo|IBISNode:0.12410503876785861
-IBISNode:0.6682054777701786|type|IBISNode.Type:con
-IBISNode:0.6682054777701786|label|string:A con
-IBISNode:0.6682054777701786|attachedTo|IBISNode:0.12410503876785861
-IBISNode:0.32296544202722466|type|IBISNode.Type:question
-IBISNode:0.32296544202722466|label|string:Is this reall a con?
-IBISNode:0.32296544202722466|attachedTo|IBISNode:0.6682054777701786
-IBISNode:0.6761491936852434|type|IBISNode.Type:pro
-IBISNode:0.6761491936852434|label|string:Problem that a new pro will go under previous cons
-IBISNode:0.6761491936852434|attachedTo|IBISNode:0.12410503876785861
-IBISNode:0.32296544202722466|label|string:Is this really a con?
-IBISNode:0.4186093527393314|type|IBISNode.Type:option
-IBISNode:0.4186093527393314|label|string:Maybe
-IBISNode:0.4186093527393314|attachedTo|IBISNode:0.32296544202722466
-IBISNode:0.4186093527393314|attachedTo|
-IBISNode:0.4186093527393314|deleted|boolean:true
-IBISNode:0.38282163017300663|type|IBISNode.Type:question
-IBISNode:0.38282163017300663|label|string:What are ideas from Glyma?
-IBISNode:0.38282163017300663|attachedTo|IBISNode:0
-IBISNode:0.0931316508219101|type|IBISNode.Type:option
-IBISNode:0.0931316508219101|label|string:Embedding iframe that uses web service to transform other web resource
-IBISNode:0.0931316508219101|attachedTo|IBISNode:0.38282163017300663
-IBISNode:0.18602523442254926|type|IBISNode.Type:question
-IBISNode:0.18602523442254926|label|string:Example?
-IBISNode:0.18602523442254926|attachedTo|IBISNode:0.0931316508219101
-IBISNode:0.10925926687860388|type|IBISNode.Type:option
-IBISNode:0.10925926687860388|label|string:Section of video on how to attach resources into Glyma:https://youtu.be/4b6HJbtGZ3w?t=553
-IBISNode:0.10925926687860388|attachedTo|IBISNode:0.18602523442254926
-0|type|IBISNode.Type:question
-IBISNode:0.5383832460735861|type|IBISNode.Type:pro
-IBISNode:0.5383832460735861 |-| label|string:Pro again
-IBISNode:0.5383832460735861|attachedTo|IBISNode:0.12410503876785861
-IBISNode:0.6761491936852434|label|string:Problem that a new pro will go under previous cons (FIXED!)
-IBISNode:0.6906403990997534|type|IBISNode.Type:question
-IBISNode:0.6906403990997534|label|string:A question about a question?
-IBISNode:0.6906403990997534|attachedTo|IBISNode:0.3053399899172159
-risky|label|string:Risky2
-test|something|else2
-test|something|else3
-test|something|else4
-test|something|else5
-test|something|else6
-test|something|else7
-test|something|else8
-test|something|else9
-IBISNode:0.6906403990997534|label|string:A question about a question? (Updated but with triple editor and string id)
-IBISNode:0.6906403990997534|label|string:A question about a question? (Updated but with triple editor and really string id)
-IBISNode:0.6906403990997534|label|string:A question about a question? (Updated with triple editor and really string id)
-IBISNode:0.23612004982183254|type|IBISNode.Type:option
-IBISNode:0.23612004982183254|label|string:An answer
-IBISNode:0.23612004982183254|attachedTo|IBISNode:0.6906403990997534
-IBISNode:0.4157326364914913|type|IBISNode.Type:pro
-IBISNode:0.4157326364914913|label|string:A pro
-IBISNode:0.4157326364914913|attachedTo|IBISNode:0.23612004982183254
-IBISNode:0.7238145430915051|type|IBISNode.Type:con
-IBISNode:0.7238145430915051|label|string:A con
-IBISNode:0.7238145430915051|attachedTo|IBISNode:0.23612004982183254
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|type|IBISNode.Type:question
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|type|IBISNode.Type:pro
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|type|IBISNode.Type:con
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|type|IBISNode.Type:answer
-IBISNode:0.7238145430915051|label|string:A sort of con
-IBISNode:0.7238145430915051|type|IBISNode.Type:con
-IBISNode:0|label|string:What to work on next? 0.7285893542130949
-IBISNode:0|label|string:What to work on next? 0.7023378814663096
-IBISNode:0|label|string:What to work on next? 0.9198210879728924
-IBISNode:0|label|string:What to work on next? 0.25453519461458185
-IBISNode:0|label|string:What to work on next? 0.4568337823234814
-IBISNode:0|label|string:What to work on next? 0.16094831848815638
-IBISNode:0|label|string:What to work on next? 0.927373393246828
-IBISNode:0|property:label|string:What to work on next? (a new random number)
-IBISNode:0|string:label|string:What to work on next? (a new random number)
+test something else
+test other thing
+test more another
+test2 something else
+1 name 
+1 label string:a long label
+1 label string:different label
+2 pro 1
+2 label string:good!
+1 label string:another label
+1 + cheap
+2 label string:the second
+1 + 2
+cheap label string:Cheap!
+cheap ? 3
+3 label string:Is it really cheaper?
+1 label string:A big idea
+1 - risky
+risky label string:Risky
+2 label string:another pro
+0 label string:What to work on next?
+0 ! 1
+0 ! 4
+4 label string:A small idea
+4 + 5
+5 label string:6
+5 label string:Really really cheap
+4 + 6
+6 label string:Low risk
+0 ! 7
+7 label string:Triples
+7 label string:Triplestore
+root value 0
+root value 1
+root value 0
+root value 
+root value 7
+root value 1
+root value 0
+7 + 8
+8 label string:Flexible
+7 - 
+7 - 9
+9 label string:Flabby
+test type IBISNode.Type:operation-replace
+test type IBISNode.Type:operation-insert
+test type IBISNode.Type:operation-insert2
+test type IBISNode.Type:operation-replace2
+7 - 
+test something else2
+0 ! 1
+0 ! 4
+1 + cheap
+4 + 5
+3 ! Maybe
+3 ! 10
+3 ! 
+1 + Yet another pro
+1 + Yet another pro
+1 + 11
+11 label string:Yet another pro
+4 - IBISNode:0.2193099557688355
+11 label string:Yet another pro that is longer
+11 ? IBISNode:0.4851227118258178
+IBISNode:0.4851227118258178 label string:Should it be longer?
+4 - IBISNode:0.5940495778344923
+IBISNode:0.2193099557688355 label string:A con
+IBISNode:0.5940495778344923 label string:Another con
+4 - IBISNode:0.5327191062381859
+IBISNode:0.5327191062381859 label string:A longer con
+4 - IBISNode:0.030601292856757056
+IBISNode:0.030601292856757056 label string:Yet another con -- after fix
+4 - IBISNode:0.5327191062381859
+4 - IBISNode:0.5940495778344923
+IBISNode:0.2193099557688355 ? IBISNode:0.23230973909549857
+IBISNode:0.23230973909549857 label string:another question
+IBISNode:0.23230973909549857 label string:another question?
+IBISNode:0.23230973909549857 * IBISNode:0.10578152847597744
+IBISNode:0.10578152847597744 label string:subitem?
+IBISNode:0.23230973909549857 * IBISNode:0.7102769674410606
+IBISNode:0.7102769674410606 label string:subitem2
+IBISNode:0.23230973909549857 label string:another question 2?
+IBISNode:0.23230973909549857 label string:another question? (2)
+IBISNode:0.23230973909549857 label string:another question?
+IBISNode:0.23230973909549857 ? IBISNode:0.3346989611778324
+IBISNode:0.3346989611778324 label string:Yet another question?
+IBISNode:0.3346989611778324 * IBISNode:0.5652519529736341
+IBISNode:0.5652519529736341 label string:test
+IBISNode:0.3346989611778324 ! IBISNode:0.27104962525748455
+IBISNode:0.27104962525748455 label string:option
+IBISNode:0.3346989611778324 ! IBISNode:0.7824355056975826
+IBISNode:0.7824355056975826 label string:second option
+IBISNode:0.3346989611778324 ! IBISNode:0.7824355056975826
+11 label string:Yet another pro that is somewhat longer
+IBISNode:0.27104962525748455 + IBISNode:0.2677935092479582
+IBISNode:0.2677935092479582 label string:pro
+IBISNode:0.27104962525748455 - IBISNode:0.5679905439160235
+IBISNode:0.5679905439160235 label string:con
+4 + IBISNode:0.679463033838902
+IBISNode:0.679463033838902 label string:Another pro!
+IBISNode:0.679463033838902 label string:Another better pro!
+IBISNode:0.3053399899172159 type IBISNode.Type:question
+IBISNode:0.3053399899172159 label string:A question  about new test question with new items approach?
+IBISNode:0.3053399899172159 attachedTo 0
+IBISNode:0.9535092439156513 type IBISNode.Type:option
+IBISNode:0.9535092439156513 label string:Option 1
+IBISNode:0.9535092439156513 attachedTo IBISNode:0.3053399899172159
+IBISNode:0.12410503876785861 type IBISNode.Type:option
+IBISNode:0.12410503876785861 label string:Option 2
+IBISNode:0.12410503876785861 attachedTo IBISNode:0.3053399899172159
+IBISNode:0.395706445405279 type IBISNode.Type:pro
+IBISNode:0.395706445405279 label string:A pro
+IBISNode:0.395706445405279 attachedTo IBISNode:0.12410503876785861
+IBISNode:0.8248494728146751 type IBISNode.Type:pro
+IBISNode:0.8248494728146751 label string:Another pro
+IBISNode:0.8248494728146751 attachedTo IBISNode:0.12410503876785861
+IBISNode:0.6682054777701786 type IBISNode.Type:con
+IBISNode:0.6682054777701786 label string:A con
+IBISNode:0.6682054777701786 attachedTo IBISNode:0.12410503876785861
+IBISNode:0.32296544202722466 type IBISNode.Type:question
+IBISNode:0.32296544202722466 label string:Is this reall a con?
+IBISNode:0.32296544202722466 attachedTo IBISNode:0.6682054777701786
+IBISNode:0.6761491936852434 type IBISNode.Type:pro
+IBISNode:0.6761491936852434 label string:Problem that a new pro will go under previous cons
+IBISNode:0.6761491936852434 attachedTo IBISNode:0.12410503876785861
+IBISNode:0.32296544202722466 label string:Is this really a con?
+IBISNode:0.4186093527393314 type IBISNode.Type:option
+IBISNode:0.4186093527393314 label string:Maybe
+IBISNode:0.4186093527393314 attachedTo IBISNode:0.32296544202722466
+IBISNode:0.4186093527393314 attachedTo 
+IBISNode:0.4186093527393314 deleted boolean:true
+IBISNode:0.38282163017300663 type IBISNode.Type:question
+IBISNode:0.38282163017300663 label string:What are ideas from Glyma?
+IBISNode:0.38282163017300663 attachedTo IBISNode:0
+IBISNode:0.0931316508219101 type IBISNode.Type:option
+IBISNode:0.0931316508219101 label string:Embedding iframe that uses web service to transform other web resource
+IBISNode:0.0931316508219101 attachedTo IBISNode:0.38282163017300663
+IBISNode:0.18602523442254926 type IBISNode.Type:question
+IBISNode:0.18602523442254926 label string:Example?
+IBISNode:0.18602523442254926 attachedTo IBISNode:0.0931316508219101
+IBISNode:0.10925926687860388 type IBISNode.Type:option
+IBISNode:0.10925926687860388 label string:Section of video on how to attach resources into Glyma:https://youtu.be/4b6HJbtGZ3w?t=553
+IBISNode:0.10925926687860388 attachedTo IBISNode:0.18602523442254926
+0 type IBISNode.Type:question
+IBISNode:0.5383832460735861 type IBISNode.Type:pro
+IBISNode:0.5383832460735861 label string:Pro again
+IBISNode:0.5383832460735861 attachedTo IBISNode:0.12410503876785861
+IBISNode:0.6761491936852434 label string:Problem that a new pro will go under previous cons (FIXED!)
+IBISNode:0.6906403990997534 type IBISNode.Type:question
+IBISNode:0.6906403990997534 label string:A question about a question?
+IBISNode:0.6906403990997534 attachedTo IBISNode:0.3053399899172159
+risky label string:Risky2
+test something else2
+test something else3
+test something else4
+test something else5
+test something else6
+test something else7
+test something else8
+test something else9
+IBISNode:0.6906403990997534 label string:A question about a question? (Updated but with triple editor and string id)
+IBISNode:0.6906403990997534 label string:A question about a question? (Updated but with triple editor and really string id)
+IBISNode:0.6906403990997534 label string:A question about a question? (Updated with triple editor and really string id)
+IBISNode:0.23612004982183254 type IBISNode.Type:option
+IBISNode:0.23612004982183254 label string:An answer
+IBISNode:0.23612004982183254 attachedTo IBISNode:0.6906403990997534
+IBISNode:0.4157326364914913 type IBISNode.Type:pro
+IBISNode:0.4157326364914913 label string:A pro
+IBISNode:0.4157326364914913 attachedTo IBISNode:0.23612004982183254
+IBISNode:0.7238145430915051 type IBISNode.Type:con
+IBISNode:0.7238145430915051 label string:A con
+IBISNode:0.7238145430915051 attachedTo IBISNode:0.23612004982183254
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 type IBISNode.Type:question
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 type IBISNode.Type:pro
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 type IBISNode.Type:con
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 type IBISNode.Type:answer
+IBISNode:0.7238145430915051 label string:A sort of con
+IBISNode:0.7238145430915051 type IBISNode.Type:con
+IBISNode:0 label string:What to work on next? 0.7285893542130949
+IBISNode:0 label string:What to work on next? 0.7023378814663096
+IBISNode:0 label string:What to work on next? 0.9198210879728924
+IBISNode:0 label string:What to work on next? 0.25453519461458185
+IBISNode:0 label string:What to work on next? 0.4568337823234814
+IBISNode:0 label string:What to work on next? 0.16094831848815638
+IBISNode:0 label string:What to work on next? 0.927373393246828
+IBISNode:0 property:label string:What to work on next? (a new random number)
+IBISNode:0 string:label string:What to work on next? (a new random number)
