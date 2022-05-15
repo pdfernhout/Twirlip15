@@ -3,33 +3,33 @@
 {"a":"test","b":"more","c":"another"}
 {"a":"test2","b":"something","c":"else"}
 {"a":"1","b":"name","c":""}
-{"a":"1","b":"label","c":"a long label"}
-{"a":"1","b":"label","c":"different label","index":7}
+{"a":"1","b":"label","c":"string: a long label"}
+{"a":"1","b":"label","c":"string: different label","index":7}
 {"a":"2","b":"pro","c":"1","index":8}
-{"a":"2","b":"label","c":"good!","index":9}
-{"a":"1","b":"label","c":"another label","index":10}
+{"a":"2","b":"label","c":"string: good!","index":9}
+{"a":"1","b":"label","c":"string: another label","index":10}
 {"a":"1","b":"+","c":"cheap","index":11}
-{"a":"2","b":"label","c":"the second","index":12}
+{"a":"2","b":"label","c":"string: the second","index":12}
 {"a":"1","b":"+","c":"2","index":13}
-{"a":"cheap","b":"label","c":"Cheap!","index":14}
+{"a":"cheap","b":"label","c":"string: Cheap!","index":14}
 {"a":"cheap","b":"?","c":"3","index":15}
-{"a":"3","b":"label","c":"Is it really cheaper?","index":16}
-{"a":"1","b":"label","c":"A big idea","index":17}
+{"a":"3","b":"label","c":"string: Is it really cheaper?","index":16}
+{"a":"1","b":"label","c":"string: A big idea","index":17}
 {"a":"1","b":"-","c":"risky","index":18}
-{"a":"risky","b":"label","c":"Risky","index":19}
-{"a":"2","b":"label","c":"another pro","index":20}
-{"a":"0","b":"label","c":"What to work on next?","index":21}
+{"a":"risky","b":"label","c":"string: Risky","index":19}
+{"a":"2","b":"label","c":"string: another pro","index":20}
+{"a":"0","b":"label","c":"string: What to work on next?","index":21}
 {"a":"0","b":"!","c":"1","index":22}
 {"a":"0","b":"!","c":"4","index":23}
-{"a":"4","b":"label","c":"A small idea","index":24}
+{"a":"4","b":"label","c":"string: A small idea","index":24}
 {"a":"4","b":"+","c":"5","index":25}
-{"a":"5","b":"label","c":"6","index":26}
-{"a":"5","b":"label","c":"Really really cheap","index":27}
+{"a":"5","b":"label","c":"string: 6","index":26}
+{"a":"5","b":"label","c":"string: Really really cheap","index":27}
 {"a":"4","b":"+","c":"6","index":28}
-{"a":"6","b":"label","c":"Low risk","index":29}
+{"a":"6","b":"label","c":"string: Low risk","index":29}
 {"a":"0","b":"!","c":"7","index":30}
-{"a":"7","b":"label","c":"Triples","index":31}
-{"a":"7","b":"label","c":"Triplestore","index":32}
+{"a":"7","b":"label","c":"string: Triples","index":31}
+{"a":"7","b":"label","c":"string: Triplestore","index":32}
 {"a":"root","b":"value","c":"0","index":33}
 {"a":"root","b":"value","c":"1","index":34}
 {"a":"root","b":"value","c":"0","index":35}
@@ -38,14 +38,14 @@
 {"a":"root","b":"value","c":"1","index":38}
 {"a":"root","b":"value","c":"0","index":39}
 {"a":"7","b":"+","c":"8","index":40}
-{"a":"8","b":"label","c":"Flexible","index":41}
+{"a":"8","b":"label","c":"string: Flexible","index":41}
 {"a":"7","b":"-","c":"","index":42}
 {"a":"7","b":"-","c":"9","index":43}
-{"a":"9","b":"label","c":"Flabby","index":44}
-{"a":"test","b":"type","c":"operation-replace","o":"replace","index":45}
-{"a":"test","b":"type","c":"operation-insert","o":"insert","index":46}
-{"a":"test","b":"type","c":"operation-insert2","o":"insert","index":47}
-{"a":"test","b":"type","c":"operation-replace2","o":"replace","index":48}
+{"a":"9","b":"label","c":"string: Flabby","index":44}
+{"a":"test","b":"type","c":"IBISNode.Type: operation-replace","o":"replace","index":45}
+{"a":"test","b":"type","c":"IBISNode.Type: operation-insert","o":"insert","index":46}
+{"a":"test","b":"type","c":"IBISNode.Type: operation-insert2","o":"insert","index":47}
+{"a":"test","b":"type","c":"IBISNode.Type: operation-replace2","o":"replace","index":48}
 {"a":"7","b":"-","c":"","o":"remove","index":49}
 {"a":"test","b":"something","c":"else2","o":"replace","index":52}
 {"a":"0","b":"!","c":"1","o":"insert","index":51}
@@ -58,98 +58,98 @@
 {"a":"1","b":"+","c":"Yet another pro","o":"insert","index":58}
 {"a":"1","b":"+","c":"Yet another pro","o":"remove","index":59,"ignore":true}
 {"a":"1","b":"+","c":"11","o":"insert","index":60}
-{"a":"11","b":"label","c":"Yet another pro","o":"insert","index":61}
-{"a":"4","b":"-","c":"0.2193099557688355","o":"insert","index":62}
-{"a":"11","b":"label","c":"Yet another pro that is longer","o":"replace","index":63}
-{"a":"11","b":"?","c":"0.4851227118258178","o":"insert","index":64}
-{"a":"0.4851227118258178","b":"label","c":"Should it be longer?","o":"replace","index":66}
-{"a":"4","b":"-","c":"0.5940495778344923","o":"insert","index":67}
-{"a":"0.2193099557688355","b":"label","c":"A con","o":"replace","index":69}
-{"a":"0.5940495778344923","b":"label","c":"Another con","o":"replace","index":68}
-{"a":"4","b":"-","c":"0.5327191062381859","o":"insert","index":69}
-{"a":"0.5327191062381859","b":"label","c":"A longer con","o":"replace","index":70}
-{"a":"4","b":"-","c":"0.030601292856757056","o":"insert","index":71}
-{"a":"0.030601292856757056","b":"label","c":"Yet another con -- after fix","o":"insert","index":72}
-{"a":"4","b":"-","c":"0.5327191062381859","o":"remove","index":73,"ignore":true}
-{"a":"4","b":"-","c":"0.5940495778344923","o":"remove","index":74,"ignore":true}
-{"a":"0.2193099557688355","b":"?","c":"0.23230973909549857","o":"insert","index":75}
-{"a":"0.23230973909549857","b":"label","c":"another question","o":"insert","index":76}
-{"a":"0.23230973909549857","b":"label","c":"another question?","o":"replace","index":77}
-{"a":"0.23230973909549857","b":"*","c":"0.10578152847597744","o":"insert","index":78}
-{"a":"0.10578152847597744","b":"label","c":"subitem?","o":"insert","index":79}
-{"a":"0.23230973909549857","b":"*","c":"0.7102769674410606","o":"insert","index":80}
-{"a":"0.7102769674410606","b":"label","c":"subitem2","o":"insert","index":81}
-{"a":"0.23230973909549857","b":"label","c":"another question 2?","o":"replace","index":82}
-{"a":"0.23230973909549857","b":"label","c":"another question? (2)","o":"replace","index":83}
-{"a":"0.23230973909549857","b":"label","c":"another question?","o":"replace","index":84}
-{"a":"0.23230973909549857","b":"?","c":"0.3346989611778324","o":"insert","index":85}
-{"a":"0.3346989611778324","b":"label","c":"Yet another question?","o":"insert","index":86}
-{"a":"0.3346989611778324","b":"*","c":"0.5652519529736341","o":"insert","index":87}
-{"a":"0.5652519529736341","b":"label","c":"test","o":"insert","index":88}
-{"a":"0.3346989611778324","b":"!","c":"0.27104962525748455","o":"insert","index":89}
-{"a":"0.27104962525748455","b":"label","c":"option","o":"insert","index":90}
-{"a":"0.3346989611778324","b":"!","c":"0.7824355056975826","o":"insert","index":91}
-{"a":"0.7824355056975826","b":"label","c":"second option","o":"insert","index":92}
-{"a":"0.3346989611778324","b":"!","c":"0.7824355056975826","o":"remove","index":93,"ignore":true}
-{"a":"11","b":"label","c":"Yet another pro that is somewhat longer","o":"replace","index":94}
-{"a":"0.27104962525748455","b":"+","c":"0.2677935092479582","o":"insert","index":95}
-{"a":"0.2677935092479582","b":"label","c":"pro","o":"insert","index":96}
-{"a":"0.27104962525748455","b":"-","c":"0.5679905439160235","o":"insert","index":97}
-{"a":"0.5679905439160235","b":"label","c":"con","o":"insert","index":98}
-{"a":"4","b":"+","c":"0.679463033838902","o":"insert","index":99}
-{"a":"0.679463033838902","b":"label","c":"Another pro!","o":"insert","index":100}
-{"a":"0.679463033838902","b":"label","c":"Another better pro!","o":"replace","index":101}
-{"a":"0.3053399899172159","b":"type","c":"question","o":"insert","index":102}
-{"a":"0.3053399899172159","b":"label","c":"A question  about new test question with new items approach?","o":"insert","index":103}
-{"a":"0.3053399899172159","b":"attachedTo","c":"0","o":"insert","index":104}
-{"a":"0.9535092439156513","b":"type","c":"option","o":"insert","index":105}
-{"a":"0.9535092439156513","b":"label","c":"Option 1","o":"insert","index":106}
-{"a":"0.9535092439156513","b":"attachedTo","c":"0.3053399899172159","o":"insert","index":107}
-{"a":"0.12410503876785861","b":"type","c":"option","o":"insert","index":108}
-{"a":"0.12410503876785861","b":"label","c":"Option 2","o":"insert","index":109}
-{"a":"0.12410503876785861","b":"attachedTo","c":"0.3053399899172159","o":"insert","index":110}
-{"a":"0.395706445405279","b":"type","c":"pro","o":"insert","index":111}
-{"a":"0.395706445405279","b":"label","c":"A pro","o":"insert","index":112}
-{"a":"0.395706445405279","b":"attachedTo","c":"0.12410503876785861","o":"insert","index":113}
-{"a":"0.8248494728146751","b":"type","c":"pro","o":"insert","index":114}
-{"a":"0.8248494728146751","b":"label","c":"Another pro","o":"insert","index":115}
-{"a":"0.8248494728146751","b":"attachedTo","c":"0.12410503876785861","o":"insert","index":116}
-{"a":"0.6682054777701786","b":"type","c":"con","o":"insert","index":117}
-{"a":"0.6682054777701786","b":"label","c":"A con","o":"insert","index":118}
-{"a":"0.6682054777701786","b":"attachedTo","c":"0.12410503876785861","o":"insert","index":119}
-{"a":"0.32296544202722466","b":"type","c":"question","o":"insert","index":120}
-{"a":"0.32296544202722466","b":"label","c":"Is this reall a con?","o":"insert","index":121}
-{"a":"0.32296544202722466","b":"attachedTo","c":"0.6682054777701786","o":"insert","index":122}
-{"a":"0.6761491936852434","b":"type","c":"pro","o":"insert","index":123}
-{"a":"0.6761491936852434","b":"label","c":"Problem that a new pro will go under previous cons","o":"insert","index":124}
-{"a":"0.6761491936852434","b":"attachedTo","c":"0.12410503876785861","o":"insert","index":125}
-{"a":"0.32296544202722466","b":"label","c":"Is this really a con?","o":"replace","index":126}
-{"a":"0.4186093527393314","b":"type","c":"option","o":"insert","index":127}
-{"a":"0.4186093527393314","b":"label","c":"Maybe","o":"insert","index":128}
-{"a":"0.4186093527393314","b":"attachedTo","c":"0.32296544202722466","o":"insert","index":129}
-{"a":"0.4186093527393314","b":"attachedTo","c":"","o":"replace","index":130}
-{"a":"0.4186093527393314","b":"deleted","c":"true","o":"insert","index":131}
-{"a":"0.38282163017300663","b":"type","c":"question","o":"insert","index":132}
-{"a":"0.38282163017300663","b":"label","c":"What are ideas from Glyma?","o":"insert","index":133}
-{"a":"0.38282163017300663","b":"attachedTo","c":"0","o":"insert","index":134}
-{"a":"0.0931316508219101","b":"type","c":"option","o":"insert","index":135}
-{"a":"0.0931316508219101","b":"label","c":"Embedding iframe that uses web service to transform other web resource","o":"insert","index":136}
-{"a":"0.0931316508219101","b":"attachedTo","c":"0.38282163017300663","o":"insert","index":137}
-{"a":"0.18602523442254926","b":"type","c":"question","o":"insert","index":138}
-{"a":"0.18602523442254926","b":"label","c":"Example?","o":"insert","index":139}
-{"a":"0.18602523442254926","b":"attachedTo","c":"0.0931316508219101","o":"insert","index":140}
-{"a":"0.10925926687860388","b":"type","c":"option","o":"insert","index":141}
-{"a":"0.10925926687860388","b":"label","c":"Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
-{"a":"0.10925926687860388","b":"attachedTo","c":"0.18602523442254926","o":"insert","index":143}
-{"a":"0","b":"type","c":"question","o":"insert","index":144}
-{"a":"0.5383832460735861","b":"type","c":"pro","o":"insert","index":145}
-{"a":"0.5383832460735861","b":"label","c":"Pro again","o":"insert","index":146}
-{"a":"0.5383832460735861","b":"attachedTo","c":"0.12410503876785861","o":"insert","index":147}
-{"a":"0.6761491936852434","b":"label","c":"Problem that a new pro will go under previous cons (FIXED!)","o":"replace","index":148}
-{"a":"0.6906403990997534","b":"type","c":"question","o":"insert","index":149}
-{"a":"0.6906403990997534","b":"label","c":"A question about a question?","o":"insert","index":150}
-{"a":"0.6906403990997534","b":"attachedTo","c":"0.3053399899172159","o":"insert","index":151}
-{"a":"risky","b":"label","c":"Risky2","o":"replace","index":152}
+{"a":"11","b":"label","c":"string: Yet another pro","o":"insert","index":61}
+{"a":"4","b":"-","c":"IBISNode: 0.2193099557688355","o":"insert","index":62}
+{"a":"11","b":"label","c":"string: Yet another pro that is longer","o":"replace","index":63}
+{"a":"11","b":"?","c":"IBISNode: 0.4851227118258178","o":"insert","index":64}
+{"a":"IBISNode: 0.4851227118258178","b":"label","c":"string: Should it be longer?","o":"replace","index":66}
+{"a":"4","b":"-","c":"IBISNode: 0.5940495778344923","o":"insert","index":67}
+{"a":"IBISNode: 0.2193099557688355","b":"label","c":"string: A con","o":"replace","index":69}
+{"a":"IBISNode: 0.5940495778344923","b":"label","c":"string: Another con","o":"replace","index":68}
+{"a":"4","b":"-","c":"IBISNode: 0.5327191062381859","o":"insert","index":69}
+{"a":"IBISNode: 0.5327191062381859","b":"label","c":"string: A longer con","o":"replace","index":70}
+{"a":"4","b":"-","c":"IBISNode: 0.030601292856757056","o":"insert","index":71}
+{"a":"IBISNode: 0.030601292856757056","b":"label","c":"string: Yet another con -- after fix","o":"insert","index":72}
+{"a":"4","b":"-","c":"IBISNode: 0.5327191062381859","o":"remove","index":73,"ignore":true}
+{"a":"4","b":"-","c":"IBISNode: 0.5940495778344923","o":"remove","index":74,"ignore":true}
+{"a":"IBISNode: 0.2193099557688355","b":"?","c":"IBISNode: 0.23230973909549857","o":"insert","index":75}
+{"a":"IBISNode: 0.23230973909549857","b":"label","c":"string: another question","o":"insert","index":76}
+{"a":"IBISNode: 0.23230973909549857","b":"label","c":"string: another question?","o":"replace","index":77}
+{"a":"IBISNode: 0.23230973909549857","b":"*","c":"IBISNode: 0.10578152847597744","o":"insert","index":78}
+{"a":"IBISNode: 0.10578152847597744","b":"label","c":"string: subitem?","o":"insert","index":79}
+{"a":"IBISNode: 0.23230973909549857","b":"*","c":"IBISNode: 0.7102769674410606","o":"insert","index":80}
+{"a":"IBISNode: 0.7102769674410606","b":"label","c":"string: subitem2","o":"insert","index":81}
+{"a":"IBISNode: 0.23230973909549857","b":"label","c":"string: another question 2?","o":"replace","index":82}
+{"a":"IBISNode: 0.23230973909549857","b":"label","c":"string: another question? (2)","o":"replace","index":83}
+{"a":"IBISNode: 0.23230973909549857","b":"label","c":"string: another question?","o":"replace","index":84}
+{"a":"IBISNode: 0.23230973909549857","b":"?","c":"IBISNode: 0.3346989611778324","o":"insert","index":85}
+{"a":"IBISNode: 0.3346989611778324","b":"label","c":"string: Yet another question?","o":"insert","index":86}
+{"a":"IBISNode: 0.3346989611778324","b":"*","c":"IBISNode: 0.5652519529736341","o":"insert","index":87}
+{"a":"IBISNode: 0.5652519529736341","b":"label","c":"string: test","o":"insert","index":88}
+{"a":"IBISNode: 0.3346989611778324","b":"!","c":"IBISNode: 0.27104962525748455","o":"insert","index":89}
+{"a":"IBISNode: 0.27104962525748455","b":"label","c":"string: option","o":"insert","index":90}
+{"a":"IBISNode: 0.3346989611778324","b":"!","c":"IBISNode: 0.7824355056975826","o":"insert","index":91}
+{"a":"IBISNode: 0.7824355056975826","b":"label","c":"string: second option","o":"insert","index":92}
+{"a":"IBISNode: 0.3346989611778324","b":"!","c":"IBISNode: 0.7824355056975826","o":"remove","index":93,"ignore":true}
+{"a":"11","b":"label","c":"string: Yet another pro that is somewhat longer","o":"replace","index":94}
+{"a":"IBISNode: 0.27104962525748455","b":"+","c":"IBISNode: 0.2677935092479582","o":"insert","index":95}
+{"a":"IBISNode: 0.2677935092479582","b":"label","c":"string: pro","o":"insert","index":96}
+{"a":"IBISNode: 0.27104962525748455","b":"-","c":"IBISNode: 0.5679905439160235","o":"insert","index":97}
+{"a":"IBISNode: 0.5679905439160235","b":"label","c":"string: con","o":"insert","index":98}
+{"a":"4","b":"+","c":"IBISNode: 0.679463033838902","o":"insert","index":99}
+{"a":"IBISNode: 0.679463033838902","b":"label","c":"string: Another pro!","o":"insert","index":100}
+{"a":"IBISNode: 0.679463033838902","b":"label","c":"string: Another better pro!","o":"replace","index":101}
+{"a":"IBISNode: 0.3053399899172159","b":"type","c":"IBISNode.Type: question","o":"insert","index":102}
+{"a":"IBISNode: 0.3053399899172159","b":"label","c":"string: A question  about new test question with new items approach?","o":"insert","index":103}
+{"a":"IBISNode: 0.3053399899172159","b":"attachedTo","c":"0","o":"insert","index":104}
+{"a":"IBISNode: 0.9535092439156513","b":"type","c":"IBISNode.Type: option","o":"insert","index":105}
+{"a":"IBISNode: 0.9535092439156513","b":"label","c":"string: Option 1","o":"insert","index":106}
+{"a":"IBISNode: 0.9535092439156513","b":"attachedTo","c":"IBISNode: 0.3053399899172159","o":"insert","index":107}
+{"a":"IBISNode: 0.12410503876785861","b":"type","c":"IBISNode.Type: option","o":"insert","index":108}
+{"a":"IBISNode: 0.12410503876785861","b":"label","c":"string: Option 2","o":"insert","index":109}
+{"a":"IBISNode: 0.12410503876785861","b":"attachedTo","c":"IBISNode: 0.3053399899172159","o":"insert","index":110}
+{"a":"IBISNode: 0.395706445405279","b":"type","c":"IBISNode.Type: pro","o":"insert","index":111}
+{"a":"IBISNode: 0.395706445405279","b":"label","c":"string: A pro","o":"insert","index":112}
+{"a":"IBISNode: 0.395706445405279","b":"attachedTo","c":"IBISNode: 0.12410503876785861","o":"insert","index":113}
+{"a":"IBISNode: 0.8248494728146751","b":"type","c":"IBISNode.Type: pro","o":"insert","index":114}
+{"a":"IBISNode: 0.8248494728146751","b":"label","c":"string: Another pro","o":"insert","index":115}
+{"a":"IBISNode: 0.8248494728146751","b":"attachedTo","c":"IBISNode: 0.12410503876785861","o":"insert","index":116}
+{"a":"IBISNode: 0.6682054777701786","b":"type","c":"IBISNode.Type: con","o":"insert","index":117}
+{"a":"IBISNode: 0.6682054777701786","b":"label","c":"string: A con","o":"insert","index":118}
+{"a":"IBISNode: 0.6682054777701786","b":"attachedTo","c":"IBISNode: 0.12410503876785861","o":"insert","index":119}
+{"a":"IBISNode: 0.32296544202722466","b":"type","c":"IBISNode.Type: question","o":"insert","index":120}
+{"a":"IBISNode: 0.32296544202722466","b":"label","c":"string: Is this reall a con?","o":"insert","index":121}
+{"a":"IBISNode: 0.32296544202722466","b":"attachedTo","c":"IBISNode: 0.6682054777701786","o":"insert","index":122}
+{"a":"IBISNode: 0.6761491936852434","b":"type","c":"IBISNode.Type: pro","o":"insert","index":123}
+{"a":"IBISNode: 0.6761491936852434","b":"label","c":"string: Problem that a new pro will go under previous cons","o":"insert","index":124}
+{"a":"IBISNode: 0.6761491936852434","b":"attachedTo","c":"IBISNode: 0.12410503876785861","o":"insert","index":125}
+{"a":"IBISNode: 0.32296544202722466","b":"label","c":"string: Is this really a con?","o":"replace","index":126}
+{"a":"IBISNode: 0.4186093527393314","b":"type","c":"IBISNode.Type: option","o":"insert","index":127}
+{"a":"IBISNode: 0.4186093527393314","b":"label","c":"string: Maybe","o":"insert","index":128}
+{"a":"IBISNode: 0.4186093527393314","b":"attachedTo","c":"IBISNode: 0.32296544202722466","o":"insert","index":129}
+{"a":"IBISNode: 0.4186093527393314","b":"attachedTo","c":"","o":"replace","index":130}
+{"a":"IBISNode: 0.4186093527393314","b":"deleted","c":"boolean: true","o":"insert","index":131}
+{"a":"IBISNode: 0.38282163017300663","b":"type","c":"IBISNode.Type: question","o":"insert","index":132}
+{"a":"IBISNode: 0.38282163017300663","b":"label","c":"string: What are ideas from Glyma?","o":"insert","index":133}
+{"a":"IBISNode: 0.38282163017300663","b":"attachedTo","c":"IBISNode: 0","o":"insert","index":134}
+{"a":"IBISNode: 0.0931316508219101","b":"type","c":"IBISNode.Type: option","o":"insert","index":135}
+{"a":"IBISNode: 0.0931316508219101","b":"label","c":"string: Embedding iframe that uses web service to transform other web resource","o":"insert","index":136}
+{"a":"IBISNode: 0.0931316508219101","b":"attachedTo","c":"IBISNode: 0.38282163017300663","o":"insert","index":137}
+{"a":"IBISNode: 0.18602523442254926","b":"type","c":"IBISNode.Type: question","o":"insert","index":138}
+{"a":"IBISNode: 0.18602523442254926","b":"label","c":"string: Example?","o":"insert","index":139}
+{"a":"IBISNode: 0.18602523442254926","b":"attachedTo","c":"IBISNode: 0.0931316508219101","o":"insert","index":140}
+{"a":"IBISNode: 0.10925926687860388","b":"type","c":"IBISNode.Type: option","o":"insert","index":141}
+{"a":"IBISNode: 0.10925926687860388","b":"label","c":"string: Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
+{"a":"IBISNode: 0.10925926687860388","b":"attachedTo","c":"IBISNode: 0.18602523442254926","o":"insert","index":143}
+{"a":"0","b":"type","c":"IBISNode.Type: question","o":"insert","index":144}
+{"a":"IBISNode: 0.5383832460735861","b":"type","c":"IBISNode.Type: pro","o":"insert","index":145}
+{"a":"IBISNode: 0.5383832460735861","b":"label","c":"string: Pro again","o":"insert","index":146}
+{"a":"IBISNode: 0.5383832460735861","b":"attachedTo","c":"IBISNode: 0.12410503876785861","o":"insert","index":147}
+{"a":"IBISNode: 0.6761491936852434","b":"label","c":"string: Problem that a new pro will go under previous cons (FIXED!)","o":"replace","index":148}
+{"a":"IBISNode: 0.6906403990997534","b":"type","c":"IBISNode.Type: question","o":"insert","index":149}
+{"a":"IBISNode: 0.6906403990997534","b":"label","c":"string: A question about a question?","o":"insert","index":150}
+{"a":"IBISNode: 0.6906403990997534","b":"attachedTo","c":"IBISNode: 0.3053399899172159","o":"insert","index":151}
+{"a":"risky","b":"label","c":"string: Risky2","o":"replace","index":152}
 {"a":"test","b":"something","c":"else2","o":"replace","index":153}
 {"a":"test","b":"something","c":"else3","o":"replace","index":154}
 {"a":"test","b":"something","c":"else4","o":"replace","index":155}
@@ -158,34 +158,36 @@
 {"a":"test","b":"something","c":"else7","o":"replace","index":158}
 {"a":"test","b":"something","c":"else8","o":"replace","index":159}
 {"a":"test","b":"something","c":"else9","o":"replace","index":160}
-{"a":"0.6906403990997534","b":"label","c":"A question about a question? (Updated but with triple editor and string id)","o":"replace","index":161}
-{"a":"0.6906403990997534","b":"label","c":"A question about a question? (Updated but with triple editor and really string id)","o":"replace","index":162}
-{"a":"0.6906403990997534","b":"label","c":"A question about a question? (Updated with triple editor and really string id)","o":"replace","index":163}
-{"a":"0.23612004982183254","b":"type","c":"option","o":"insert","index":164}
-{"a":"0.23612004982183254","b":"label","c":"An answer","o":"insert","index":165}
-{"a":"0.23612004982183254","b":"attachedTo","c":"0.6906403990997534","o":"insert","index":166}
-{"a":"0.4157326364914913","b":"type","c":"pro","o":"insert","index":167}
-{"a":"0.4157326364914913","b":"label","c":"A pro","o":"insert","index":168}
-{"a":"0.4157326364914913","b":"attachedTo","c":"0.23612004982183254","o":"insert","index":169}
-{"a":"0.7238145430915051","b":"type","c":"con","o":"insert","index":170}
-{"a":"0.7238145430915051","b":"label","c":"A con","o":"insert","index":171}
-{"a":"0.7238145430915051","b":"attachedTo","c":"0.23612004982183254","o":"insert","index":172}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":173}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":174}
-{"a":"0.7238145430915051","b":"type","c":"question","o":"replace","index":175}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":176}
-{"a":"0.7238145430915051","b":"type","c":"pro","o":"replace","index":177}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":178}
-{"a":"0.7238145430915051","b":"type","c":"con","o":"replace","index":179}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":180}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":181}
-{"a":"0.7238145430915051","b":"type","c":"answer","o":"replace","index":182}
-{"a":"0.7238145430915051","b":"label","c":"A sort of con","o":"replace","index":183}
-{"a":"0.7238145430915051","b":"type","c":"con","o":"replace","index":184}
-{"a":"0","b":"label","c":"What to work on next? 0.7285893542130949","o":"replace","index":185}
-{"a":"0","b":"label","c":"What to work on next? 0.7023378814663096","o":"replace","index":186}
-{"a":"0","b":"label","c":"What to work on next? 0.9198210879728924","o":"replace","index":187}
-{"a":"0","b":"label","c":"What to work on next? 0.25453519461458185","o":"replace","index":188}
-{"a":"0","b":"label","c":"What to work on next? 0.4568337823234814","o":"replace","index":189}
-{"a":"0","b":"label","c":"What to work on next? 0.16094831848815638","o":"replace","index":190}
-{"a":"0","b":"label","c":"What to work on next? 0.927373393246828","o":"replace","index":191}
+{"a":"IBISNode: 0.6906403990997534","b":"label","c":"string: A question about a question? (Updated but with triple editor and string id)","o":"replace","index":161}
+{"a":"IBISNode: 0.6906403990997534","b":"label","c":"string: A question about a question? (Updated but with triple editor and really string id)","o":"replace","index":162}
+{"a":"IBISNode: 0.6906403990997534","b":"label","c":"string: A question about a question? (Updated with triple editor and really string id)","o":"replace","index":163}
+{"a":"IBISNode: 0.23612004982183254","b":"type","c":"IBISNode.Type: option","o":"insert","index":164}
+{"a":"IBISNode: 0.23612004982183254","b":"label","c":"string: An answer","o":"insert","index":165}
+{"a":"IBISNode: 0.23612004982183254","b":"attachedTo","c":"IBISNode: 0.6906403990997534","o":"insert","index":166}
+{"a":"IBISNode: 0.4157326364914913","b":"type","c":"IBISNode.Type: pro","o":"insert","index":167}
+{"a":"IBISNode: 0.4157326364914913","b":"label","c":"string: A pro","o":"insert","index":168}
+{"a":"IBISNode: 0.4157326364914913","b":"attachedTo","c":"IBISNode: 0.23612004982183254","o":"insert","index":169}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: con","o":"insert","index":170}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A con","o":"insert","index":171}
+{"a":"IBISNode: 0.7238145430915051","b":"attachedTo","c":"IBISNode: 0.23612004982183254","o":"insert","index":172}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":173}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":174}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: question","o":"replace","index":175}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":176}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: pro","o":"replace","index":177}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":178}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: con","o":"replace","index":179}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":180}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":181}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: answer","o":"replace","index":182}
+{"a":"IBISNode: 0.7238145430915051","b":"label","c":"string: A sort of con","o":"replace","index":183}
+{"a":"IBISNode: 0.7238145430915051","b":"type","c":"IBISNode.Type: con","o":"replace","index":184}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.7285893542130949","o":"replace","index":185}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.7023378814663096","o":"replace","index":186}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.9198210879728924","o":"replace","index":187}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.25453519461458185","o":"replace","index":188}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.4568337823234814","o":"replace","index":189}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.16094831848815638","o":"replace","index":190}
+{"a":"IBISNode: 0","b":"label","c":"string: What to work on next? 0.927373393246828","o":"replace","index":191}
+{"a":"IBISNode: 0","b":"property:label","c":"string: What to work on next? (a new random number)","o":"replace","index":192}
+{"a":"IBISNode: 0","b":"string: label","c":"string: What to work on next? (a new random number)","o":"replace","index":193}
