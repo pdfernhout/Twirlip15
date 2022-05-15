@@ -99,6 +99,14 @@ export function Triplestore(showError, fileName) {
         ) {
             return showError(new Error("triple fields must be strings: " + JSON.stringify(triple)))
         }
+        if ( write && (
+            !triple.a.includes(":") ||
+            !triple.b.includes(":") ||
+                !triple.c.includes(":")
+            )
+        ) {
+            return showError(new Error("triple fields must have type at start with a colon: " + JSON.stringify(triple)))
+        }
         if (!triple.a || !triple.b) return showError(new Error("Triple a and b fields must be non-empty"))
         triple.index = triples.length + 1
         if (triple.o === "remove") {
