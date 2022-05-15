@@ -6,29 +6,29 @@ import { helpText } from "./ibis-help.js"
 import "../../vendor/showdown.js"
 import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
 
-// Experimenting with idea of schemas and Pointrel triples -- what might a schema look like?
-// It does add clarity to seeing what form the application's data is supposed to have.
-// eslint-disable-next-line no-unused-vars
-const ibisItemSchema = {
-    // type: "com.twirlip.IBISItem",
-    type: "IBISItem",
-    version: "1",
-    fields: {
-        id: "string",
-        _id: "string",
-        _schemaVersion: "string",
-        _revision: "string",
-        type: { type: "enum", options: ["question", "answer", "pro", "con"] },
-        label: "string",
-        attachedTo: "IBISItem",
-        // IBISItem:12345678 _schemaVersion 1
-        // IBISItem:12345678 _schemaHash sha256-hash-of-schema
-        deleted: "boolean",
-        deletedX: { type: "boolean" },
-        deletedY: Boolean,
-        // extra: "json"
-    }
-}
+// // Experimenting with idea of schemas and Pointrel triples -- what might a schema look like?
+// // It does add clarity to seeing what form the application's data is supposed to have.
+// // eslint-disable-next-line no-unused-vars
+// const ibisItemSchema = {
+//     // type: "com.twirlip.IBISItem",
+//     type: "IBISItem",
+//     version: "1",
+//     fields: {
+//         id: "string",
+//         _id: "string",
+//         _schemaVersion: "string",
+//         _revision: "string",
+//         type: { type: "enum", options: ["question", "answer", "pro", "con"] },
+//         label: "string",
+//         attachedTo: "IBISItem",
+//         // IBISItem:12345678 _schemaVersion 1
+//         // IBISItem:12345678 _schemaHash sha256-hash-of-schema
+//         deleted: "boolean",
+//         deletedX: { type: "boolean" },
+//         deletedY: Boolean,
+//         // extra: "json"
+//     }
+// }
 
 // eslint-disable-next-line no-unused-vars
 function validateFieldValue(value, fieldSchema) {
@@ -364,65 +364,65 @@ t.loadFileContents()
 
 m.mount(document.body, IBISApp)
 
-// Experiments with a schema for using defined classes of objects with triplestore:
+// // Experiments with a schema for using defined classes of objects with triplestore:
 
-// Try Proxy...
+// // Try Proxy...
 
-const proxyHandler = {
-    get: async function(target, property) {
-        const fieldSchema = target.schema.fields[property]
-        console.log("fieldSchema", property, fieldSchema)
-        if (!fieldSchema) throw new Error("Unexpected field name: " + property)
-        return await t.findLast(target.id, property)
-    },
+// const proxyHandler = {
+//     get: async function(target, property) {
+//         const fieldSchema = target.schema.fields[property]
+//         console.log("fieldSchema", property, fieldSchema)
+//         if (!fieldSchema) throw new Error("Unexpected field name: " + property)
+//         return await t.findLast(target.id, property)
+//     },
 
-    set: async function(target, property, value) {
-        const fieldSchema = target.schema.fields[property]
-        if (!fieldSchema) throw new Error("Unexpected field name: " + property)
-        if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + property + " of: " + JSON.stringify(value))
-        await t.addTriple({
-            a: target.id,
-            b: property,
-            c: value,
-            o: "replace"
-        })
-    }
-}
+//     set: async function(target, property, value) {
+//         const fieldSchema = target.schema.fields[property]
+//         if (!fieldSchema) throw new Error("Unexpected field name: " + property)
+//         if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + property + " of: " + JSON.stringify(value))
+//         await t.addTriple({
+//             a: target.id,
+//             b: property,
+//             c: value,
+//             o: "replace"
+//         })
+//     }
+// }
 
-const test = new Proxy({id: "0", schema: ibisItemSchema}, proxyHandler)
+// const test = new Proxy({id: "0", schema: ibisItemSchema}, proxyHandler)
 
-setTimeout(async () => console.log("test.type", await test.type), 1000)
-setTimeout(async () => console.log("test.missing", await test.missing), 1000)
-setTimeout(async () => console.log("test.label", await test.label), 1000)
-// Problem where you can't meaningfully await on an assignment --
-// which could eventually lead to errors from overlapping file operations.
-// This implies needing an approach like in a previous Pointrel version where no need to wait
-// as file changes are done in the background and an error is only signalled if problem later.
-setTimeout(async () => console.log("test.label", await (test.label = "What to work on next? " + Math.random())), 1000)
+// setTimeout(async () => console.log("test.type", await test.type), 1000)
+// setTimeout(async () => console.log("test.missing", await test.missing), 1000)
+// setTimeout(async () => console.log("test.label", await test.label), 1000)
+// // Problem where you can't meaningfully await on an assignment --
+// // which could eventually lead to errors from overlapping file operations.
+// // This implies needing an approach like in a previous Pointrel version where no need to wait
+// // as file changes are done in the background and an error is only signalled if problem later.
+// setTimeout(async () => console.log("test.label", await (test.label = "What to work on next? " + Math.random())), 1000)
 
-// eslint-disable-next-line no-unused-vars
-class SchematizedTriplestoreItem {
-    constructor(schema, triplestore, id) {
-        this.schema = schema
-        this.triplestore = triplestore
-        this.id = id
-    }
+// // eslint-disable-next-line no-unused-vars
+// class SchematizedTriplestoreItem {
+//     constructor(schema, triplestore, id) {
+//         this.schema = schema
+//         this.triplestore = triplestore
+//         this.id = id
+//     }
 
-    async getField(field) {
-        const fieldSchema = this.schema[field]
-        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
-        return await this.triplestore.findLast(this.id, field)
-    }
+//     async getField(field) {
+//         const fieldSchema = this.schema[field]
+//         if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+//         return await this.triplestore.findLast(this.id, field)
+//     }
 
-    async setField(field, value) {
-        const fieldSchema = this.schema[field]
-        if (!fieldSchema) throw new Error("Unexpected field name: " + field)
-        if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + field + " of: " + JSON.stringify(value))
-        await this.triplestore.addTriple({
-            a: this.id,
-            b: field,
-            c: value,
-            o: "replace"
-        })
-    }
-}
+//     async setField(field, value) {
+//         const fieldSchema = this.schema[field]
+//         if (!fieldSchema) throw new Error("Unexpected field name: " + field)
+//         if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + field + " of: " + JSON.stringify(value))
+//         await this.triplestore.addTriple({
+//             a: this.id,
+//             b: field,
+//             c: value,
+//             o: "replace"
+//         })
+//     }
+// }
