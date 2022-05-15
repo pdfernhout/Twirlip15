@@ -1,4 +1,4 @@
-test|something|else
+test|something|else|{jsonish:"metadata",uuid:"dffffddf",previous:"kjdkdj",timestamp:"2022-05-15T...",author:"pdf...",transaction:"uuid...",operation:"insert"}
 test|other|thing
 test|more|another
 test2|something|else
