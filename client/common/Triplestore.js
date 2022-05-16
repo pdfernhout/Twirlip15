@@ -58,7 +58,6 @@ export function Triplestore(showError, fileName) {
             }
             isFileLoaded = true
         }
-        console.log("isFileLoading setting to false")
         isFileLoading = false
     }
     
