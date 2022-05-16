@@ -73,13 +73,18 @@ async function warnIfInvalid(type, newLabel) {
 function typeForNode(id) {
     // With a schema:
     // return new IBISNode(id).type
-    return t.findLast(id, "type")
+    let type = "" + t.findLast(id, "type")
+    if (type.startsWith("IBISNode.Type:")) type = type.substring("IBISNode.Type:".length)
+    return type
 }
 
 function labelForNode(id) {
     // With a schema:
     // return new IBISNode(id).label
-    return ("" + t.findLast(id, "label")) || "Unlabelled"
+    let label = "" + t.findLast(id, "label")
+    if (label.startsWith("string:")) label = label.substring("string:".length)
+    if (!label) label = "Unlabelled"
+    return label
 }
 
 function childrenForNode(id) {
@@ -137,7 +142,7 @@ async function editClicked(id) {
         await t.addTriple({
             a: id,
             b: "label",
-            c: newLabel,
+            c: "string:" + newLabel,
             o: "replace"
         }) 
     }
@@ -145,7 +150,7 @@ async function editClicked(id) {
         await t.addTriple({
             a: id,
             b: "type",
-            c: newType,
+            c: "IBISNode.Type:" + newType,
             o: "replace"
         }) 
     }
@@ -164,7 +169,7 @@ async function deleteClicked(id) {
     await t.addTriple({
         a: id,
         b: "deleted",
-        c: true,
+        c: "boolean:true",
         o: "insert"
     })
 }
@@ -179,14 +184,14 @@ async function addItem(type, parentId) {
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        const childId = "node:" + ("" + Math.random()).split(".")[1]
+        const childId = "IBISNode:" + ("" + Math.random()).split(".")[1]
         // With a schema:
         // const node = new SchematizedObject("IBISNode", childId)
         // node.type = type
         await t.addTriple({
             a: childId,
             b: "type",
-            c: type,
+            c: "IBISNode.Type:" + type,
             o: "insert"
         })
         // With a schema:
@@ -194,7 +199,7 @@ async function addItem(type, parentId) {
         await t.addTriple({
             a: childId,
             b: "label",
-            c: newLabel,
+            c: "string:" + newLabel,
             o: "insert"
         })
         // With a schema:
