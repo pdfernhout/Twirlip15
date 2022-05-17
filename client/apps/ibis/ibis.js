@@ -11,7 +11,7 @@ import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } fr
 // // eslint-disable-next-line no-unused-vars
 // const ibisItemSchema = {
 //     // type: "com.twirlip.IBISItem",
-//     type: "IBISItem",
+//     type: "IBIS.Item",
 //     version: "1",
 //     fields: {
 //         id: "string",
@@ -20,7 +20,7 @@ import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } fr
 //         _revision: "string",
 //         type: { type: "enum", options: ["question", "answer", "pro", "con"] },
 //         label: "string",
-//         attachedTo: "IBISItem",
+//         attachedTo: "IBIS.Item",
 //         // IBISItem:12345678 _schemaVersion 1
 //         // IBISItem:12345678 _schemaHash sha256-hash-of-schema
 //         deleted: "boolean",
@@ -73,15 +73,15 @@ async function warnIfInvalid(type, newLabel) {
 function typeForNode(id) {
     // With a schema:
     // return new IBISNode(id).type
-    let type = "" + t.findLast(id, "type")
-    if (type.startsWith("IBISNode.Type:")) type = type.substring("IBISNode.Type:".length)
+    let type = "" + t.findLast(id, "IBIS.Field:type")
+    if (type.startsWith("IBIS.Type:")) type = type.substring("IBIS.Type:".length)
     return type
 }
 
 function labelForNode(id) {
     // With a schema:
     // return new IBISNode(id).label
-    let label = "" + t.findLast(id, "label")
+    let label = "" + t.findLast(id, "IBIS.Field:label")
     if (label.startsWith("string:")) label = label.substring("string:".length)
     if (!label) label = "Unlabelled"
     return label
@@ -90,7 +90,11 @@ function labelForNode(id) {
 function childrenForNode(id) {
     // With a schema:
     // return new IBISNode(id).attachedTo
-    return t.find(null, "attachedTo", id)
+    return t.find(null, "IBIS.Field:attachedTo", id)
+}
+
+function rootForTree() {
+    return t.last((t.find("IBIS.Root:root", "IBIS.Field:value")))
 }
 
 // Copied from triples.js
@@ -141,7 +145,7 @@ async function editClicked(id) {
     if (newLabel && newLabel !== oldLabel) {
         await t.addTriple({
             a: id,
-            b: "label",
+            b: "IBIS.Field:label",
             c: "string:" + newLabel,
             o: "replace"
         }) 
@@ -149,8 +153,8 @@ async function editClicked(id) {
     if (type !== newType) {
         await t.addTriple({
             a: id,
-            b: "type",
-            c: "IBISNode.Type:" + newType,
+            b: "IBIS.Field:type",
+            c: "IBIS.Type:" + newType,
             o: "replace"
         }) 
     }
@@ -162,13 +166,13 @@ async function deleteClicked(id) {
     if (!await modalConfirm("confirm delete " + type + " \"" + label + "\"?")) return
     await t.addTriple({
         a: id,
-        b: "attachedTo",
+        b: "IBIS.Field:attachedTo",
         c: "",
         o: "replace"
     })
     await t.addTriple({
         a: id,
-        b: "deleted",
+        b: "IBIS.Field:deleted",
         c: "boolean:true",
         o: "insert"
     })
@@ -184,21 +188,21 @@ async function addItem(type, parentId) {
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        const childId = "IBISNode:" + ("" + Math.random()).split(".")[1]
+        const childId = "IBIS.Node:" + ("" + Math.random()).split(".")[1]
         // With a schema:
-        // const node = new SchematizedObject("IBISNode", childId)
+        // const node = new SchematizedObject("IBIS.Node", childId)
         // node.type = type
         await t.addTriple({
             a: childId,
-            b: "type",
-            c: "IBISNode.Type:" + type,
+            b: "IBIS.Field:type",
+            c: "IBIS.Type:" + type,
             o: "insert"
         })
         // With a schema:
         // node.label = newLabel
         await t.addTriple({
             a: childId,
-            b: "label",
+            b: "IBIS.Field:label",
             c: "string:" + newLabel,
             o: "insert"
         })
@@ -206,7 +210,7 @@ async function addItem(type, parentId) {
         // node.attachedTo = parentId
         await t.addTriple({
             a: childId,
-            b: "attachedTo",
+            b: "IBIS.Field:attachedTo",
             c: parentId,
             o: "insert"
         })
@@ -287,7 +291,7 @@ function viewIBISDiagram(id) {
 
 async function exportMenuAction() {
     console.log("exportMenuAction")
-    const rootId = t.last((t.find("IBISRoot:root", "value")))
+    const rootId = rootForTree()
     if (!rootId) return await modalAlert("No IBIS root")
     const result = exportIBISDiagram(0, rootId)
     console.log(result)
@@ -326,8 +330,8 @@ async function makeInitialQuestion() {
         // Need special root object with different schema
         // root.value = id
         await t.addTriple({
-            a: "IBISRoot:root",
-            b: "value",
+            a: "IBIS.Root:root",
+            b: "IBIS.Field:value",
             c: id,
             o: "insert"
         })
@@ -336,7 +340,7 @@ async function makeInitialQuestion() {
 
 const IBISApp = {
     view: () => {
-        const rootId = t.last((t.find("IBISRoot:root", "value")))
+        const rootId = rootForTree()
         const loadingState = t.getLoadingState()
         return m("div",
             viewMenu(),
