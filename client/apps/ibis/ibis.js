@@ -72,15 +72,15 @@ async function warnIfInvalid(type, newLabel) {
 
 function typeForNode(id) {
     // With a schema:
-    // return new IBISNode(id).type
+    // return new IBIS.Node(id).type
     let type = "" + t.findLast(id, "type")
-    if (type.startsWith("IBISNode.Type:")) type = type.substring("IBISNode.Type:".length)
+    if (type.startsWith("IBIS.NodeType:")) type = type.substring("IBIS.NodeType:".length)
     return type
 }
 
 function labelForNode(id) {
     // With a schema:
-    // return new IBISNode(id).label
+    // return new IBIS.Node(id).label
     let label = "" + t.findLast(id, "label")
     if (label.startsWith("string:")) label = label.substring("string:".length)
     if (!label) label = "Unlabelled"
@@ -89,8 +89,12 @@ function labelForNode(id) {
 
 function childrenForNode(id) {
     // With a schema:
-    // return new IBISNode(id).attachedTo
+    // return new IBIS.Node(id).attachedTo
     return t.find(null, "attachedTo", id)
+}
+
+function findRootForTree() {
+    return t.last((t.find("IBIS.Root:root", "value")))
 }
 
 // Copied from triples.js
@@ -150,7 +154,7 @@ async function editClicked(id) {
         await t.addTriple({
             a: id,
             b: "type",
-            c: "IBISNode.Type:" + newType,
+            c: "IBIS.NodeType:" + newType,
             o: "replace"
         }) 
     }
@@ -184,14 +188,14 @@ async function addItem(type, parentId) {
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        const childId = "IBISNode:" + ("" + Math.random()).split(".")[1]
+        const childId = "IBIS.Node:" + ("" + Math.random()).split(".")[1]
         // With a schema:
-        // const node = new SchematizedObject("IBISNode", childId)
+        // const node = new SchematizedObject("IBIS.Node", childId)
         // node.type = type
         await t.addTriple({
             a: childId,
             b: "type",
-            c: "IBISNode.Type:" + type,
+            c: "IBIS.NodeType:" + type,
             o: "insert"
         })
         // With a schema:
@@ -287,7 +291,7 @@ function viewIBISDiagram(id) {
 
 async function exportMenuAction() {
     console.log("exportMenuAction")
-    const rootId = t.last((t.find("IBISRoot:root", "value")))
+    const rootId = findRootForTree()
     if (!rootId) return await modalAlert("No IBIS root")
     const result = exportIBISDiagram(0, rootId)
     console.log(result)
@@ -326,7 +330,7 @@ async function makeInitialQuestion() {
         // Need special root object with different schema
         // root.value = id
         await t.addTriple({
-            a: "IBISRoot:root",
+            a: "IBIS.Root:root",
             b: "value",
             c: id,
             o: "insert"
@@ -336,7 +340,7 @@ async function makeInitialQuestion() {
 
 const IBISApp = {
     view: () => {
-        const rootId = t.last((t.find("IBISRoot:root", "value")))
+        const rootId = findRootForTree()
         const loadingState = t.getLoadingState()
         return m("div",
             viewMenu(),
