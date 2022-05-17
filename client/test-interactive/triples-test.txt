@@ -1,77 +1,77 @@
-{"a":"test","b":"something","c":"else"}
-{"a":"test","b":"other","c":"thing"}
-{"a":"test","b":"more","c":"another"}
-{"a":"test2","b":"something","c":"else"}
-{"a":"1","b":"name","c":""}
-{"a":"1","b":"label","c":"string:a long label"}
-{"a":"1","b":"label","c":"string:different label","index":7}
-{"a":"2","b":"pro","c":"1","index":8}
-{"a":"2","b":"label","c":"string:good!","index":9}
-{"a":"1","b":"label","c":"string:another label","index":10}
-{"a":"1","b":"+","c":"cheap","index":11}
-{"a":"2","b":"label","c":"string:the second","index":12}
-{"a":"1","b":"+","c":"2","index":13}
-{"a":"cheap","b":"label","c":"string:Cheap!","index":14}
-{"a":"cheap","b":"?","c":"3","index":15}
-{"a":"3","b":"label","c":"string:Is it really cheaper?","index":16}
-{"a":"1","b":"label","c":"string:A big idea","index":17}
-{"a":"1","b":"-","c":"risky","index":18}
-{"a":"risky","b":"label","c":"string:Risky","index":19}
-{"a":"2","b":"label","c":"string:another pro","index":20}
-{"a":"0","b":"label","c":"string:What to work on next?","index":21}
-{"a":"0","b":"!","c":"1","index":22}
-{"a":"0","b":"!","c":"4","index":23}
-{"a":"4","b":"label","c":"string:A small idea","index":24}
-{"a":"4","b":"+","c":"5","index":25}
-{"a":"5","b":"label","c":"string:6","index":26}
-{"a":"5","b":"label","c":"string:Really really cheap","index":27}
-{"a":"4","b":"+","c":"6","index":28}
-{"a":"6","b":"label","c":"string:Low risk","index":29}
-{"a":"0","b":"!","c":"7","index":30}
-{"a":"7","b":"label","c":"string:Triples","index":31}
-{"a":"7","b":"label","c":"string:Triplestore","index":32}
-{"a":"root","b":"value","c":"0","index":33}
-{"a":"root","b":"value","c":"1","index":34}
-{"a":"root","b":"value","c":"0","index":35}
-{"a":"root","b":"value","c":"","index":36}
-{"a":"root","b":"value","c":"7","index":37}
-{"a":"root","b":"value","c":"1","index":38}
-{"a":"root","b":"value","c":"0","index":39}
-{"a":"7","b":"+","c":"8","index":40}
-{"a":"8","b":"label","c":"string:Flexible","index":41}
-{"a":"7","b":"-","c":"","index":42}
-{"a":"7","b":"-","c":"9","index":43}
-{"a":"9","b":"label","c":"string:Flabby","index":44}
-{"a":"test","b":"type","c":"IBISNode.Type:operation-replace","o":"replace","index":45}
-{"a":"test","b":"type","c":"IBISNode.Type:operation-insert","o":"insert","index":46}
-{"a":"test","b":"type","c":"IBISNode.Type:operation-insert2","o":"insert","index":47}
-{"a":"test","b":"type","c":"IBISNode.Type:operation-replace2","o":"replace","index":48}
-{"a":"7","b":"-","c":"","o":"remove","index":49}
-{"a":"test","b":"something","c":"else2","o":"replace","index":52}
-{"a":"0","b":"!","c":"1","o":"insert","index":51}
-{"a":"0","b":"!","c":"4","o":"insert","index":52}
-{"a":"1","b":"+","c":"cheap","o":"insert","index":53}
-{"a":"4","b":"+","c":"5","o":"insert","index":54}
-{"a":"3","b":"!","c":"Maybe","o":"insert","index":55}
-{"a":"3","b":"!","c":"10","o":"insert","index":56}
-{"a":"3","b":"!","c":"","o":"clear","index":57,"ignore":true}
-{"a":"1","b":"+","c":"Yet another pro","o":"insert","index":58}
-{"a":"1","b":"+","c":"Yet another pro","o":"remove","index":59,"ignore":true}
-{"a":"1","b":"+","c":"11","o":"insert","index":60}
-{"a":"11","b":"label","c":"string:Yet another pro","o":"insert","index":61}
-{"a":"4","b":"-","c":"IBISNode:0.2193099557688355","o":"insert","index":62}
-{"a":"11","b":"label","c":"string:Yet another pro that is longer","o":"replace","index":63}
-{"a":"11","b":"?","c":"IBISNode:0.4851227118258178","o":"insert","index":64}
+{"a":"IBISNode:test","b":"something","c":"string:else"}
+{"a":"IBISNode:test","b":"other","c":"string:thing"}
+{"a":"IBISNode:test","b":"more","c":"string:another"}
+{"a":"IBISNode:test2","b":"something","c":"string:else"}
+{"a":"IBISNode:1","b":"name","c":""}
+{"a":"IBISNode:1","b":"label","c":"string:a long label"}
+{"a":"IBISNode:1","b":"label","c":"string:different label","index":7}
+{"a":"IBISNode:2","b":"pro","c":"IBISNode:1","index":8}
+{"a":"IBISNode:2","b":"label","c":"string:good!","index":9}
+{"a":"IBISNode:1","b":"label","c":"string:another label","index":10}
+{"a":"IBISNode:1","b":"+","c":"string:cheap","index":11}
+{"a":"IBISNode:2","b":"label","c":"string:the second","index":12}
+{"a":"IBISNode:1","b":"+","c":"IBISNode:2","index":13}
+{"a":"IBISNode:cheap","b":"label","c":"string:Cheap!","index":14}
+{"a":"IBISNode:cheap","b":"?","c":"IBISNode:3","index":15}
+{"a":"IBISNode:3","b":"label","c":"string:Is it really cheaper?","index":16}
+{"a":"IBISNode:1","b":"label","c":"string:A big idea","index":17}
+{"a":"IBISNode:1","b":"-","c":"string:risky","index":18}
+{"a":"IBISNode:risky","b":"label","c":"string:Risky","index":19}
+{"a":"IBISNode:2","b":"label","c":"string:another pro","index":20}
+{"a":"IBISNode:0","b":"label","c":"string:What to work on next?","index":21}
+{"a":"IBISNode:0","b":"!","c":"IBISNode:1","index":22}
+{"a":"IBISNode:0","b":"!","c":"IBISNode:4","index":23}
+{"a":"IBISNode:4","b":"label","c":"string:A small idea","index":24}
+{"a":"IBISNode:4","b":"+","c":"IBISNode:5","index":25}
+{"a":"IBISNode:5","b":"label","c":"string:6","index":26}
+{"a":"IBISNode:5","b":"label","c":"string:Really really cheap","index":27}
+{"a":"IBISNode:4","b":"+","c":"IBISNode:6","index":28}
+{"a":"IBISNode:6","b":"label","c":"string:Low risk","index":29}
+{"a":"IBISNode:0","b":"!","c":"IBISNode:7","index":30}
+{"a":"IBISNode:7","b":"label","c":"string:Triples","index":31}
+{"a":"IBISNode:7","b":"label","c":"string:Triplestore","index":32}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:0","index":33}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:1","index":34}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:0","index":35}
+{"a":"IBISRoot:root","b":"value","c":"","index":36}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:7","index":37}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:1","index":38}
+{"a":"IBISRoot:root","b":"value","c":"IBISNode:0","index":39}
+{"a":"IBISNode:7","b":"+","c":"IBISNode:8","index":40}
+{"a":"IBISNode:8","b":"label","c":"string:Flexible","index":41}
+{"a":"IBISNode:7","b":"-","c":"","index":42}
+{"a":"IBISNode:7","b":"-","c":"IBISNode:9","index":43}
+{"a":"IBISNode:9","b":"label","c":"string:Flabby","index":44}
+{"a":"IBISNode:test","b":"type","c":"IBISNode.Type:operation-replace","o":"replace","index":45}
+{"a":"IBISNode:test","b":"type","c":"IBISNode.Type:operation-insert","o":"insert","index":46}
+{"a":"IBISNode:test","b":"type","c":"IBISNode.Type:operation-insert2","o":"insert","index":47}
+{"a":"IBISNode:test","b":"type","c":"IBISNode.Type:operation-replace2","o":"replace","index":48}
+{"a":"IBISNode:7","b":"-","c":"","o":"remove","index":49}
+{"a":"IBISNode:test","b":"something","c":"string:else2","o":"replace","index":52}
+{"a":"IBISNode:0","b":"!","c":"IBISNode:1","o":"insert","index":51}
+{"a":"IBISNode:0","b":"!","c":"IBISNode:4","o":"insert","index":52}
+{"a":"IBISNode:1","b":"+","c":"string:cheap","o":"insert","index":53}
+{"a":"IBISNode:4","b":"+","c":"IBISNode:5","o":"insert","index":54}
+{"a":"IBISNode:3","b":"!","c":"string:Maybe","o":"insert","index":55}
+{"a":"IBISNode:3","b":"!","c":"IBISNode:10","o":"insert","index":56}
+{"a":"IBISNode:3","b":"!","c":"","o":"clear","index":57,"ignore":true}
+{"a":"IBISNode:1","b":"+","c":"string:Yet another pro","o":"insert","index":58}
+{"a":"IBISNode:1","b":"+","c":"string:Yet another pro","o":"remove","index":59,"ignore":true}
+{"a":"IBISNode:1","b":"+","c":"IBISNode:11","o":"insert","index":60}
+{"a":"IBISNode:11","b":"label","c":"string:Yet another pro","o":"insert","index":61}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.2193099557688355","o":"insert","index":62}
+{"a":"IBISNode:11","b":"label","c":"string:Yet another pro that is longer","o":"replace","index":63}
+{"a":"IBISNode:11","b":"?","c":"IBISNode:0.4851227118258178","o":"insert","index":64}
 {"a":"IBISNode:0.4851227118258178","b":"label","c":"string:Should it be longer?","o":"replace","index":66}
-{"a":"4","b":"-","c":"IBISNode:0.5940495778344923","o":"insert","index":67}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.5940495778344923","o":"insert","index":67}
 {"a":"IBISNode:0.2193099557688355","b":"label","c":"string:A con","o":"replace","index":69}
 {"a":"IBISNode:0.5940495778344923","b":"label","c":"string:Another con","o":"replace","index":68}
-{"a":"4","b":"-","c":"IBISNode:0.5327191062381859","o":"insert","index":69}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.5327191062381859","o":"insert","index":69}
 {"a":"IBISNode:0.5327191062381859","b":"label","c":"string:A longer con","o":"replace","index":70}
-{"a":"4","b":"-","c":"IBISNode:0.030601292856757056","o":"insert","index":71}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.030601292856757056","o":"insert","index":71}
 {"a":"IBISNode:0.030601292856757056","b":"label","c":"string:Yet another con -- after fix","o":"insert","index":72}
-{"a":"4","b":"-","c":"IBISNode:0.5327191062381859","o":"remove","index":73,"ignore":true}
-{"a":"4","b":"-","c":"IBISNode:0.5940495778344923","o":"remove","index":74,"ignore":true}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.5327191062381859","o":"remove","index":73,"ignore":true}
+{"a":"IBISNode:4","b":"-","c":"IBISNode:0.5940495778344923","o":"remove","index":74,"ignore":true}
 {"a":"IBISNode:0.2193099557688355","b":"?","c":"IBISNode:0.23230973909549857","o":"insert","index":75}
 {"a":"IBISNode:0.23230973909549857","b":"label","c":"string:another question","o":"insert","index":76}
 {"a":"IBISNode:0.23230973909549857","b":"label","c":"string:another question?","o":"replace","index":77}
@@ -91,17 +91,17 @@
 {"a":"IBISNode:0.3346989611778324","b":"!","c":"IBISNode:0.7824355056975826","o":"insert","index":91}
 {"a":"IBISNode:0.7824355056975826","b":"label","c":"string:second option","o":"insert","index":92}
 {"a":"IBISNode:0.3346989611778324","b":"!","c":"IBISNode:0.7824355056975826","o":"remove","index":93,"ignore":true}
-{"a":"11","b":"label","c":"string:Yet another pro that is somewhat longer","o":"replace","index":94}
+{"a":"IBISNode:11","b":"label","c":"string:Yet another pro that is somewhat longer","o":"replace","index":94}
 {"a":"IBISNode:0.27104962525748455","b":"+","c":"IBISNode:0.2677935092479582","o":"insert","index":95}
 {"a":"IBISNode:0.2677935092479582","b":"label","c":"string:pro","o":"insert","index":96}
 {"a":"IBISNode:0.27104962525748455","b":"-","c":"IBISNode:0.5679905439160235","o":"insert","index":97}
 {"a":"IBISNode:0.5679905439160235","b":"label","c":"string:con","o":"insert","index":98}
-{"a":"4","b":"+","c":"IBISNode:0.679463033838902","o":"insert","index":99}
+{"a":"IBISNode:4","b":"+","c":"IBISNode:0.679463033838902","o":"insert","index":99}
 {"a":"IBISNode:0.679463033838902","b":"label","c":"string:Another pro!","o":"insert","index":100}
 {"a":"IBISNode:0.679463033838902","b":"label","c":"string:Another better pro!","o":"replace","index":101}
 {"a":"IBISNode:0.3053399899172159","b":"type","c":"IBISNode.Type:question","o":"insert","index":102}
 {"a":"IBISNode:0.3053399899172159","b":"label","c":"string:A question  about new test question with new items approach?","o":"insert","index":103}
-{"a":"IBISNode:0.3053399899172159","b":"attachedTo","c":"0","o":"insert","index":104}
+{"a":"IBISNode:0.3053399899172159","b":"attachedTo","c":"IBISNode:0","o":"insert","index":104}
 {"a":"IBISNode:0.9535092439156513","b":"type","c":"IBISNode.Type:option","o":"insert","index":105}
 {"a":"IBISNode:0.9535092439156513","b":"label","c":"string:Option 1","o":"insert","index":106}
 {"a":"IBISNode:0.9535092439156513","b":"attachedTo","c":"IBISNode:0.3053399899172159","o":"insert","index":107}
@@ -141,7 +141,7 @@
 {"a":"IBISNode:0.10925926687860388","b":"type","c":"IBISNode.Type:option","o":"insert","index":141}
 {"a":"IBISNode:0.10925926687860388","b":"label","c":"string:Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
 {"a":"IBISNode:0.10925926687860388","b":"attachedTo","c":"IBISNode:0.18602523442254926","o":"insert","index":143}
-{"a":"0","b":"type","c":"IBISNode.Type:question","o":"insert","index":144}
+{"a":"IBISNode:0","b":"type","c":"IBISNode.Type:question","o":"insert","index":144}
 {"a":"IBISNode:0.5383832460735861","b":"type","c":"IBISNode.Type:pro","o":"insert","index":145}
 {"a":"IBISNode:0.5383832460735861","b":"label","c":"string:Pro again","o":"insert","index":146}
 {"a":"IBISNode:0.5383832460735861","b":"attachedTo","c":"IBISNode:0.12410503876785861","o":"insert","index":147}
@@ -149,15 +149,15 @@
 {"a":"IBISNode:0.6906403990997534","b":"type","c":"IBISNode.Type:question","o":"insert","index":149}
 {"a":"IBISNode:0.6906403990997534","b":"label","c":"string:A question about a question?","o":"insert","index":150}
 {"a":"IBISNode:0.6906403990997534","b":"attachedTo","c":"IBISNode:0.3053399899172159","o":"insert","index":151}
-{"a":"risky","b":"label","c":"string:Risky2","o":"replace","index":152}
-{"a":"test","b":"something","c":"else2","o":"replace","index":153}
-{"a":"test","b":"something","c":"else3","o":"replace","index":154}
-{"a":"test","b":"something","c":"else4","o":"replace","index":155}
-{"a":"test","b":"something","c":"else5","o":"replace","index":156}
-{"a":"test","b":"something","c":"else6","o":"replace","index":157}
-{"a":"test","b":"something","c":"else7","o":"replace","index":158}
-{"a":"test","b":"something","c":"else8","o":"replace","index":159}
-{"a":"test","b":"something","c":"else9","o":"replace","index":160}
+{"a":"IBISNode:risky","b":"label","c":"string:Risky2","o":"replace","index":152}
+{"a":"IBISNode:test","b":"something","c":"string:else2","o":"replace","index":153}
+{"a":"IBISNode:test","b":"something","c":"string:else3","o":"replace","index":154}
+{"a":"IBISNode:test","b":"something","c":"string:else4","o":"replace","index":155}
+{"a":"IBISNode:test","b":"something","c":"string:else5","o":"replace","index":156}
+{"a":"IBISNode:test","b":"something","c":"string:else6","o":"replace","index":157}
+{"a":"IBISNode:test","b":"something","c":"string:else7","o":"replace","index":158}
+{"a":"IBISNode:test","b":"something","c":"string:else8","o":"replace","index":159}
+{"a":"IBISNode:test","b":"something","c":"string:else9","o":"replace","index":160}
 {"a":"IBISNode:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and string id)","o":"replace","index":161}
 {"a":"IBISNode:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and really string id)","o":"replace","index":162}
 {"a":"IBISNode:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated with triple editor and really string id)","o":"replace","index":163}

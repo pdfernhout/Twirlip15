@@ -287,7 +287,7 @@ function viewIBISDiagram(id) {
 
 async function exportMenuAction() {
     console.log("exportMenuAction")
-    const rootId = t.last((t.find("root", "value")))
+    const rootId = t.last((t.find("IBISRoot:root", "value")))
     if (!rootId) return await modalAlert("No IBIS root")
     const result = exportIBISDiagram(0, rootId)
     console.log(result)
@@ -326,7 +326,7 @@ async function makeInitialQuestion() {
         // Need special root object with different schema
         // root.value = id
         await t.addTriple({
-            a: "root",
+            a: "IBISRoot:root",
             b: "value",
             c: id,
             o: "insert"
@@ -336,7 +336,7 @@ async function makeInitialQuestion() {
 
 const IBISApp = {
     view: () => {
-        const rootId = t.last((t.find("root", "value")))
+        const rootId = t.last((t.find("IBISRoot:root", "value")))
         const loadingState = t.getLoadingState()
         return m("div",
             viewMenu(),
