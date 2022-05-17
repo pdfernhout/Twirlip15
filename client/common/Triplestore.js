@@ -100,11 +100,11 @@ export function Triplestore(showError, fileName) {
         }
         if ( write && (
             !triple.a.includes(":") ||
-            !triple.b.includes(":") ||
+            // !triple.b.includes(":") ||
             (triple.c && !triple.c.includes(":"))
             )
         ) {
-            return showError(new Error("triple fields must have type at start with a colon: " + JSON.stringify(triple)))
+            return showError(new Error("triple fields A & C must have type at start with a colon: " + JSON.stringify(triple)))
         }
         if (!triple.a || !triple.b) return showError(new Error("Triple a and b fields must be non-empty"))
         triple.index = triples.length + 1
