@@ -57,7 +57,7 @@ function standardModal(promptText, modalType, defaultText = "") {
     return new Promise((resolve, reject) => {
         setModalCallback(() => {
             return m("div.mt5.ml-auto.mr-auto.bg-near-white.pa3.br3",
-                { key: "standardModal", style: "width: 32rem" },
+                { key: "standardModal", style: "width: 40rem" },
                 m("div.ma2", weaveIntoArray(promptText.split("\n"), m("br"))),
                 modalType === "prompt" && m("div.ma2",
                     m("input.w-100", {
@@ -86,14 +86,14 @@ function standardModal(promptText, modalType, defaultText = "") {
                         },
                     }),
                 ),
-                m("div.ma2.flex.justify-end", 
+                m("div.ma2.mt3.flex.justify-end", 
                     modalType !== "alert" && m("button", {
                         onclick: () => {
                             setModalCallback(null)
                             resolve(null)
                         }
                     }, "Cancel"),
-                    m("button.ml2", {
+                    m("button.ml3.w3", {
                         onclick: () => {
                             setModalCallback(null)
                             resolve(value)
@@ -120,7 +120,7 @@ export function customModal(drawFunction, style) {
 export class ModalInputView {
     view() {
         if (modalCallback) {
-            return m("div.ModalInputView.overlay",
+            return m("div.ModalInputView.overlay.pt6",
                 modalCallback()
             )
         } else {

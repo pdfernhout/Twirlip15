@@ -6,6 +6,7 @@ import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
 import { FileUtils } from "../../common/FileUtils.js"
 import "../../vendor/md5.js"
+import { ModalInputView, modalAlert, modalConfirm, modalPrompt } from "../../common/ModalInputView.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -136,7 +137,7 @@ function isFilePreviewable(fileName) {
 }
 
 async function newFile() {
-    const newFileName = prompt("New file name?")
+    const newFileName = await modalPrompt("New file name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileSave(fileName, "")
@@ -202,7 +203,7 @@ async function uploadFile() {
 }
 
 async function newDirectory() {
-    const newFileName = prompt("New directory name?")
+    const newFileName = await modalPrompt("New directory name?")
     if (newFileName) {
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileNewDirectory(fileName)
@@ -216,7 +217,7 @@ function fileNameFromPath(filePath) {
 
 async function renameFile() {
     const fileNameBefore = fileNameFromPath(Object.keys(selectedFiles)[0])
-    const fileNameAfter = prompt("New file name after rename?", fileNameBefore)
+    const fileNameAfter = await modalPrompt("New file name after rename?", fileNameBefore)
     if (fileNameAfter) {
         const oldFileName = directoryPath + fileNameBefore
         const newFileName = directoryPath + fileNameAfter
@@ -231,7 +232,7 @@ async function renameFile() {
 async function copyFile() {
     const copyFromFilePath = Object.keys(selectedFiles)[0]
     const copyFromFileName = fileNameFromPath(copyFromFilePath)
-    const copyToFileName = prompt("New file name for copy?", copyFromFileName)
+    const copyToFileName = await modalPrompt("New file name for copy?", copyFromFileName)
     if (copyToFileName) {
         const copyToFilePath = directoryPath + copyToFileName
         const apiResult = await TwirlipServer.fileCopy(copyFromFilePath, copyToFilePath)
@@ -244,7 +245,7 @@ async function copyFile() {
 
 async function deleteFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
-    const proceed = confirm("Delete selected files:\n" + sortedSelections.join("\n"))
+    const proceed = await modalConfirm("Delete selected files:\n" + sortedSelections.join("\n"))
     if (!proceed) return
     const apiResult = await TwirlipServer.fileDelete(Object.keys(selectedFiles))
     if (apiResult) {
@@ -255,7 +256,7 @@ async function deleteFiles() {
 
 async function moveFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
-    const proceed = confirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
+    const proceed = await modalConfirm("Move selected files to current directory:\n" + sortedSelections.join("\n"))
     if (!proceed) return
     const apiResult = await TwirlipServer.fileMove(Object.keys(selectedFiles), directoryPath)
     if (apiResult) {
@@ -264,17 +265,17 @@ async function moveFiles() {
     }
 }
 
-function launchApplication(id) {
+async function launchApplication(id) {
     if (Object.keys(selectedFiles).length !== 1) {
-        return alert("One file (and only one) must be selected to launch an application")
+        return await modalAlert("One file (and only one) must be selected to launch an application")
     }
     const fileName = Object.keys(selectedFiles)[0]
     window.location = fileName + "?twirlip=" + id
 }
 
-function showSelectedFiles() {
+async function showSelectedFiles() {
     const sortedSelections = Object.keys(selectedFiles).sort()
-    alert("Selected files:\n" + sortedSelections.join("\n"))
+    await modalAlert("Selected files:\n" + sortedSelections.join("\n"))
 }
 
 function selectAll() {
@@ -546,6 +547,7 @@ const Filer = {
                 }}, "☰"), "Files in: ", viewPath(directoryPath)
             ),
             m("div.flex-none", viewMenu()),
+            m(ModalInputView),
             m("div.flex-none", viewSelectedFiles()),
             m("div.pl2.pr2.flex-auto.overflow-y-auto", viewDirectoryFiles())
         )
