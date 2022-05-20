@@ -22,6 +22,18 @@ export function menuCheckbox(label, checked, action, disabled) {
     )
 }
 
+export function viewSelect(options, value, callback) {
+    return m("select", { value, onchange: event => callback(event.target.value) },
+        options.map(option => {
+            if (option.label) {
+                return m("option", { value: option.value }, option.label)
+            } else {
+                return m("option", { value: option }, option)
+            }
+        })
+    )
+}
+
 export function interceptSaveKey(onSaveHandler) {
     return (evt) => {
         // derived from: https://stackoverflow.com/questions/2903991/how-to-detect-ctrlv-ctrlc-using-javascript

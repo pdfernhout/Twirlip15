@@ -1,12 +1,12 @@
 /* global m, md5 */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
-import { menuTopBar, menuHoverColor, menuButton, menuCheckbox } from "../../common/menu.js"
+import { menuTopBar, menuHoverColor, menuButton, menuCheckbox, viewSelect } from "../../common/menu.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
 import { FileUtils } from "../../common/FileUtils.js"
 import "../../vendor/md5.js"
-import { ModalInputView, modalAlert, modalConfirm, modalPrompt } from "../../common/ModalInputView.js"
+import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -28,12 +28,22 @@ let previews = {}
 let previewsToFetch = []
 const filterStoragePrefix = "twirlip15_filter_"
 
+window.onpageshow = function(event) {
+    if (event.persisted) {
+        loadDirectory(directoryPath, false)
+    }
+}
+
 window.onpopstate = async function(event) {
     if (event.state) {
         await loadDirectory(event.state.directoryPath, false)
     } else {
         await loadDirectory("/", false)
     }
+}
+
+function navigateToURL(url) {
+    window.location = url
 }
 
 function showError(error) {
@@ -137,11 +147,59 @@ function isFilePreviewable(fileName) {
 }
 
 async function newFile() {
-    const newFileName = await modalPrompt("New file name?")
-    if (newFileName) {
+    let newFileName = ""
+    let openWithApplication = ""
+    const ok = await customModal((resolve) => {
+        return m("div",
+            m("h3", "New file name?"),
+            m("label.flex.items-center", 
+                m("span.mr2", "Name: "),
+                m("input.flex-grow-1", {
+                    value: newFileName, 
+                    oninput: event => newFileName = event.target.value,
+                    oncreate: (vnode) => {
+                        const input = vnode.dom
+                        input.focus()
+                        input.selectionStart = 0
+                        input.selectionEnd = newFileName.length
+                    },
+                    // TODO: Handle escape or enter even if no input
+                    onkeydown: (event) => {
+                        if (event.keyCode === 13) {
+                            // enter
+                            resolve(true)
+                            return false
+                        } else if (event.keyCode === 27) {
+                            // escape
+                            resolve(null)
+                            return false
+                        }
+                        return true
+                    },
+                }),
+            ),
+            m("div.pa2"),
+            m("label",
+                "Open with: ",
+                viewSelect(applicationList, openWithApplication, value => openWithApplication = value)
+            ),
+            m("div.pa2"),
+            m("div.ma2.flex.justify-end", 
+                m("button", { onclick: () => resolve(false)}, "Cancel"),
+                m("button.ml2", { onclick: () => resolve(true)}, "OK")
+            )
+        )
+    })
+    if (ok && newFileName) {
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileSave(fileName, "")
-        if (apiResult) loadDirectory(directoryPath, false)
+        if (apiResult) {
+            if (openWithApplication) {
+                navigateToURL(newFileName + "?twirlip=" + openWithApplication)
+            } else {
+                await loadDirectory(directoryPath, false)
+            }
+        }
     }
 }
 
@@ -270,7 +328,7 @@ async function launchApplication(id) {
         return await modalAlert("One file (and only one) must be selected to launch an application")
     }
     const fileName = Object.keys(selectedFiles)[0]
-    window.location = fileName + "?twirlip=" + id
+    navigateToURL(fileName + "?twirlip=" + id)
 }
 
 async function showSelectedFiles() {

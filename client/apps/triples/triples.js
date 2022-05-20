@@ -1,6 +1,7 @@
 /* global m */
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
+import { viewSelect } from "../../common/menu.js"
 
 let showIgnoredTriples = false
 let showTriplesInReverseOrder = true
@@ -71,18 +72,6 @@ function viewCheckbox(label, value, callback) {
             onclick: event => callback(event.target.checked)
         }),
         label
-    )
-}
-
-function viewSelect(options, value, callback) {
-    return m("select", { value, onchange: event => callback(event.target.value) },
-        options.map(option => {
-            if (option.label) {
-                return m("option", { value: option.value }, option.label)
-            } else {
-                return m("option", { value: option }, option)
-            }
-        })
     )
 }
 

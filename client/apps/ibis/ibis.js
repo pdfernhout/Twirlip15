@@ -1,7 +1,7 @@
 /* global m, showdown */
 import "../../vendor/mithril.js"
 import { Triplestore } from "../../common/Triplestore.js"
-import { menuTopBar, menuButton } from "../../common/menu.js"
+import { menuTopBar, menuButton, viewSelect } from "../../common/menu.js"
 import { helpText } from "./ibis-help.js"
 import "../../vendor/showdown.js"
 import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
@@ -97,19 +97,6 @@ function findRootForTree() {
     return t.last((t.find("IBIS.Root:root", "value")))
 }
 
-// Copied from triples.js
-function viewSelect(options, value, callback) {
-    return m("select", { value, onchange: event => callback(event.target.value) },
-        options.map(option => {
-            if (option.label) {
-                return m("option", { value: option.value }, option.label)
-            } else {
-                return m("option", { value: option }, option)
-            }
-        })
-    )
-}
-
 async function editClicked(id) {
     const type = typeForNode(id)
     const oldLabel = labelForNode(id)
@@ -124,7 +111,29 @@ async function editClicked(id) {
                 m("h3", "Edit node " +  id),
                 m("label.flex.items-center", 
                     m("span.mr2", "Label: "),
-                    m("input.flex-grow-1", {value: newLabel, oninput: event => newLabel = event.target.value}),
+                    m("input.flex-grow-1", {
+                        value: newLabel,
+                        oninput: event => newLabel = event.target.value,
+                        oncreate: (vnode) => {
+                            const input = vnode.dom
+                            input.focus()
+                            input.selectionStart = 0
+                            input.selectionEnd = newLabel.length
+                        },
+                        // TODO: Handle escape or enter even if no input
+                        onkeydown: (event) => {
+                            if (event.keyCode === 13) {
+                                // enter
+                                resolve(true)
+                                return false
+                            } else if (event.keyCode === 27) {
+                                // escape
+                                resolve(null)
+                                return false
+                            }
+                            return true
+                        },
+                    }),
                 ),
                 m("div.pa2"),
                 m("label",
