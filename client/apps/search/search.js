@@ -113,7 +113,7 @@ function viewFileEntry(fileInfo) {
 
 function viewDirectoryFiles() {
     return directoryFiles
-        ? m("div", 
+        ? m("div",
             directoryFiles.length === 0
                 ? "No text-ish (txt, htm, html, md) files in directory"
                 : m("div",
@@ -136,7 +136,8 @@ function viewDirectoryFiles() {
 
 const Search = {
     view: () => {
-        return m("div.flex.flex-row.h-100.w-100",
+        return m("div.flex.flex-column.h-100.w-100",
+            m("div.flex-none", "Path: ", m("i", directoryPath)),
             m("div.ma2.flex-none.overflow-y-auto.w-37rem.mw-37rem", // .w-37rem.mw-37rem.
                 errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
                 loadingAllFiles && m("div.absolute.ma6.pa2.ba.bw2.bg-yellow.flex.items-center", 
@@ -152,10 +153,18 @@ const Search = {
     }
 }
 
-function startup() {
-    const startDirectory =  decodeURI(window.location.pathname)
-    loadDirectory(startDirectory)
+async function startup() {
+    const pathname =  decodeURI(window.location.pathname)
+    directoryPath = pathname
     m.mount(document.body, Search)
+    try {
+        await loadDirectory(pathname)
+    } catch {
+        let startDirectory = pathname.match(/(.*)[/\\]/)[1] || ""
+        directoryPath = startDirectory
+        m.redraw()
+        await loadDirectory(startDirectory)
+    }
 }
 
 startup()
