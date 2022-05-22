@@ -1,6 +1,7 @@
 export const applicationList = [
     "appender",
     "archiver",
+    "chat",
     "edit",
     "filer",
     "ibis",

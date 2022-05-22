@@ -1,20 +1,69 @@
+/* global m */
 /* global marked, Push */
 /* eslint-disable no-console */
 
 "use strict"
 
-import { StoreUsingServer } from "./StoreUsingServer.js"
-import { HashUtils } from "./HashUtils.js"
-import { FileUtils } from "./FileUtils.js"
-import { FileUploader } from "./FileUploader.js"
-import { UUID } from "./UUID.js"
-import { Toast } from "./Toast.js"
+// import { StoreUsingServer } from "../../common/StoreUsingServer.js"
+import { HashUtils } from "../../common/HashUtils.js"
+import { FileUtils } from "../../common/FileUtils.js"
+// import { FileUploader } from "../../common/FileUploader.js"
+import { UUID } from "../../common/UUID.js"
+import { Toast } from "../../common/Toast.js"
 
-// defines marked
-import "./vendor/marked.js"
+import { marked } from "../../vendor/marked.js"
 
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
+
+/* Stub for testing */
+
+function StoreUsingServer(redrawCallback) {
+
+    let items = []
+    let responder = null
+
+    function addItem(item) {
+        items.push(item)
+        responder.onAddItem(item)
+        redrawCallback()
+    }
+
+    function clearItems() {
+        items = []
+    }
+
+    function connect(newResponder) {
+
+        responder = newResponder
+
+        for (let item of items) {
+            responder.onAddItem(item)
+        }
+
+        responder.onLoaded()
+        
+        // This next redraw is only needed if connect was done other than in an event handler or at startup
+        if (redrawCallback) redrawCallback()
+    }
+
+    function setup() {
+        // Do nothing
+    }
+
+    return {
+        addItem,
+        clearItems,
+        connect,
+        setup,
+        isSetup: function() { return true }
+    }
+}
+
+const FileUploader = {
+    upload: () => alert("Unfinished")
+}
+
 
 let chatRoom = "test"
 let userID = localStorage.getItem("userID") || "anonymous"
@@ -186,7 +235,7 @@ function hasFilterText(message) {
 function exportChatAsMarkdownClicked() {
     let text = ""
 
-    getSortedMessages().forEach(function (message, index) {
+    getSortedMessages().forEach(function (message) {
         if (!hasFilterText(message)) return
         text += "\n----\n"
         text += "author: " + message.userID + " " + makeLocalMessageTimestamp(message.timestamp) + "\n"
@@ -201,7 +250,7 @@ function exportChatAsMarkdownClicked() {
 function exportChatAsJSONClicked() {
     const messagesToExport = []
 
-    getSortedMessages().forEach(function (message, index) {
+    getSortedMessages().forEach(function (message) {
         if (!hasFilterText(message)) return
         messagesToExport.push(message)
     })
@@ -293,7 +342,7 @@ function viewNavigation() {
 }
 
 function viewMessages() {
-    return getSortedMessages().map(function (message, index) {
+    return getSortedMessages().map(function (message) {
         if (!hasFilterText(message)) return []
         return m("div", /* Causes ordering issue: {key: message.uuid || ("" + index)}, */ [
             m("hr.b--light-gray"),
@@ -363,7 +412,7 @@ function viewEntryAreaTools() {
     return m("div.dib",
         viewEntryAreaPositionChoice(),
         m("a.pl2", {href: "https://github.github.com/gfm/", target: "_blank"}, "Markdown"),
-        m("a.pl2", {href: "https://svg-edit.github.io/svgedit/releases/latest/editor/svg-editor.html", target: "_blank"}, "SVGEdit"),
+        m("a.pl2", {href: "https://unpkg.com/svgedit@7.1.3/dist/editor/index.html", target: "_blank"}, "SVGEdit"),
         m("button.ml2.mt2", {onclick: sendChatMessage}, "Send (ctrl-enter)"),
         m("button.ml2.mt2", {onclick: uploadDocumentClicked}, m("i.fa.mr1" + (isUploading ? ".fa-refresh.fa-spin" : ".fa-upload")), "Upload document..."),
         m("button.ml2.mt2", {onclick: exportChatAsMarkdownClicked, title: "Export filtered chat as Markdown"}, "Export Markdown..."),
