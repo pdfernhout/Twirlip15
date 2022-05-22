@@ -7,6 +7,7 @@ import Dexie from "../../vendor/dexie.mjs"
 import { FileUtils } from "../../common/FileUtils.js"
 import "../../vendor/md5.js"
 import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
+import { applicationList } from "./applicationList.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -357,8 +358,6 @@ function dropdownMenu(label, options, callback, disabled) {
         })
     )]
 }
-
-const applicationList = ["appender", "archiver", "edit", "filer", "ibis", "ideas", "mail", "search", "triples", "view-md"]
 
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
