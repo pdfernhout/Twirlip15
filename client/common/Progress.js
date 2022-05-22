@@ -1,3 +1,5 @@
+/* global m */
+
 let progressMessage = null
 
 function progress(message) {

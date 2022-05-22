@@ -1,3 +1,5 @@
+/* global m */
+
 const toastMessages = []
 
 function toast(message, delay) {
