@@ -19,3 +19,4 @@ function copyFile(source, dest) {
 // Incomplete list
 copyFile("node_modules/mithril/mithril.js", "client/vendor/mithril.js")
 copyFile("node_modules/font-awesome/css/font-awesome.css", "client/vendor/font-awesome/css/font-awesome.css")
+copyFile("node_modules/marked/lib/marked.esm.js", "client/vendor/marked.js")
