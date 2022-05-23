@@ -496,6 +496,6 @@ const backend = StoreUsingServer(m.redraw, chosenFileName)
 backend.connect(chatRoomResponder)
 
 // Kludgy way to get latest chat messages
-setInterval(() => backend.connect(chatRoomResponder), 2000)
+setInterval(() => backend.connect(chatRoomResponder), 5000)
 
 m.mount(document.body, TwirlipChat)
