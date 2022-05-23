@@ -5,3 +5,8 @@
 {"chatText":"Hello again!","userID":"anonymous","timestamp":"2022-05-23T14:57:59.387Z","uuid":"chatMessage:d4cb847e-c492-4cba-965b-a919600f2781"}
 {"chatText":"And some more.","userID":"anonymous","timestamp":"2022-05-23T14:58:04.450Z","uuid":"chatMessage:39a4b2eb-0f70-4eb4-b37e-4426249fdcdc"}
 {"chatText":"More again!","userID":"anonymous","timestamp":"2022-05-23T14:58:13.567Z","uuid":"chatMessage:d20a7523-a46d-413d-915c-4e77780296c0"}
+{"chatText":"Hi poller!","userID":"anonymous","timestamp":"2022-05-23T15:01:31.982Z","uuid":"chatMessage:e166bfc4-3023-4ad5-9471-76e782aaff31"}
+{"chatText":"More!","userID":"anonymous","timestamp":"2022-05-23T15:01:43.280Z","uuid":"chatMessage:3a422ddb-0856-448a-b6c2-66ced78b168e"}
+{"chatText":"Working on it!","userID":"anonymous","timestamp":"2022-05-23T15:08:25.328Z","uuid":"chatMessage:42c04a7f-8949-4d1e-92da-0b0e03355ea7"}
+{"chatText":"Hi eeeeee! Not quite CouchDB! :-) Maybe better?","userID":"anonymous","timestamp":"2022-05-23T15:08:53.405Z","uuid":"chatMessage:ac8174e2-d8c8-418a-a3c1-eae7444167d6"}
+{"chatText":"Hi there!","userID":"anonymous","timestamp":"2022-05-23T15:09:15.940Z","uuid":"chatMessage:42d5d5bb-705b-4fd7-95dc-aaaa47cd263d"}

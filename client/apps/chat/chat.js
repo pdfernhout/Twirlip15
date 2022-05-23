@@ -440,9 +440,9 @@ function scrollToBottomLater() {
 
 const chatRoomResponder = {
     onLoaded: () => {
+        if (!isLoaded) scrollToBottomLater()
         isLoaded = true
         console.log("onLoaded")
-        scrollToBottomLater()
     },
     onAddItem: (item) => {
         // console.log("onAddItem", item)
@@ -454,6 +454,10 @@ const chatRoomResponder = {
         } else {
             if (messagesByUUID[item.uuid] !== undefined) {
                 const previousVersion = messages[messagesByUUID[item.uuid]]
+                if (previousVersion.timestamp === item.timestamp) {
+                    // ignore repeat of existing message
+                    return
+                }
                 // console.log("message is edited", item, messagesByUUID[item.uuid])
                 item.editedTimestamp = item.timestamp
                 item.timestamp = previousVersion.timestamp
@@ -490,5 +494,8 @@ if (filePathFromParams) {
 const backend = StoreUsingServer(m.redraw, chosenFileName)
 
 backend.connect(chatRoomResponder)
+
+// Kludgy way to get latest chat messages
+setInterval(() => backend.connect(chatRoomResponder), 2000)
 
 m.mount(document.body, TwirlipChat)
