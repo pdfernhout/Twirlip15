@@ -19,6 +19,7 @@ import "../../vendor/mithril.js"
 
 let chosenFileName = ""
 let chosenFileNameShort = ""
+let previousChosenFileContents = ""
 
 function showError(error) {
     Toast.toast(error)
@@ -57,10 +58,17 @@ function StoreUsingServer(redrawCallback, fileName) {
             return
         }
 
+        if (previousChosenFileContents === chosenFileContents) {
+            // do nothing
+            return
+        }
+
         items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
         for (let item of items) {
             responder.onAddItem(item)
         }
+
+        previousChosenFileContents = chosenFileContents
 
         responder.onLoaded()
         
