@@ -295,7 +295,7 @@ function makeLocalMessageTimestamp(timestamp) {
 function viewNavigation() {
     return [
         m("span.dib.tr.ml2", "User:"),
-        m("input.w4.ml2", {value: userID, onchange: userIDChange, title: "Your user id or handle"}),
+        m("input.w4.ml2", {value: userID, oninput: userIDChange, title: "Your user id or handle"}),
         m("div.dib",
             m("span.ml2" + (filterText ? ".green" : ""), "Show:"),
             m("input.ml2" + (filterText ? ".green" : ""), {value: filterText, oninput: (event) => { filterText = event.target.value; scrollToBottomLater() }, title: "Only display messages with all entered words"}),
