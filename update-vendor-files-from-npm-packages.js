@@ -29,3 +29,5 @@ copyFile("node_modules/font-awesome/fonts/fontawesome-webfont.woff2", "client/ve
 copyFile("node_modules/font-awesome/fonts/FontAwesome.otf", "client/vendor/font-awesome/fonts/FontAwesome.otf")
 
 copyFile("node_modules/marked/lib/marked.esm.js", "client/vendor/marked.js")
+
+copyFile("node_modules/push.js/bin/push.js", "client/vendor/push.js")

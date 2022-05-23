@@ -27,6 +27,7 @@
     "pem": "1.14.4",
     "pino": "7.11.0",
     "pino-http": "7.0.0",
+    "push.js": "1.0.12",
     "readline-sync": "1.4.10",
     "serve-index": "1.9.1",
     "sharp": "0.30.1",
