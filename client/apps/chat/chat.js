@@ -1,5 +1,4 @@
-/* global m */
-/* global marked, Push */
+/* global m, Push */
 /* eslint-disable no-console */
 
 "use strict"
@@ -12,6 +11,9 @@ import { UUID } from "../../common/UUID.js"
 import { Toast } from "../../common/Toast.js"
 
 import { marked } from "../../vendor/marked.js"
+
+// defines Push
+import "../../vendor/push.js"
 
 // defines m
 import "../../vendor/mithril.js"
