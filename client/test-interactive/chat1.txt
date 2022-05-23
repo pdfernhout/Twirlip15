@@ -1,0 +1,7 @@
+{"chatText":"Hello!","userID":"anonymous","timestamp":"2022-05-23T14:49:23.016Z","uuid":"chatMessage:7cc84aa2-b1b9-4a14-bad5-fc659f6812d3"}
+{"chatText":"World!","userID":"anonymous","timestamp":"2022-05-23T14:49:38.588Z","uuid":"chatMessage:7a1a2c20-cb6e-49c1-8df6-e97f97094e58"}
+{"chatText":"Adding newline!","userID":"anonymous","timestamp":"2022-05-23T14:54:04.845Z","uuid":"chatMessage:cc1ad406-8d63-497d-874f-ed941f1e43fe"}
+{"chatText":"Another!","userID":"anonymous","timestamp":"2022-05-23T14:56:48.515Z","uuid":"chatMessage:92d13fec-c3a8-40d2-beed-c1fb8bf5afa4"}
+{"chatText":"Hello again!","userID":"anonymous","timestamp":"2022-05-23T14:57:59.387Z","uuid":"chatMessage:d4cb847e-c492-4cba-965b-a919600f2781"}
+{"chatText":"And some more.","userID":"anonymous","timestamp":"2022-05-23T14:58:04.450Z","uuid":"chatMessage:39a4b2eb-0f70-4eb4-b37e-4426249fdcdc"}
+{"chatText":"More again!","userID":"anonymous","timestamp":"2022-05-23T14:58:13.567Z","uuid":"chatMessage:d20a7523-a46d-413d-915c-4e77780296c0"}

@@ -3,8 +3,7 @@
 
 "use strict"
 
-// import { StoreUsingServer } from "../../common/StoreUsingServer.js"
-import { HashUtils } from "../../common/HashUtils.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { FileUtils } from "../../common/FileUtils.js"
 // import { FileUploader } from "../../common/FileUploader.js"
 import { UUID } from "../../common/UUID.js"
@@ -18,27 +17,47 @@ import "../../vendor/push.js"
 // defines m
 import "../../vendor/mithril.js"
 
+let chosenFileName = ""
+let chosenFileNameShort = ""
+
+function showError(error) {
+    Toast.toast(error)
+}
+
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+
+
 /* Stub for testing */
 
-function StoreUsingServer(redrawCallback) {
+function StoreUsingServer(redrawCallback, fileName) {
 
     let items = []
     let responder = null
 
-    function addItem(item) {
-        items.push(item)
-        responder.onAddItem(item)
+    async function addItem(item) {
+        const apiResult = await TwirlipServer.fileAppend(fileName, JSON.stringify(item) + "\n")
+        if (apiResult) {
+            items.push(item)
+            responder.onAddItem(item)
+        }
         redrawCallback()
     }
 
-    function clearItems() {
-        items = []
-    }
-
-    function connect(newResponder) {
+    async function connect(newResponder) {
 
         responder = newResponder
 
+        let chosenFileContents = null
+
+        const apiResult = await TwirlipServer.fileContents(fileName)
+        if (apiResult) {
+            chosenFileContents = apiResult.contents
+        } else {
+            Toast.toast("loading chat file failed")
+            return
+        }
+
+        items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
         for (let item of items) {
             responder.onAddItem(item)
         }
@@ -49,16 +68,9 @@ function StoreUsingServer(redrawCallback) {
         if (redrawCallback) redrawCallback()
     }
 
-    function setup() {
-        // Do nothing
-    }
-
     return {
         addItem,
-        clearItems,
-        connect,
-        setup,
-        isSetup: function() { return true }
+        connect
     }
 }
 
@@ -66,8 +78,6 @@ const FileUploader = {
     upload: () => alert("Unfinished")
 }
 
-
-let chatRoom = "test"
 let userID = localStorage.getItem("userID") || "anonymous"
 let chatText = ""
 const messages = []
@@ -89,50 +99,8 @@ let messagesByUUID = {}
 let entryAreaPosition = "right"
 const entryAreaPositionChoices = ["none", "right", "bottom", "top", "left"]
 
-function startup() {
-    chatRoom = HashUtils.getHashParams()["chatRoom"] || chatRoom
-    window.onhashchange = () => updateChatRoomFromHash()
-    updateHashForChatRoom()
-}
-
-function updateTitleForChatRoom() {
-    document.title = chatRoom + " -- Twirlip7 Chat"
-}
-
-function updateChatRoomFromHash() {
-    const hashParams = HashUtils.getHashParams()
-    console.log("updateChatRoomFromHash", hashParams)
-    const newChatRoom = hashParams["chatRoom"]
-    if (newChatRoom !== chatRoom) {
-        resetMessagesForChatroomChange()
-        chatRoom = newChatRoom
-        backend.configure({chatRoom})
-        updateTitleForChatRoom()
-    }
-}
-
-function updateHashForChatRoom() {
-    const hashParams = HashUtils.getHashParams()
-    hashParams["chatRoom"] = chatRoom
-    HashUtils.setHashParams(hashParams)
-    updateTitleForChatRoom()
-}
-
-function chatRoomChange(event) {
-    resetMessagesForChatroomChange()
-    chatRoom = event.target.value
-    updateHashForChatRoom()
-    backend.configure({chatRoom})
-}
-
-function resetMessagesForChatroomChange() {
-    messages.splice(0)
-    messagesByUUID = {}
-}
-
 function userIDChange(event) {
     userID = event.target.value
-    backend.configure(undefined, userID)
     localStorage.setItem("userID", userID)
 }
 
@@ -246,7 +214,7 @@ function exportChatAsMarkdownClicked() {
         text += message.chatText
     })
 
-    FileUtils.saveToFile(chatRoom + " " + new Date().toISOString(), text, ".md")
+    FileUtils.saveToFile(chosenFileNameShort + " " + new Date().toISOString(), text, ".md")
 }
 
 function exportChatAsJSONClicked() {
@@ -257,7 +225,7 @@ function exportChatAsJSONClicked() {
         messagesToExport.push(message)
     })
 
-    FileUtils.saveToFile(chatRoom + " " + new Date().toISOString(), JSON.stringify(messagesToExport, null, 4), ".json")
+    FileUtils.saveToFile(chosenFileNameShort + " " + new Date().toISOString(), JSON.stringify(messagesToExport, null, 4), ".json")
 }
 
 function importChatFromJSONClicked() {
@@ -326,8 +294,6 @@ function makeLocalMessageTimestamp(timestamp) {
 
 function viewNavigation() {
     return [
-        m("span.dib.tr", "Space:"),
-        m("input.w5.ml2", {value: chatRoom, onchange: chatRoomChange}),
         m("span.dib.tr.ml2", "User:"),
         m("input.w4.ml2", {value: userID, onchange: userIDChange, title: "Your user id or handle"}),
         m("div.dib",
@@ -513,15 +479,16 @@ const chatRoomResponder = {
     }
 }
 
-startup()
+const filePathFromParams = decodeURI(window.location.pathname)
 
-const backend = StoreUsingServer(m.redraw, {chatRoom}, userID)
+if (filePathFromParams) {
+    chosenFileName = filePathFromParams
+    chosenFileNameShort = filePathFromParams.split("/").pop()
+}
+
+
+const backend = StoreUsingServer(m.redraw, chosenFileName)
 
 backend.connect(chatRoomResponder)
-try {
-    backend.setup()
-} catch(e) {
-    alert("This Chat app requires a backend server supporting socket.io (i.e. won't work correctly on rawgit)")
-}
 
 m.mount(document.body, TwirlipChat)
