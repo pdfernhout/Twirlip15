@@ -315,7 +315,7 @@ function viewNavigation() {
             m("input.ml2" + (filterText ? ".green" : ""), {value: filterText, oninput: (event) => { filterText = event.target.value; scrollToBottomLater() }, title: "Only display messages with all entered words"}),
             m("span.ml2" + (hideText ? ".orange" : ""), "Hide:"),
             m("input.ml2" + (hideText ? ".orange" : ""), {value: hideText, oninput: (event) => { hideText = event.target.value; scrollToBottomLater() }, title: "Hide messages with any entered words"}),
-            m("span.ml2",  { title: "Sort alphabetically by chat message text" },
+            m("label.ml2.nowrap",  { title: "Sort alphabetically by chat message text" },
                 m("input[type=checkbox].ma1", { checked: sortMessagesByContent, onchange: (event) => sortMessagesByContent = event.target.checked }),
                 "sort"
             )
@@ -395,7 +395,7 @@ function viewEntryLine() {
 
 function viewSetNotifications() {
     const isDenied = Notification.permission === "denied"
-    return m("label.ml2" + (isDenied ? ".moon-gray" : ""),  
+    return m("label.ml2.nowrap" + (isDenied ? ".moon-gray" : ""),  
         { title: "Send notifications and poll in background" + 
             (isDenied ? 
                 "\nif this is greyed out check your browser notification settings for this website"
