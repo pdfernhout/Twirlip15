@@ -504,6 +504,13 @@ const backend = StoreUsingServer(m.redraw, chosenFileName)
 backend.connect(chatRoomResponder)
 
 // Kludgy way to get latest chat messages
-setInterval(() => backend.connect(chatRoomResponder), 5000)
+// This conflicts with using Push for notifications since you would not have any background requests
+async function pollForUpdates() {
+    if (document.hasFocus()) {
+        await backend.connect(chatRoomResponder)
+    }
+    setTimeout(pollForUpdates, 5000)
+}
+pollForUpdates()
 
 m.mount(document.body, TwirlipChat)

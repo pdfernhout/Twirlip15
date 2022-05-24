@@ -11,3 +11,4 @@
 {"chatText":"Hi eeeeee! Not quite CouchDB! :-) Maybe better?","userID":"anonymous","timestamp":"2022-05-23T15:08:53.405Z","uuid":"chatMessage:ac8174e2-d8c8-418a-a3c1-eae7444167d6"}
 {"chatText":"Hi there!","userID":"anonymous","timestamp":"2022-05-23T15:09:15.940Z","uuid":"chatMessage:42d5d5bb-705b-4fd7-95dc-aaaa47cd263d"}
 {"chatText":"More testing","userID":"anonymous","timestamp":"2022-05-23T15:30:26.193Z","uuid":"chatMessage:202fa60b-9a9b-4eed-8b6d-fadfcb24af45"}
+{"chatText":"Yet more testing","userID":"anonymous","timestamp":"2022-05-23T15:32:22.066Z","uuid":"chatMessage:24b84120-ac13-4271-bef3-bc0add559fbd"}
