@@ -27,7 +27,6 @@ function showError(error) {
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
-
 /* Stub for testing */
 
 function StoreUsingServer(redrawCallback, fileName) {
@@ -397,6 +396,12 @@ function viewEntryAreaTools() {
         m("button.ml2.mt2", {onclick: exportChatAsMarkdownClicked, title: "Export filtered chat as Markdown"}, "Export Markdown..."),
         m("button.ml2.mt2", {onclick: exportChatAsJSONClicked, title: "Export filtered chat as JSON"}, "Export JSON..."),
         m("button.ml2.mt2", {onclick: importChatFromJSONClicked, title: "Import chat messages from JSON"}, "Import JSON..."),
+        m("button.ml2.mt2", {
+            onclick: () => Push.Permission.has() 
+                ? alert("Already has permission to send notifications")
+                : Push.Permission.request(m.redraw), 
+            title: "Configure Notifications"
+        }, "Notifications"),        
     )
 }
 
@@ -486,7 +491,7 @@ const chatRoomResponder = {
                     messagesDiv.scrollTop = messagesDiv.scrollHeight + 10000
                 }, 100)
             }
-            if (!document.hasFocus()) {
+            if (Push.Permission.has() && !document.hasFocus()) {
                 // Notify the user about a new message in this window
                 Push.create(item.userID + ": " + item.chatText, {timeout: 4000})
             }
@@ -507,9 +512,8 @@ const backend = StoreUsingServer(m.redraw, chosenFileName)
 backend.connect(chatRoomResponder)
 
 // Kludgy way to get latest chat messages
-// This conflicts with using Push for notifications since you would not have any background requests
 async function pollForUpdates() {
-    if (document.hasFocus()) {
+    if (document.hasFocus() || Push.Permission.has()) {
         await backend.connect(chatRoomResponder)
     }
     setTimeout(pollForUpdates, 5000)
