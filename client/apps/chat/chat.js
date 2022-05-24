@@ -85,6 +85,8 @@ const FileUploader = {
     upload: () => alert("Unfinished")
 }
 
+let sendNotifications = localStorage.getItem("sendNotifications") || "false"
+
 let userID = localStorage.getItem("userID") || "anonymous"
 let chatText = ""
 const messages = []
@@ -386,9 +388,39 @@ function viewEntryLine() {
     )
 }
 
+function viewSetNotifications() {
+    const isDenied = Notification.permission === "denied"
+    return m("label.ml2" + (isDenied ? ".moon-gray" : ""),  
+        { title: "Send notifications and poll in background" + 
+            (isDenied ? 
+                "\nif this is greyed out check your browser notification settings for this website"
+                : ""
+            )
+        },
+        m("input[type=checkbox].ma1", { 
+            checked: Push.Permission.has() && sendNotifications === "true", 
+            onchange: event => {
+                if (!Push.Permission.has()) Push.Permission.request(
+                    () => {
+                        sendNotifications = "true"
+                        m.redraw()
+                    }, 
+                    m.redraw
+                )
+                event.target.checked
+                    ? sendNotifications = "true"
+                    : sendNotifications = "false"
+                localStorage.setItem("sendNotifications", sendNotifications)
+            },
+            disabled: isDenied
+        }),
+        "notify"
+    )  
+}
 function viewEntryAreaTools() {
     return m("div.dib",
         viewEntryAreaPositionChoice(),
+        viewSetNotifications(),
         m("a.pl2", {href: "https://github.github.com/gfm/", target: "_blank"}, "Markdown"),
         m("a.pl2", {href: "https://unpkg.com/svgedit@7.1.3/dist/editor/index.html", target: "_blank"}, "SVGEdit"),
         m("button.ml2.mt2", {onclick: sendChatMessage}, "Send (ctrl-enter)"),
@@ -396,12 +428,6 @@ function viewEntryAreaTools() {
         m("button.ml2.mt2", {onclick: exportChatAsMarkdownClicked, title: "Export filtered chat as Markdown"}, "Export Markdown..."),
         m("button.ml2.mt2", {onclick: exportChatAsJSONClicked, title: "Export filtered chat as JSON"}, "Export JSON..."),
         m("button.ml2.mt2", {onclick: importChatFromJSONClicked, title: "Import chat messages from JSON"}, "Import JSON..."),
-        m("button.ml2.mt2", {
-            onclick: () => Push.Permission.has() 
-                ? alert("Already has permission to send notifications")
-                : Push.Permission.request(m.redraw), 
-            title: "Configure Notifications"
-        }, "Notifications"),        
     )
 }
 
@@ -491,7 +517,7 @@ const chatRoomResponder = {
                     messagesDiv.scrollTop = messagesDiv.scrollHeight + 10000
                 }, 100)
             }
-            if (Push.Permission.has() && !document.hasFocus()) {
+            if (sendNotifications === "true" && Push.Permission.has() && !document.hasFocus()) {
                 // Notify the user about a new message in this window
                 Push.create(item.userID + ": " + item.chatText, {timeout: 4000})
             }
@@ -513,7 +539,7 @@ backend.connect(chatRoomResponder)
 
 // Kludgy way to get latest chat messages
 async function pollForUpdates() {
-    if (document.hasFocus() || Push.Permission.has()) {
+    if (document.hasFocus() || (sendNotifications === "true" &&  Push.Permission.has())) {
         await backend.connect(chatRoomResponder)
     }
     setTimeout(pollForUpdates, 5000)
