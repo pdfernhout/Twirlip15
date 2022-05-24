@@ -104,7 +104,7 @@ let messagesDiv = null
 
 let messagesByUUID = {}
 
-let entryAreaPosition = "right"
+let entryAreaPosition = localStorage.getItem("entryAreaPosition") || "right"
 const entryAreaPositionChoices = ["none", "right", "bottom", "top", "left"]
 
 function userIDChange(event) {
@@ -366,7 +366,10 @@ function viewMessages() {
 
 function viewEntryAreaPositionChoice() {
     return m("span.ml2",  { title: "Show entry area" },
-        m("select", {onchange: event => entryAreaPosition = event.target.value},
+        m("select", {onchange: event => {
+                entryAreaPosition = event.target.value
+                localStorage.setItem("entryAreaPosition", entryAreaPosition)
+            }},
             entryAreaPositionChoices.map(key => {
                 return m("option", {value: key, selected: entryAreaPosition === key}, "entry area: " + key)
             })
