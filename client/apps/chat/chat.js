@@ -84,7 +84,10 @@ function StoreUsingServer(redrawCallback, fileName) {
 }
 
 const FileUploader = {
-    upload: () => alert("Unfinished")
+    upload: async () => {
+        alert("Unfinished")
+        throw new Error("unfinished")
+    }
 }
 
 let sendNotifications = preferences.get("chat-sendNotifications", "false")
