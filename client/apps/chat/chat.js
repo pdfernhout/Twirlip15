@@ -4,6 +4,7 @@
 "use strict"
 
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import { FileUtils } from "../../common/FileUtils.js"
 // import { FileUploader } from "../../common/FileUploader.js"
 import { UUID } from "../../common/UUID.js"
@@ -26,6 +27,7 @@ function showError(error) {
 }
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
+const preferences = new Twirlip15Preferences()
 
 /* Stub for testing */
 
@@ -85,9 +87,9 @@ const FileUploader = {
     upload: () => alert("Unfinished")
 }
 
-let sendNotifications = localStorage.getItem("sendNotifications") || "false"
+let sendNotifications = preferences.get("chat-sendNotifications", "false")
 
-let userID = localStorage.getItem("userID") || "anonymous"
+let userID = preferences.get("userID", "anonymous")
 let chatText = ""
 const messages = []
 let editedChatMessageUUID = null
@@ -105,12 +107,12 @@ let messagesDiv = null
 
 let messagesByUUID = {}
 
-let entryAreaPosition = localStorage.getItem("entryAreaPosition") || "right"
+let entryAreaPosition = preferences.get("chat-entryAreaPosition", "right")
 const entryAreaPositionChoices = ["none", "right", "bottom", "top", "left"]
 
 function userIDChange(event) {
     userID = event.target.value
-    localStorage.setItem("userID", userID)
+    preferences.set("userID", userID)
 }
 
 function chatTextChange(event) {
@@ -369,7 +371,7 @@ function viewEntryAreaPositionChoice() {
     return m("span.ml2",  { title: "Show entry area" },
         m("select", {onchange: event => {
                 entryAreaPosition = event.target.value
-                localStorage.setItem("entryAreaPosition", entryAreaPosition)
+                preferences.set("chat-entryAreaPosition", entryAreaPosition)
             }},
             entryAreaPositionChoices.map(key => {
                 return m("option", {value: key, selected: entryAreaPosition === key}, "entry area: " + key)
@@ -410,7 +412,7 @@ function viewSetNotifications() {
                 event.target.checked
                     ? sendNotifications = "true"
                     : sendNotifications = "false"
-                localStorage.setItem("sendNotifications", sendNotifications)
+                    preferences.set("chat-sendNotifications", sendNotifications)
             },
             disabled: isDenied
         }),
