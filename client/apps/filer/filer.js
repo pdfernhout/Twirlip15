@@ -597,7 +597,7 @@ const Filer = {
         return m("div.h-100.flex.flex-column",
             errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
             statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
-            m("div.flex-none.pt1.pb1", m("span.ma2", {
+            m("div.flex-none.pt1.pb1.bg-light-green", m("span.ma2", {
                 onclick: () => {
                     showMenu = !showMenu
                     preferences.set("showMenu", showMenu)
