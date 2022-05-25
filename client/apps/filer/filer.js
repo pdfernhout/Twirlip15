@@ -325,10 +325,11 @@ async function moveFiles() {
 }
 
 async function launchApplication(id) {
-    if (Object.keys(selectedFiles).length !== 1) {
-        return await modalAlert("One file (and only one) must be selected to launch an application")
+    const fileNames = Object.keys(selectedFiles)
+    if (fileNames.length > 1) {
+        return await modalAlert("At most one file must be selected to launch an application")
     }
-    const fileName = Object.keys(selectedFiles)[0]
+    const fileName = fileNames.length ? fileNames[0] : directoryPath
     navigateToURL(fileName + "?twirlip=" + id)
 }
 
@@ -365,7 +366,7 @@ function viewMenu() {
         menuButton("+New file", () => newFile()),
         menuButton("⬆Upload file", () => uploadFile(), isUploading),
         menuButton("+New directory", () => newDirectory()),
-        dropdownMenu("▶Launch", applicationList, (id) => launchApplication(id), selectedFileCount !== 1),
+        dropdownMenu("▶Launch", applicationList, (id) => launchApplication(id), selectedFileCount > 1),
         menuButton("✎Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("➛Move", () => moveFiles(), !selectedFileCount),
         menuButton("⎘Copy", () => copyFile(), selectedFileCount !== 1),
