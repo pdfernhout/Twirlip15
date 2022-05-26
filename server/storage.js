@@ -50,7 +50,7 @@ const mkdir = promisify(fs.mkdir)
 const appendFile = promisify(fs.appendFile)
 const stat = promisify(fs.stat)
 
-const log = require("./log")
+const { log } = require("./log")
 const forEachLineInFile = require("./forEachLineInFile")
 const CanonicalJSON = require("./CanonicalJSON")
 

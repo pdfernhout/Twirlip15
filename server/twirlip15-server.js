@@ -20,6 +20,10 @@ const pinoDestination = pino.destination("./logs/Twirlip15-" + new Date().toISOS
 const logger = pino(pinoDestination)
 const pinoHTTP = require("pino-http")({}, pinoDestination)
 
+const { configureLog } = require("./log")
+
+configureLog(logger)
+
 function logStartupInfo(text) {
     console.log(text)
     logger.info(text)

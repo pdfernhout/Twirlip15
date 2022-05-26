@@ -4,7 +4,7 @@
 /* eslint-env node */
 /* jslint node: true */
 
-const log = require("./log")
+const { log } = require("./log")
 const configDefault = require("./configDefault")
 
 const yargs = require("yargs")

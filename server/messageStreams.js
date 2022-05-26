@@ -19,7 +19,7 @@ const ephemeralStreamPrefix = "__EPHEMERAL:"
 
 const SocketIOServer = require("socket.io")
 
-const log = require("./log")
+const { log } = require("./log")
 const storage = require("./storage")
 const forEachLineInFile = require("./forEachLineInFile")
 
