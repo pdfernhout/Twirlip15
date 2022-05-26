@@ -27,13 +27,13 @@ function log(level, ...args) {
     }[level]
 
     if (args.length <= 1) {
-        logFunction({}, ...args)
+        logFunction.bind(logger)(args[0])
     } else {
         const message = []
         for (let i in args) {
             message.push(args[i])
         }
-        logFunction({message})
+        logFunction.bind(logger)({message})
     }
 }
 
