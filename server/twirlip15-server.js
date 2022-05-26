@@ -15,6 +15,8 @@ const expressForceSSL = require("express-force-ssl")
 const expressBasicAuth = require("express-basic-auth")
 const bcrypt  = require("bcrypt")
 
+const storage = require("./storage")
+
 const pino = require("pino")
 const pinoDestination = pino.destination("./logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log")
 const logger = pino(pinoDestination)
@@ -60,6 +62,9 @@ const sslDirName = getPreference("sslDirName", "ssl-info/")
 const sslKeyFileName = getPreference("sslKeyFileName", "ssl-key.pem")
 const sslCertFileName = getPreference("sslCertFileName", "ssl-cert.pem")
 const usersFileName = getPreference("usersFileName", "users/users.json")
+
+const dataDirectory = getPreference("dataDirectory", "server-data")
+storage.setDataDirectory(dataDirectory)
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding

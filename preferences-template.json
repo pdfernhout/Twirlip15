@@ -9,5 +9,6 @@
     "httpsPort": 8016,
     "redirectHttpToHttps": "true if not 127.0.0.1",
     "requireAuthentication": "true if redirectHttpToHttps",
-    "maxDataForResult": 2000000
+    "maxDataForResult": 2000000,
+    "dataDirectory": "server-data"
 }

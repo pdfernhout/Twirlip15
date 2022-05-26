@@ -54,11 +54,14 @@ const { log } = require("./log")
 const forEachLineInFile = require("./forEachLineInFile")
 const CanonicalJSON = require("./CanonicalJSON")
 
-const { config } = require("./configLoader")
+let dataDirectory = null
 
-const dataDirectory = path.normalize(__dirname + "/../../" + config.dataDirectory)
-
-log("info", "Using dataDirectory: " + dataDirectory)
+function setDataDirectory(newDataDirectory) {
+    dataDirectory = newDataDirectory.startsWith("/")
+        ? path.normalize(newDataDirectory)
+        : path.normalize(__dirname + "/../" + newDataDirectory)
+    log("info", "Using dataDirectory: " + dataDirectory)
+}
 
 const storageExtension = ".txt"
 
@@ -256,6 +259,7 @@ function respondWithReconstructedFile(request, response) {
 }
 
 module.exports = {
+    setDataDirectory,
     calculateSha256,
     keyForStreamId,
     getStorageFileNameForMessage,
