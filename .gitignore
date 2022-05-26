@@ -3,3 +3,4 @@ ssl-info
 users/users.json
 preferences.json
 logs/*.log
+message-streams

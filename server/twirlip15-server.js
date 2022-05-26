@@ -63,7 +63,7 @@ const sslKeyFileName = getPreference("sslKeyFileName", "ssl-key.pem")
 const sslCertFileName = getPreference("sslCertFileName", "ssl-cert.pem")
 const usersFileName = getPreference("usersFileName", "users/users.json")
 
-const dataDirectory = getPreference("dataDirectory", "server-data")
+const dataDirectory = getPreference("dataDirectory", "message-streams")
 storage.setDataDirectory(dataDirectory)
 
 // For remote access, you could forward a local port to the server using ssh:
