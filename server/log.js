@@ -33,7 +33,7 @@ function log(level, ...args) {
         for (let i in args) {
             message.push(args[i])
         }
-        logFunction({}, message)
+        logFunction({message})
     }
 }
 
