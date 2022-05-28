@@ -151,6 +151,9 @@ function getUnauthorizedResponse(req) {
         : "No credentials provided"
 }
 
+// Example use: http://localhost:8080/sha256/somesha?content-type=image/png&title=some%20title
+app.get("/sha256/:sha256", storage.respondWithReconstructedFile)
+
 app.get("/twirlip15-api", function(request, response) {
     response.json({
         ok: true, 
