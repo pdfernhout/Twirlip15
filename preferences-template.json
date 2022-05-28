@@ -10,5 +10,5 @@
     "redirectHttpToHttps": "true if not 127.0.0.1",
     "requireAuthentication": "true if redirectHttpToHttps",
     "maxDataForResult": 2000000,
-    "dataDirectory": "message-streams"
+    "dataDirectory": "server-data"
 }

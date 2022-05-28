@@ -63,7 +63,7 @@ const sslKeyFileName = getPreference("sslKeyFileName", "ssl-key.pem")
 const sslCertFileName = getPreference("sslCertFileName", "ssl-cert.pem")
 const usersFileName = getPreference("usersFileName", "users/users.json")
 
-const dataDirectory = getPreference("dataDirectory", "message-streams")
+const dataDirectory = getPreference("dataDirectory", "server-data")
 storage.setDataDirectory(dataDirectory)
 
 // For remote access, you could forward a local port to the server using ssh:
@@ -557,10 +557,14 @@ function readOrCreateSSLCertificateKeys() {
     return keysPromise
 }
 
+// messageStreams.io will handle Twirlip data requests made via websockets
+const messageStreams = require("./messageStreams")
+
 function startHttpsServer() {
     readOrCreateSSLCertificateKeys().then(keys => {
         // Create an HTTPS service
         const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(httpsPort, host, function () {
+            messageStreams.io.attach(httpsServer)
             const host = httpsServer.address().address
             const port = httpsServer.address().port
             logStartupInfo("Twirlip server listening at https://" + host + ":" + port)

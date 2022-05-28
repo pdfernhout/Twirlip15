@@ -33,6 +33,7 @@
     "serve-index": "1.9.1",
     "sharp": "0.30.1",
     "showdown": "2.0.0",
+    "socket.io": "4.5.1",
     "tachyons": "4.12.0"
   },
   "devDependencies": {

@@ -27,7 +27,7 @@ const streamToListenerMap = {}
 const listenerToStreamsMap = {}
 // TODO: const backloggedMessages = {}
 
-const io = new SocketIOServer()
+const io = SocketIOServer()
 
 io.on("connection", function(socket) {
     const clientId = socket.id
