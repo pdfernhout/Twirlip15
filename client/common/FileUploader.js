@@ -3,7 +3,7 @@
 /* global sha256 */
 
 // defines sha256
-import "./vendor/sha256.js"
+import "../vendor/sha256.js"
 const calculateSHA256 = sha256
 
 function chunkSubstr(str, size) {
