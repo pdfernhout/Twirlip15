@@ -40,7 +40,7 @@ You can copy entries from preference-template.json to create a preferences.json 
 
 To look at a prettified log (which are written in JSON using pino):
 
-    cat logs/Twirlip15-$SOMELOGTIMESTAMP$.log | npx pino-pretty -t SYS:standard
+    cat server-logs/Twirlip15-$SOMELOGTIMESTAMP$.log | npx pino-pretty -t SYS:standard
 
 ## Licence 
 

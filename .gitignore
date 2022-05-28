@@ -2,5 +2,5 @@ node_modules
 ssl-info
 users/users.json
 preferences.json
-logs/*.log
+server-logs/*.log
 server-data

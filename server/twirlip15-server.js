@@ -18,7 +18,7 @@ const bcrypt  = require("bcrypt")
 const storage = require("./storage")
 
 const pino = require("pino")
-const pinoDestination = pino.destination("./logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log")
+const pinoDestination = pino.destination("./server-logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log")
 const logger = pino(pinoDestination)
 const pinoHTTP = require("pino-http")({}, pinoDestination)
 
