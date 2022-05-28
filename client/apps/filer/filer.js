@@ -532,6 +532,12 @@ function formatTime(time) {
 }
 
 function viewerForURL(url) {
+    const lowercaseURL = String(url.toLowerCase())
+    for (let appName of applicationList) {
+        if (lowercaseURL.endsWith(".twirlip-" + appName + ".jsonl")) {
+            return url + "?twirlip=" + appName
+        }
+    }
     if (url.endsWith(".md")) {
         return url + "?twirlip=view-md"
     } else {
