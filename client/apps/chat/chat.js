@@ -6,7 +6,7 @@
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import { FileUtils } from "../../common/FileUtils.js"
-// import { FileUploader } from "../../common/FileUploader.js"
+import { FileUploader } from "../../common/FileUploader.js"
 import { UUID } from "../../common/UUID.js"
 import { Toast } from "../../common/Toast.js"
 
@@ -80,13 +80,6 @@ function StoreUsingServer(redrawCallback, fileName) {
     return {
         addItem,
         connect
-    }
-}
-
-const FileUploader = {
-    upload: async () => {
-        alert("Unfinished")
-        throw new Error("unfinished")
     }
 }
 
