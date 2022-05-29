@@ -36,14 +36,12 @@ const preferences = new Twirlip15Preferences()
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-function ItemStoreUsingServerFiles(redrawCallback, defaultFileName) {
+function ItemStoreUsingServerFiles(redrawCallback, responder, defaultFileName, defaultLoadFailureCallback) {
 
     const deferredFileChanges = []
-    let responder = null
     let isLoaded = false
 
-    async function connect(newResponder) {
-        responder = newResponder
+    async function connect() {
 
         const socket = io()
 
@@ -74,7 +72,8 @@ function ItemStoreUsingServerFiles(redrawCallback, defaultFileName) {
         return promise
     }
 
-    // Need to await connect before calling loadFile
+    // Need to await connect before calling loadFile if not using defaultFileName.
+    // Should await loadFile before calling it a second time due to isLoading flag use.
     async function loadFile(fileName, failureCallback) {
 
         if (!defaultFileName) defaultFileName = fileName
@@ -88,7 +87,11 @@ function ItemStoreUsingServerFiles(redrawCallback, defaultFileName) {
         if (apiResult) {
             chosenFileContents = apiResult.contents
         } else {
-            if (failureCallback) failureCallback()
+            if (failureCallback) {
+                failureCallback()
+            } else if (defaultLoadFailureCallback) {
+                defaultLoadFailureCallback()
+            }
             return
         }
 
@@ -115,6 +118,15 @@ function ItemStoreUsingServerFiles(redrawCallback, defaultFileName) {
             responder.onAddItem(item, fileName || defaultFileName)
         }
         if (redrawCallback) redrawCallback()
+    }
+
+    async function defaultSetup() {
+        await connect(responder)
+        await loadFile(chosenFileName, defaultLoadFailureCallback)
+    }
+
+    if (defaultFileName) {
+        defaultSetup()
     }
 
     return {
@@ -570,13 +582,6 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-const backend = ItemStoreUsingServerFiles(m.redraw)
-
-async function loadChatFile() {
-    await backend.connect(chatRoomResponder)
-    await backend.loadFile(chosenFileName, () => Toast.toast("loading chat file failed"))
-}
+const backend = ItemStoreUsingServerFiles(m.redraw, chatRoomResponder, chosenFileName, () => Toast.toast("loading chat file failed"))
 
 m.mount(document.body, TwirlipChat)
-
-loadChatFile()
