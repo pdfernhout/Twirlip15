@@ -23,7 +23,6 @@ import { io } from "/socket.io/socket.io.esm.min.js"
 
 let chosenFileName = ""
 let chosenFileNameShort = ""
-let previousChosenFileContents = ""
 let clientId = undefined
 
 function showError(error) {
@@ -33,11 +32,15 @@ function showError(error) {
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 const preferences = new Twirlip15Preferences()
 
-/* Stub for testing */
+// call connect after creation to set up connection
+// calls onAddItem on responder passed in for connect on new items
+// calls onLoaded on responder after all items initially in file are added
+// call addItem on store to add a new item
+function ItemStoreUsingJsonlServerFile(fileName, redrawCallback) {
 
-function StoreUsingServer(redrawCallback, fileName) {
-
+    const deferredFileChanges = []
     let responder = null
+    let isLoaded = false
 
     async function setupSocket() {
         const socket = io()
@@ -45,8 +48,13 @@ function StoreUsingServer(redrawCallback, fileName) {
         socket.on("fileChanged", async function(message) {
             if (message.stringToAppend) {
                 const newItem = JSON.parse(message.stringToAppend)
-                chatRoomResponder.onAddItem(newItem)
-                redrawCallback()
+                if (isLoaded) {
+                    chatRoomResponder.onAddItem(newItem)
+                    if (redrawCallback) redrawCallback()
+                } else {
+                    // Defer processing new items if they come in while initially loading file
+                    deferredFileChanges.push(newItem)
+                }
             }
         })
 
@@ -66,7 +74,7 @@ function StoreUsingServer(redrawCallback, fileName) {
         if (apiResult) {
             responder.onAddItem(item)
         }
-        redrawCallback()
+        if (redrawCallback) redrawCallback()
     }
 
     async function connect(newResponder) {
@@ -77,6 +85,7 @@ function StoreUsingServer(redrawCallback, fileName) {
 
         await setupSocket()
 
+        // Requesting fileContents after socket connected will automatically get fileChanged messages from server
         const apiResult = await TwirlipServer.fileContents(fileName)
         if (apiResult) {
             chosenFileContents = apiResult.contents
@@ -85,21 +94,20 @@ function StoreUsingServer(redrawCallback, fileName) {
             return
         }
 
-        if (previousChosenFileContents === chosenFileContents) {
-            // do nothing
-            return
-        }
-
         const items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
         for (let item of items) {
             responder.onAddItem(item)
         }
 
-        previousChosenFileContents = chosenFileContents
+        while (deferredFileChanges.length) {
+            const item = deferredFileChanges.shift()
+            responder.onAddItem(item)
+        }
 
-        responder.onLoaded()
+        isLoaded = true
+
+        if (responder.onLoaded) responder.onLoaded()
         
-        // This next redraw is only needed if connect was done other than in an event handler or at startup
         if (redrawCallback) redrawCallback()
     }
 
@@ -505,10 +513,12 @@ function scrollToBottomLater() {
 }
 
 const chatRoomResponder = {
+
     onLoaded: () => {
         if (!isLoaded) scrollToBottomLater()
         isLoaded = true
     },
+
     onAddItem: (item) => {
         // console.log("onAddItem", item)
         let edited = false
@@ -555,7 +565,7 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-const backend = StoreUsingServer(m.redraw, chosenFileName)
+const backend = ItemStoreUsingJsonlServerFile(chosenFileName, m.redraw)
 backend.connect(chatRoomResponder)
 
 m.mount(document.body, TwirlipChat)
