@@ -605,11 +605,6 @@ app.use("/", express.static("/"))
 
 logStartupInfo("Twirlip serving from directory: " + process.cwd())
 
-const httpServer = http.createServer(app)
-httpServer.listen(httpPort, host)
-io.attach(httpServer)
-logStartupInfo("Twirlip server listening at http://" + host + ":" + httpPort)
-
 function readOrCreateSSLCertificateKeys() {
     // load certificates if available or otherwise create them
     let serviceKey
@@ -642,6 +637,13 @@ function readOrCreateSSLCertificateKeys() {
 // messageStreams.io will handle Twirlip data requests made via websockets
 // Twirlip7: const messageStreams = require("./messageStreams")
 
+function startHttpServer() {
+    const httpServer = http.createServer(app)
+    httpServer.listen(httpPort, host)
+    io.attach(httpServer)
+    logStartupInfo("Twirlip server listening at http://" + host + ":" + httpPort)
+}
+
 function startHttpsServer() {
     readOrCreateSSLCertificateKeys().then(keys => {
         // Create an HTTPS service
@@ -653,6 +655,10 @@ function startHttpsServer() {
             logStartupInfo("Twirlip server listening at https://" + host + ":" + port)
         })
     })
+}
+
+if (httpPort) {
+    startHttpServer()
 }
 
 if (httpsPort) {
