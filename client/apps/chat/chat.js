@@ -37,7 +37,6 @@ const preferences = new Twirlip15Preferences()
 
 function StoreUsingServer(redrawCallback, fileName) {
 
-    let items = []
     let responder = null
 
     async function setupSocket() {
@@ -91,7 +90,7 @@ function StoreUsingServer(redrawCallback, fileName) {
             return
         }
 
-        items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
+        const items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
         for (let item of items) {
             responder.onAddItem(item)
         }
