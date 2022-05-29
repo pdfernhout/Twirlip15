@@ -38,8 +38,9 @@ function defaultAPIErrorReporter(error) {
 
 export class Twirlip15ServerAPI {
     
-    constructor(onError=defaultAPIErrorReporter) {
+    constructor(onError=defaultAPIErrorReporter, clientId=undefined) {
         this.onError = onError
+        this.clientId = clientId
     }
 
     // Actions on directories
@@ -82,19 +83,19 @@ export class Twirlip15ServerAPI {
     // Actions on file data
 
     async fileSave(fileName, contents, onError=null) {
-        return await twirlip15ApiCall({request: "file-save", fileName, contents}, onError || this.onError)
+        return await twirlip15ApiCall({request: "file-save", fileName, contents, clientId: this.clientId}, onError || this.onError)
     }
 
     async fileAppend(fileName, stringToAppend, encoding, onError=null) {
-        return await twirlip15ApiCall({request: "file-append", fileName, stringToAppend, encoding}, onError || this.onError)
+        return await twirlip15ApiCall({request: "file-append", fileName, stringToAppend, encoding, clientId: this.clientId}, onError || this.onError)
     }
     
     async fileContents(fileName, onError=null) {
-        return await twirlip15ApiCall({request: "file-contents", fileName}, onError || this.onError)
+        return await twirlip15ApiCall({request: "file-contents", fileName, clientId: this.clientId}, onError || this.onError)
     }
     
     async fileReadBytes(fileName, start, length, encoding="base64", onError=null) {
-        return await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length, encoding}, onError || this.onError)
+        return await twirlip15ApiCall({request: "file-read-bytes", fileName, start, length, encoding, clientId: this.clientId}, onError || this.onError)
     }
 
     async filePreview(fileName, resizeOptions, onError=null) {

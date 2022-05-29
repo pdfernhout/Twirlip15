@@ -9,6 +9,7 @@ const util = require("util")
 const path = require("path")
 const express = require("express")
 const bodyParser = require("body-parser")
+const http = require("http")
 const https = require("https")
 const pem = require("pem")
 const expressForceSSL = require("express-force-ssl")
@@ -151,8 +152,49 @@ function getUnauthorizedResponse(req) {
         : "No credentials provided"
 }
 
+const socketClients = {}
+const { Server } = require("socket.io")
+const io = new Server()
+io.on("connection", function(socket) {
+    const clientId = socket.id
+
+    const address = socket.request.connection.remoteAddress
+    logger.debug("socket.io connection %s %s", address, clientId)
+
+    socketClients[clientId] = {}
+
+    socket.on("disconnect", function() {
+        logger.debug("socket.io disconnect %s %s", address, clientId)
+        delete socketClients[clientId]
+    })
+
+    // socket.on("twirlip", function (message) {
+    //     // log("debug", address, "socket.io message", clientId, message)
+    //     processMessage(clientId, message)
+    // })
+})
+
+function fileRead(clientId, filePath) {     
+    if (clientId) {
+        socketClients[clientId][filePath] = true
+    }
+}
+
+function fileChanged(clientId, filePath, stringToAppend=null) {
+    if (clientId) {
+        socketClients[clientId][filePath] = true
+    }
+    for (let otherClientId of Object.keys(socketClients)) {
+        console.log("fileChanged", clientId, otherClientId, filePath)
+        if (clientId === otherClientId) continue
+        if (socketClients[otherClientId][filePath]) {
+            io.sockets.to(otherClientId).emit("fileChanged", {message: "fileChanged", filePath, stringToAppend})
+        }
+    }
+}
+
 // Example use: http://localhost:8080/sha256/somesha?content-type=image/png&title=some%20title
-app.get("/sha256/:sha256", storage.respondWithReconstructedFile)
+// Twirlip7: app.get("/sha256/:sha256", storage.respondWithReconstructedFile)
 
 app.get("/twirlip15-api", function(request, response) {
     response.json({
@@ -251,6 +293,7 @@ async function requestFileContents(request, response) {
         try {
             const contents = await fs.promises.readFile(filePath, encoding)
             response.json({ok: true, contents: contents})
+            fileRead(request.body.clientId, request.body.fileName)
         } catch(err) {
             logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
@@ -281,6 +324,7 @@ async function requestFileReadBytes(request, response) {
             const buffer = Buffer.alloc(length)
             const readResult = await fsRead(fileHandle.fd, buffer, 0, length, start)
             response.json({ok: true, data: buffer.toString(encoding), bytesRead: readResult.bytesRead})
+            fileRead(request.body.clientId, request.body.fileName)
         } catch(err) {
             logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
@@ -328,6 +372,7 @@ async function requestFileAppend(request, response) {
     try {
         await fs.promises.appendFile(filePath, stringToAppend, encoding)
         response.json({ok: true})
+        fileChanged(request.body.clientId, request.body.fileName, stringToAppend)
     } catch(err) {
         logger.info(err)
         response.json({ok: false, errorMessage: "Problem appending to file"})
@@ -344,6 +389,7 @@ async function requestFileSave(request, response) {
     try {
         await fs.promises.writeFile(filePath, fileContents, encoding)
         response.json({ok: true})
+        fileChanged(request.body.clientId, request.body.fileName)
     } catch(err) {
         logger.info(err)
         response.json({ok: false, errorMessage: "Problem writing file"})
@@ -528,7 +574,9 @@ app.use("/", express.static("/"))
 
 logStartupInfo("Twirlip serving from directory: " + process.cwd())
 
-app.listen(httpPort, host)
+const httpServer = http.createServer(app)
+httpServer.listen(httpPort, host)
+io.attach(httpServer)
 logStartupInfo("Twirlip server listening at http://" + host + ":" + httpPort)
 
 function readOrCreateSSLCertificateKeys() {
@@ -561,13 +609,14 @@ function readOrCreateSSLCertificateKeys() {
 }
 
 // messageStreams.io will handle Twirlip data requests made via websockets
-const messageStreams = require("./messageStreams")
+// Twirlip7: const messageStreams = require("./messageStreams")
 
 function startHttpsServer() {
     readOrCreateSSLCertificateKeys().then(keys => {
         // Create an HTTPS service
-        const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(httpsPort, host, function () {
-            messageStreams.io.attach(httpsServer)
+        const httpsServer = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app)
+        io.attach(httpsServer)
+        httpsServer.listen(httpsPort, host, function () {
             const host = httpsServer.address().address
             const port = httpsServer.address().port
             logStartupInfo("Twirlip server listening at https://" + host + ":" + port)

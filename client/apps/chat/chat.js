@@ -18,9 +18,13 @@ import "../../vendor/push.js"
 // defines m
 import "../../vendor/mithril.js"
 
+// defines io
+import { io } from "/socket.io/socket.io.esm.min.js"
+
 let chosenFileName = ""
 let chosenFileNameShort = ""
 let previousChosenFileContents = ""
+let clientId = undefined
 
 function showError(error) {
     Toast.toast(error)
@@ -39,7 +43,6 @@ function StoreUsingServer(redrawCallback, fileName) {
     async function addItem(item) {
         const apiResult = await TwirlipServer.fileAppend(fileName, JSON.stringify(item) + "\n")
         if (apiResult) {
-            items.push(item)
             responder.onAddItem(item)
         }
         redrawCallback()
@@ -530,18 +533,22 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-
 const backend = StoreUsingServer(m.redraw, chosenFileName)
 
-backend.connect(chatRoomResponder)
+const socket = io()
 
-// Kludgy way to get latest chat messages
-async function pollForUpdates() {
-    if (document.hasFocus() || (sendNotifications === "true" &&  Push.Permission.has())) {
-        await backend.connect(chatRoomResponder)
+socket.on("connect", () => {
+    clientId = socket.id
+    TwirlipServer.clientId = clientId
+    backend.connect(chatRoomResponder)
+})
+
+socket.on("fileChanged", async function(message) {
+    if (message.stringToAppend) {
+        const newItem = JSON.parse(message.stringToAppend)
+        chatRoomResponder.onAddItem(newItem)
+        m.redraw()
     }
-    setTimeout(pollForUpdates, 5000)
-}
-pollForUpdates()
+})
 
 m.mount(document.body, TwirlipChat)
