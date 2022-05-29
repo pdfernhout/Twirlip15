@@ -4,3 +4,4 @@ users/users.json
 preferences.json
 server-logs/*.log
 server-data
+proxyKey.txt

@@ -219,8 +219,13 @@ async function scheduleNextFileOperation() {
     if (fileOperationQueue.length) scheduleNextFileOperation()
 }
 
+const proxyRequest = require("./proxyRequest")
+app.post("/twirlip15-api/proxy", function (request, response) {
+    proxyRequest(request, response)
+})
+
 // Example use: http://localhost:8080/sha256/somesha?content-type=image/png&title=some%20title
-// Twirlip7: app.get("/sha256/:sha256", storage.respondWithReconstructedFile)
+// Twirlip7: app.get("/twirlip-api/sha256/:sha256", storage.respondWithReconstructedFile)
 
 app.get("/twirlip15-api", function(request, response) {
     response.json({

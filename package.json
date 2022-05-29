@@ -30,6 +30,7 @@
     "pino-http": "7.0.0",
     "push.js": "1.0.12",
     "readline-sync": "1.4.10",
+    "request": "^2.88.2",
     "serve-index": "1.9.1",
     "sharp": "0.30.1",
     "showdown": "2.0.0",
