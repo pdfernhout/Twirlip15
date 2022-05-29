@@ -49,7 +49,7 @@ let messagesDiv = null
 
 let messagesByUUID = {}
 
-let entryAreaPosition = preferences.get("chat-entryAreaPosition", "right")
+let entryAreaPosition = preferences.get("chat-entryAreaPosition", "bottom")
 const entryAreaPositionChoices = ["none", "right", "bottom", "top", "left"]
 
 function userIDChange(event) {
