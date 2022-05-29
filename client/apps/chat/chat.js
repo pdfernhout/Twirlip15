@@ -36,7 +36,7 @@ const preferences = new Twirlip15Preferences()
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-function ItemStoreUsingServerFiles(redrawCallback, responder, defaultFileName, defaultLoadFailureCallback) {
+function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, responder, defaultFileName, defaultLoadFailureCallback) {
 
     const deferredFileChanges = []
     let isLoaded = false
@@ -64,7 +64,7 @@ function ItemStoreUsingServerFiles(redrawCallback, responder, defaultFileName, d
         const promise = new Promise((resolve) => {
             socket.on("connect", () => {
                 clientId = socket.id
-                TwirlipServer.clientId = clientId
+                twirlipServer.clientId = clientId
                 resolve()
             })
         })
@@ -83,7 +83,7 @@ function ItemStoreUsingServerFiles(redrawCallback, responder, defaultFileName, d
         let chosenFileContents = null
 
         // Requesting fileContents after socket connected will automatically get fileChanged messages from server
-        const apiResult = await TwirlipServer.fileContents(fileName)
+        const apiResult = await twirlipServer.fileContents(fileName)
         if (apiResult) {
             chosenFileContents = apiResult.contents
         } else {
@@ -113,7 +113,7 @@ function ItemStoreUsingServerFiles(redrawCallback, responder, defaultFileName, d
     }
 
     async function addItem(item, fileName) {
-        const apiResult = await TwirlipServer.fileAppend(fileName || defaultFileName, JSON.stringify(item) + "\n")
+        const apiResult = await twirlipServer.fileAppend(fileName || defaultFileName, JSON.stringify(item) + "\n")
         if (apiResult) {
             responder.onAddItem(item, fileName || defaultFileName)
         }
@@ -582,6 +582,6 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-const backend = ItemStoreUsingServerFiles(m.redraw, chatRoomResponder, chosenFileName, () => Toast.toast("loading chat file failed"))
+const backend = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, chatRoomResponder, chosenFileName, () => Toast.toast("loading chat file failed"))
 
 m.mount(document.body, TwirlipChat)
