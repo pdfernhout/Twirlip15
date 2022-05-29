@@ -185,12 +185,38 @@ function fileChanged(clientId, filePath, stringToAppend=null) {
         socketClients[clientId][filePath] = true
     }
     for (let otherClientId of Object.keys(socketClients)) {
-        console.log("fileChanged", clientId, otherClientId, filePath)
         if (clientId === otherClientId) continue
         if (socketClients[otherClientId][filePath]) {
             io.sockets.to(otherClientId).emit("fileChanged", {message: "fileChanged", filePath, stringToAppend})
         }
     }
+}
+
+// Coordinate all file writes with a queue to avoid race conditions.
+// Not adding file reading operations to queue for performance.
+const fileOperationQueue = []
+let currentFileOperationPromise = null
+
+function addFileOperationToQueue(fileOperationPromiseCreationFunction) {
+    const deferredPromise = new Promise((resolve, reject) => {
+        fileOperationQueue.push({resolve, reject, fileOperationPromiseCreationFunction})
+    })
+    scheduleNextFileOperation()
+    return deferredPromise
+}
+
+async function scheduleNextFileOperation() {
+    if (currentFileOperationPromise) return
+    const fileOperation = fileOperationQueue.shift()
+    currentFileOperationPromise = await fileOperation.fileOperationPromiseCreationFunction()
+    try {
+        const result = await currentFileOperationPromise
+        fileOperation.resolve(result)
+    } catch (error) {
+        fileOperation.reject(error)
+    }
+    currentFileOperationPromise = null
+    if (fileOperationQueue.length) scheduleNextFileOperation()
 }
 
 // Example use: http://localhost:8080/sha256/somesha?content-type=image/png&title=some%20title
@@ -370,7 +396,7 @@ async function requestFileAppend(request, response) {
     const stringToAppend = request.body.stringToAppend
     const encoding = request.body.encoding || "utf8"
     try {
-        await fs.promises.appendFile(filePath, stringToAppend, encoding)
+        await addFileOperationToQueue(() => fs.promises.appendFile(filePath, stringToAppend, encoding))
         response.json({ok: true})
         fileChanged(request.body.clientId, request.body.fileName, stringToAppend)
     } catch(err) {
@@ -387,7 +413,7 @@ async function requestFileSave(request, response) {
     const fileContents = request.body.contents
     const encoding = request.body.encoding || "utf8"
     try {
-        await fs.promises.writeFile(filePath, fileContents, encoding)
+        await addFileOperationToQueue(() => fs.promises.writeFile(filePath, fileContents, encoding))
         response.json({ok: true})
         fileChanged(request.body.clientId, request.body.fileName)
     } catch(err) {
@@ -403,7 +429,7 @@ async function requestFileCopy(request, response) {
     if (failForRequiredField(request, response, "copyToFilePath")) return
     const copyToFilePath = path.join(baseDir, request.body.copyToFilePath)
     try {
-        await fs.promises.copyFile(copyFromFilePath, copyToFilePath)
+        await addFileOperationToQueue(() => fs.promises.copyFile(copyFromFilePath, copyToFilePath))
         response.json({ok: true})
     } catch(err) {
         logger.info(err)
@@ -425,7 +451,7 @@ async function requestFileRename(request, response) {
 
     for (let item of renameFiles) {
         try {
-            await fs.promises.rename(path.join(baseDir, item.oldFileName), path.join(baseDir, item.newFileName))
+            await addFileOperationToQueue(() => fs.promises.rename(path.join(baseDir, item.oldFileName), path.join(baseDir, item.newFileName)))
         } catch {
             return response.json({ok: false, errorMessage: "renameFile failed for: " + JSON.stringify(item)})
         }
@@ -452,7 +478,7 @@ async function requestFileMove(request, response) {
             const oldFileName = path.join(baseDir, fileName)
             const shortFileName = path.basename(fileName)
             const newFileName = path.join(baseDir, newLocation, shortFileName)
-            await fs.promises.rename(oldFileName, newFileName)
+            await addFileOperationToQueue(() => fs.promises.rename(oldFileName, newFileName))
         } catch (err) {
             logger.info(err)
             return response.json({ok: false, errorMessage: "file move failed for: " + JSON.stringify(fileName)})
@@ -476,10 +502,10 @@ async function requestFileDelete(request, response) {
             const filePath = path.join(baseDir, fileName)
             const stat = await fs.promises.lstat(filePath)
             if (stat.isFile()) {
-                await fs.promises.unlink(filePath)
+                await addFileOperationToQueue(() => fs.promises.unlink(filePath))
             } else {
                 // await fs.promises.rmdir(filePath, {recursive: true})
-                await fs.promises.rmdir(filePath)
+                await addFileOperationToQueue(() => fs.promises.rmdir(filePath))
             }
         } catch (err) {
             logger.info(err)
