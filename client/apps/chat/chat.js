@@ -34,27 +34,32 @@ const preferences = new Twirlip15Preferences()
 
 // call connect after creation to set up connection
 // calls onAddItem on responder passed in for connect on new items
-// calls onLoaded on responder after all items initially in file are added
+// calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-function ItemStoreUsingJsonlServerFile(fileName, redrawCallback) {
+function ItemStoreUsingServerFiles(redrawCallback, defaultFileName) {
 
     const deferredFileChanges = []
     let responder = null
     let isLoaded = false
 
-    async function setupSocket() {
+    async function connect(newResponder) {
+        responder = newResponder
+
         const socket = io()
 
         socket.on("fileChanged", async function(message) {
             if (message.stringToAppend) {
                 const newItem = JSON.parse(message.stringToAppend)
                 if (isLoaded) {
-                    chatRoomResponder.onAddItem(newItem)
+                    chatRoomResponder.onAddItem(newItem, message.filePath)
                     if (redrawCallback) redrawCallback()
                 } else {
                     // Defer processing new items if they come in while initially loading file
-                    deferredFileChanges.push(newItem)
+                    deferredFileChanges.push({newItem, filePath: message.filePath})
                 }
+            } else {
+                // TODO: May need to reload entire file
+                console.log("Unsupported change message", message)
             }
         })
 
@@ -69,51 +74,53 @@ function ItemStoreUsingJsonlServerFile(fileName, redrawCallback) {
         return promise
     }
 
-    async function addItem(item) {
-        const apiResult = await TwirlipServer.fileAppend(fileName, JSON.stringify(item) + "\n")
-        if (apiResult) {
-            responder.onAddItem(item)
-        }
-        if (redrawCallback) redrawCallback()
-    }
+    // Need to await connect before calling loadFile
+    async function loadFile(fileName, failureCallback) {
 
-    async function connect(newResponder) {
+        if (!defaultFileName) defaultFileName = fileName
 
-        responder = newResponder
+        isLoaded = false
 
         let chosenFileContents = null
-
-        await setupSocket()
 
         // Requesting fileContents after socket connected will automatically get fileChanged messages from server
         const apiResult = await TwirlipServer.fileContents(fileName)
         if (apiResult) {
             chosenFileContents = apiResult.contents
         } else {
-            Toast.toast("loading chat file failed")
+            if (failureCallback) failureCallback()
             return
         }
 
         const items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
         for (let item of items) {
-            responder.onAddItem(item)
+            responder.onAddItem(item, fileName)
         }
 
         while (deferredFileChanges.length) {
-            const item = deferredFileChanges.shift()
-            responder.onAddItem(item)
+            const change = deferredFileChanges.shift()
+            responder.onAddItem(change.newItem, change.filePath)
         }
 
         isLoaded = true
 
-        if (responder.onLoaded) responder.onLoaded()
+        if (responder.onLoaded) responder.onLoaded(fileName)
         
         if (redrawCallback) redrawCallback()
     }
 
+    async function addItem(item, fileName) {
+        const apiResult = await TwirlipServer.fileAppend(fileName || defaultFileName, JSON.stringify(item) + "\n")
+        if (apiResult) {
+            responder.onAddItem(item, fileName || defaultFileName)
+        }
+        if (redrawCallback) redrawCallback()
+    }
+
     return {
+        connect,
+        loadFile,
         addItem,
-        connect
     }
 }
 
@@ -210,7 +217,6 @@ function formatChatMessage(text) {
 
 function getSortedMessages() {
     if (!sortMessagesByContent) return messages
-    // console.log("sorting messages")
     const sortedMessages = messages.slice()
     sortedMessages.sort((a, b) => {
         if (a.chatText < b.chatText) return -1
@@ -520,7 +526,6 @@ const chatRoomResponder = {
     },
 
     onAddItem: (item) => {
-        // console.log("onAddItem", item)
         let edited = false
         // Complexity needed to support editing
         if (messagesByUUID[item.uuid] === undefined) {
@@ -565,7 +570,13 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-const backend = ItemStoreUsingJsonlServerFile(chosenFileName, m.redraw)
-backend.connect(chatRoomResponder)
+const backend = ItemStoreUsingServerFiles(m.redraw)
+
+async function loadChatFile() {
+    await backend.connect(chatRoomResponder)
+    await backend.loadFile(chosenFileName, () => Toast.toast("loading chat file failed"))
+}
 
 m.mount(document.body, TwirlipChat)
+
+loadChatFile()
