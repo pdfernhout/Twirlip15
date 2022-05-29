@@ -16,8 +16,6 @@ const expressForceSSL = require("express-force-ssl")
 const expressBasicAuth = require("express-basic-auth")
 const bcrypt  = require("bcrypt")
 
-const storage = require("./storage")
-
 const pino = require("pino")
 const pinoDestination = pino.destination("./server-logs/Twirlip15-" + new Date().toISOString().replace(/:/g,"-") + ".log")
 const logger = pino(pinoDestination)
@@ -63,9 +61,6 @@ const sslDirName = getPreference("sslDirName", "ssl-info/")
 const sslKeyFileName = getPreference("sslKeyFileName", "ssl-key.pem")
 const sslCertFileName = getPreference("sslCertFileName", "ssl-cert.pem")
 const usersFileName = getPreference("usersFileName", "users/users.json")
-
-const dataDirectory = getPreference("dataDirectory", "server-data")
-storage.setDataDirectory(dataDirectory)
 
 // For remote access, you could forward a local port to the server using ssh:
 // https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding
@@ -224,6 +219,9 @@ app.post("/twirlip15-api/proxy", function (request, response) {
     proxyRequest(request, response)
 })
 
+// const dataDirectory = getPreference("dataDirectory", "server-data")
+// const storage = require("./storage")
+// storage.setDataDirectory(dataDirectory)
 // Example use: http://localhost:8080/sha256/somesha?content-type=image/png&title=some%20title
 // Twirlip7: app.get("/twirlip-api/sha256/:sha256", storage.respondWithReconstructedFile)
 
