@@ -23,7 +23,6 @@ import { io } from "/socket.io/socket.io.esm.min.js"
 
 let chosenFileName = ""
 let chosenFileNameShort = ""
-let clientId = undefined
 
 function showError(error) {
     Toast.toast(error)
@@ -63,7 +62,7 @@ function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, responder, def
 
         const promise = new Promise((resolve) => {
             socket.on("connect", () => {
-                clientId = socket.id
+                const clientId = socket.id
                 twirlipServer.clientId = clientId
                 resolve()
             })
