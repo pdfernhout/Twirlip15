@@ -38,3 +38,4 @@
 {"chatText":"test20","userID":"anonymous","timestamp":"2022-05-29T15:39:31.095Z","uuid":"chatMessage:0be77e44-74c0-44b4-82ad-15c8734fa0db"}
 {"chatText":"test21","userID":"anonymous","timestamp":"2022-05-29T15:39:35.703Z","uuid":"chatMessage:8da801fd-ca22-4018-9c13-43d223bf07a8"}
 {"chatText":"test22","userID":"anonymous","timestamp":"2022-05-29T15:39:45.703Z","uuid":"chatMessage:a06c692d-19bd-440d-b7e1-778facbe9864"}
+{"chatText":"Image test:\n\n![test image](../../screenshots/Twirlip15-Editor-Screenshot-2020-07-01.png)","userID":"anonymous","timestamp":"2022-05-29T16:29:34.556Z","uuid":"chatMessage:bb54a02a-eae0-4d62-9e1d-f6a10cf7fc39"}
