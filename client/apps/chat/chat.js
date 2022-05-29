@@ -40,6 +40,28 @@ function StoreUsingServer(redrawCallback, fileName) {
     let items = []
     let responder = null
 
+    async function setupSocket() {
+        const socket = io()
+
+        socket.on("fileChanged", async function(message) {
+            if (message.stringToAppend) {
+                const newItem = JSON.parse(message.stringToAppend)
+                chatRoomResponder.onAddItem(newItem)
+                redrawCallback()
+            }
+        })
+
+        const promise = new Promise((resolve) => {
+            socket.on("connect", () => {
+                clientId = socket.id
+                TwirlipServer.clientId = clientId
+                resolve()
+            })
+        })
+
+        return promise
+    }
+
     async function addItem(item) {
         const apiResult = await TwirlipServer.fileAppend(fileName, JSON.stringify(item) + "\n")
         if (apiResult) {
@@ -53,6 +75,8 @@ function StoreUsingServer(redrawCallback, fileName) {
         responder = newResponder
 
         let chosenFileContents = null
+
+        await setupSocket()
 
         const apiResult = await TwirlipServer.fileContents(fileName)
         if (apiResult) {
@@ -485,7 +509,6 @@ const chatRoomResponder = {
     onLoaded: () => {
         if (!isLoaded) scrollToBottomLater()
         isLoaded = true
-        console.log("onLoaded")
     },
     onAddItem: (item) => {
         // console.log("onAddItem", item)
@@ -534,21 +557,6 @@ if (filePathFromParams) {
 }
 
 const backend = StoreUsingServer(m.redraw, chosenFileName)
-
-const socket = io()
-
-socket.on("connect", () => {
-    clientId = socket.id
-    TwirlipServer.clientId = clientId
-    backend.connect(chatRoomResponder)
-})
-
-socket.on("fileChanged", async function(message) {
-    if (message.stringToAppend) {
-        const newItem = JSON.parse(message.stringToAppend)
-        chatRoomResponder.onAddItem(newItem)
-        m.redraw()
-    }
-})
+backend.connect(chatRoomResponder)
 
 m.mount(document.body, TwirlipChat)
