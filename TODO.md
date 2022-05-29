@@ -11,9 +11,10 @@ DONE cache thumbnail previews locally somehow (triples in db?)
 
 DONE IBIS (using outline divs)
 add ACE editor
-add chat
-add websockets or similar for chat
-add upload menu item to filer
+DONE add chat
+DONE add websockets or similar for chat
+DONE add upload menu item to filer
+get uploads to work somehow in chat
 photo browser app
 run any command line app 
 generate command line from a command-specific UI derived from man page
@@ -25,5 +26,8 @@ DONE ibis should deal with making new file when missing
 ibis should deal with deleting top node
 ibis should export to text file
 ibis should import from compendium
+ibis should be multi-user like chat is
+ibis should support transclusions in multiple maps
+ibis should support search across multiple maps
 
 think about stream (of JSON drops or maybe triples) with trees (indexes or structures maybe of triples) and rocks (hashed contents blobs or maybe triple sets) and paths (something analogous to user experience?) :-)
