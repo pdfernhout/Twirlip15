@@ -84,7 +84,7 @@ async function loadFileContents(fileInfo) {
 function satisfiesFilter(fileInfo) {
     const tags = filter.toLowerCase().trim().split(/\s+/)
     if (tags[0] === "") tags.shift()
-    if (tags.length === 0) return false
+    if (tags.length === 0) return true
 
     const contents = (fileInfo.contents || "").toLowerCase()
 
@@ -105,14 +105,6 @@ function satisfiesFilter(fileInfo) {
 
 function updateFilter(newFilter) {
     filter = newFilter
-    const tagsWithoutDuplicates = []
-    const tags = filter.trim().split(/\s+/)
-    for (const tag of tags) {
-        if (!tagsWithoutDuplicates.includes(tag)) {
-            tagsWithoutDuplicates.push(tag)
-        }
-    }
-    filter = tagsWithoutDuplicates.join(" ")
 }
 
 function viewFileEntry(fileInfo) {
@@ -141,7 +133,7 @@ function viewDirectoryFiles() {
                         }, "show (" + filterMode + "):"),
                         m("input.w-24rem", {
                             value: filter,
-                            onchange: event => updateFilter(event.target.value)
+                            oninput: event => updateFilter(event.target.value)
                         }),
                         m("span.ml1.pointer", {onclick: () => updateFilter(""), disabled: !filter}, "X")
                     ),
