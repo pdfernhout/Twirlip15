@@ -203,8 +203,8 @@ function addFileOperationToQueue(fileOperationPromiseCreationFunction) {
 async function scheduleNextFileOperation() {
     if (currentFileOperationPromise) return
     const fileOperation = fileOperationQueue.shift()
-    currentFileOperationPromise = await fileOperation.fileOperationPromiseCreationFunction()
     try {
+        currentFileOperationPromise = await fileOperation.fileOperationPromiseCreationFunction()
         const result = await currentFileOperationPromise
         fileOperation.resolve(result)
     } catch (error) {
