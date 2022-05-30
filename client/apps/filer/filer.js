@@ -192,6 +192,12 @@ async function newFile() {
         )
     })
     if (ok && newFileName) {
+        for (const fileInfo of directoryFiles) {
+            if (fileInfo.name === newFileName) {
+                showError("A file with that name already exists: " + newFileName)
+                return
+            }
+        }
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileSave(fileName, "")
         if (apiResult) {
@@ -264,6 +270,12 @@ async function uploadFile() {
 async function newDirectory() {
     const newFileName = await modalPrompt("New directory name?")
     if (newFileName) {
+        for (const fileInfo of directoryFiles) {
+            if (fileInfo.name === newFileName) {
+                showError("A file with that name already exists: " + newFileName)
+                return
+            }
+        }
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileNewDirectory(fileName)
         if (apiResult) loadDirectory(directoryPath, false)
