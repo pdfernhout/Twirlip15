@@ -19,6 +19,28 @@ function showError(error) {
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
+const textFileExtensions = {
+    css: true,
+    htm: true,
+    html: true,
+    eml: true,
+    json: true,
+    jsonl: true,
+    latex: true,
+    log: true,
+    mbox: true,
+    md: true,
+    text: true,
+    txt: true,
+    xml: true
+}
+
+function fileHasTextExtension(fileName) {
+    if (!fileName.includes(".")) return false
+    const extension = fileName.split(".").pop().toLowerCase()
+    return textFileExtensions[extension] || false
+}
+
 async function loadDirectory(newPath) {
     loadingAllFiles = true
     if (!newPath.endsWith("/")) {
@@ -33,12 +55,7 @@ async function loadDirectory(newPath) {
         localDirectoryFiles = apiResult.files.filter(
             fileInfo => !fileInfo.isDirectory 
             && !fileInfo.name.startsWith(".")
-            && (
-                fileInfo.name.endsWith(".txt") |
-                fileInfo.name.endsWith(".htm") |
-                fileInfo.name.endsWith(".html") |
-                fileInfo.name.endsWith(".md")
-            )
+            && fileHasTextExtension(fileInfo.name)
         ).sort((a, b) => {
             if (a.name === b.name) return 0
             if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
@@ -115,7 +132,7 @@ function viewDirectoryFiles() {
     return directoryFiles
         ? m("div",
             directoryFiles.length === 0
-                ? "No text-ish (txt, htm, html, md) files in directory"
+                ? "No text-ish files in directory"
                 : m("div",
                     m("div",
                         m("span.mr1", {
@@ -131,7 +148,7 @@ function viewDirectoryFiles() {
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
                 )
         )
-        : m("div", "Loading text-ish (txt, html, md) file data...")
+        : m("div", "Loading text-ish file data...")
 }
 
 const Search = {
