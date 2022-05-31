@@ -95,7 +95,9 @@ function clearPreviewFetchQueue() {
 
 function queuePreviewsIfNeeded() {
     if (showPreview) {
+        const selectedFileNames = Object.keys(selectedFiles)
         for (const fileInfo of directoryFiles) {
+            if (selectedFileNames.length && !selectedFiles[directoryPath + fileInfo.name]) continue
             if (!fileInfo.name.startsWith(".") && !fileInfo.isDirectory && isFilePreviewable(fileInfo.name)) {
                 previewsToFetch.push(directoryPath + fileInfo.name)
             }
