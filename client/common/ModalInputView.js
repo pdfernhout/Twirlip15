@@ -41,7 +41,7 @@ export function modalPrompt(promptText, defaultText = "") {
     return standardModal(promptText, "prompt", defaultText)
 }
 
-function weaveIntoArray(array, item) {
+export function weaveIntoArray(array, item) {
     const result = []
     for (let element of array) {
         result.push(element)

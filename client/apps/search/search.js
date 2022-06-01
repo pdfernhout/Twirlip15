@@ -1,6 +1,7 @@
 /* global m */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { weaveIntoArray } from "../../common/ModalInputView.js"
 
 let directoryPath = "/"
 let directoryFiles = null
@@ -107,6 +108,31 @@ function updateFilter(newFilter) {
     filter = newFilter
 }
 
+const snippetLength = 100
+
+function makePreviewForSearchTerm(text, searchTerm) {
+    const position = text.toLowerCase().indexOf(searchTerm.toLowerCase())
+    if (position === -1) return ""
+    const start = Math.max(0, position - snippetLength / 2)
+    const before = text.substring(start, position)
+    const middle = text.substring(position, position + searchTerm.length)
+    const after = text.substring(position + searchTerm.length, start + snippetLength)
+    return [before, m("b", middle), after]
+}
+
+function viewPreview(text) {
+    let snippet = ""
+    const searchTerms = filter.trim().split(" ").filter(searchTerm => searchTerm.length)
+    if (!searchTerms.length) {
+        snippet = text.substring(0, snippetLength)
+    } else {
+        snippet = searchTerms.map(searchTerm => makePreviewForSearchTerm(text, searchTerm))
+            .filter(result => result !== "")
+        snippet = weaveIntoArray(snippet, m("hr"))
+    }
+    return m("div", snippet)
+}
+
 function viewFileEntry(fileInfo) {
     if (!satisfiesFilter(fileInfo)) {
         return []
@@ -115,7 +141,8 @@ function viewFileEntry(fileInfo) {
         m("div.mb1",
             m("a.link", {href: fileInfo.name + "?twirlip=edit"}, "✎"),
             m("a.link", {href: fileInfo.name + "?twirlip=edit&mode=view"}, "📄 "),
-            m("a", {href: fileInfo.name}, fileInfo.name)
+            m("a", {href: fileInfo.name}, fileInfo.name),
+            viewPreview(fileInfo.contents)
         )
     )
 }
