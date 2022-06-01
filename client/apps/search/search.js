@@ -3,6 +3,14 @@ import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { weaveIntoArray } from "../../common/ModalInputView.js"
 
+const filterModes = ["and", "or", "exact"]
+
+function nextFilterMode(mode) {
+    let newModeIndex = filterModes.indexOf(mode) + 1
+    if (newModeIndex >= filterModes.length) newModeIndex = 0
+    return filterModes[newModeIndex]
+}
+
 let directoryPath = "/"
 let directoryFiles = null
 
@@ -99,6 +107,8 @@ function satisfiesFilter(fileInfo) {
             if (contents.includes(tag)) return true
         }
         return false
+    } else if (filterMode === "exact") {
+        return fileInfo.contents.includes(filter)
     } else {
         throw new Error("filter mode not expected: " + filterMode)
     }
@@ -111,7 +121,9 @@ function updateFilter(newFilter) {
 const snippetLength = 100
 
 function makePreviewForSearchTerm(text, searchTerm) {
-    const position = text.toLowerCase().indexOf(searchTerm.toLowerCase())
+    const position = (filterMode === "exact")
+        ? text.indexOf(searchTerm)
+        : text.toLowerCase().indexOf(searchTerm.toLowerCase())
     if (position === -1) return ""
     const start = Math.max(0, position - snippetLength / 2)
     const before = text.substring(start, position)
@@ -122,7 +134,10 @@ function makePreviewForSearchTerm(text, searchTerm) {
 
 function viewPreview(text) {
     let snippet = ""
-    const searchTerms = filter.trim().split(" ").filter(searchTerm => searchTerm.length)
+    const searchTerms = ((filterMode === "exact")
+        ? [filter]
+        : filter.trim().split(" "))
+    .filter(searchTerm => searchTerm.length)
     if (!searchTerms.length) {
         snippet = text.substring(0, snippetLength)
     } else {
@@ -156,7 +171,7 @@ function viewDirectoryFiles() {
                     m("div",
                         m("span.mr1", {
                             title: "filter by tag (or file name); click to change and/or mode",
-                            onclick: () => filterMode = filterMode === "and" ? "or" : "and"
+                            onclick: () => filterMode = nextFilterMode(filterMode)
                         }, "show (" + filterMode + "):"),
                         m("input.w-24rem", {
                             value: filter,
