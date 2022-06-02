@@ -377,9 +377,9 @@ function dropdownMenu(label, options, callback, disabled) {
 function viewMenu() {
     const selectedFileCount = Object.keys(selectedFiles).length
     return showMenu && menuTopBar([
+        menuButton("+New directory", () => newDirectory()),
         menuButton("+New file", () => newFile()),
         menuButton("⬆Upload file", () => uploadFile(), isUploading),
-        menuButton("+New directory", () => newDirectory()),
         dropdownMenu("▶Launch", applicationList, (id) => launchApplication(id), selectedFileCount > 1),
         menuButton("✎Rename", () => renameFile(), selectedFileCount !== 1),
         menuButton("➛Move", () => moveFiles(), !selectedFileCount),
