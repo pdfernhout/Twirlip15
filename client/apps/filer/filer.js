@@ -152,6 +152,28 @@ function isFilePreviewable(fileName) {
 async function newFile() {
     let newFileName = ""
     let openWithApplication = ""
+
+    function applicationChanged(value) {
+        openWithApplication = value
+        // Could improve to remove old extension if previously set
+        if (!newFileName 
+            || !newFileName.includes(".")
+            || newFileName.startsWith("Unnamed.twirlip-")
+            || newFileName === "Unnamed.txt"
+        ) {
+            const name = newFileName || "Unnamed"
+            if (value === "chat") {
+                newFileName = name + ".twirlip-chat.jsonl"
+            } else if (value === "ibis") {
+                newFileName = name + ".twirlip-ibis.jsonl"
+            } else if (value === "edit") {
+                newFileName = name + ".txt"
+            } else if (value === "triples") {
+                newFileName = name + ".twirlip-triples.jsonl"
+            }
+        }
+    }
+
     const ok = await customModal((resolve) => {
         return m("div",
             m("h3", "New file name?"),
@@ -184,7 +206,7 @@ async function newFile() {
             m("div.pa2"),
             m("label",
                 "Open with: ",
-                viewSelect(applicationList, openWithApplication, value => openWithApplication = value)
+                viewSelect(applicationList, openWithApplication, applicationChanged)
             ),
             m("div.pa2"),
             m("div.ma2.flex.justify-end", 
