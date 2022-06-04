@@ -177,22 +177,33 @@ function exportChatAsJSONClicked() {
         messagesToExport.push(message)
     })
     
-    const exportString = messagesToExport.map(message => JSON.stringify(message)).join("\n") + "\n"
+    const exportString = messagesToExport.map(message => JSON.stringify(message, (key, value) => {
+        if (key === "editedTimestamp") return undefined
+        return value
+    })).join("\n") + "\n"
 
     FileUtils.saveToFile("exported-chat-" + new Date().toISOString().replace(/:/g, "-"), exportString, ".twirlip-chat.jsonl")
 }
 
 function importChatFromJSONClicked() {
     FileUtils.loadFromFile(false, async (filename, contents, bytes) => {
-        // console.log("JSON filename, contents", filename, bytes)
+        console.log("importing JSONL from filename", filename)
         const messages = bytes.split("\n").slice(0, -1).map(JSON.parse)
         for (let message of messages) {
-            if (messagesByUUID[message.uuid] !== undefined) {
-                const previousVersion = messages[messagesByUUID[message.uuid]]
+            const previousVersion = messagesByUUID[message.uuid]
+            if (previousVersion !== undefined) {
                 if (previousVersion.uuid !== message.uuid) {
                     console.log("uuid mismatch")
                 }
-                if (previousVersion.timestamp < message.timestamp) {
+                let ignore = false
+                for (let version = previousVersion; version; version = version.previousVersion) {
+                    if (version.timestamp === message.timestamp) {
+                        // ignore repeat of existing message
+                        ignore = true
+                        console.log("already have message", message.uuid)
+                    }
+                }
+                if (!ignore && previousVersion.timestamp < message.timestamp) {
                     // only add if later
                     console.log("adding later message version", previousVersion, message)
                     await backend.addItem(message)
@@ -452,20 +463,24 @@ const chatRoomResponder = {
     onAddItem: (item) => {
         let edited = false
         // Complexity needed to support editing
-        if (messagesByUUID[item.uuid] === undefined) {
-            if (item.uuid !== undefined) messagesByUUID[item.uuid] = messages.length
+        const previousVersion = messagesByUUID[item.uuid]
+        if (previousVersion === undefined) {
+            if (item.uuid !== undefined) messagesByUUID[item.uuid] = item
             messages.push(item)
         } else {
-            if (messagesByUUID[item.uuid] !== undefined) {
-                const previousVersion = messages[messagesByUUID[item.uuid]]
-                if (previousVersion.timestamp === item.timestamp) {
-                    // ignore repeat of existing message
-                    return
+            if (previousVersion !== undefined) {
+                for (let version = previousVersion; version; version = version.previousVersion) {
+                    if (version.timestamp === item.timestamp) {
+                        // ignore repeat of existing message
+                        return
+                    }
                 }
                 // console.log("message is edited", item, messagesByUUID[item.uuid])
                 item.editedTimestamp = item.timestamp
                 item.timestamp = previousVersion.timestamp
-                messages[messagesByUUID[item.uuid]] = item
+                messagesByUUID[item.uuid] = item
+                const index = messages.indexOf(previousVersion)
+                messages[index] = item
                 edited = true
                 item.previousVersion = previousVersion
             }
