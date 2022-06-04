@@ -176,13 +176,32 @@ function exportChatAsJSONClicked() {
         if (!hasFilterText(message)) return
         messagesToExport.push(message)
     })
+    
+    const exportString = messagesToExport.map(message => JSON.stringify(message)).join("\n") + "\n"
 
-    FileUtils.saveToFile(chosenFileNameShort + " " + new Date().toISOString(), JSON.stringify(messagesToExport, null, 4), ".json")
+    FileUtils.saveToFile("exported-chat-" + new Date().toISOString().replace(/:/g, "-"), exportString, ".twirlip-chat.jsonl")
 }
 
 function importChatFromJSONClicked() {
-    FileUtils.loadFromFile(false, (filename, contents, bytes) => {
-        console.log("JSON filename, contents", filename, bytes, contents)
+    FileUtils.loadFromFile(false, async (filename, contents, bytes) => {
+        // console.log("JSON filename, contents", filename, bytes)
+        const messages = bytes.split("\n").slice(0, -1).map(JSON.parse)
+        for (let message of messages) {
+            if (messagesByUUID[message.uuid] !== undefined) {
+                const previousVersion = messages[messagesByUUID[message.uuid]]
+                if (previousVersion.uuid !== message.uuid) {
+                    console.log("uuid mismatch")
+                }
+                if (previousVersion.timestamp < message.timestamp) {
+                    // only add if later
+                    console.log("adding later message version", previousVersion, message)
+                    await backend.addItem(message)
+                }
+            } else {
+                console.log("adding new message", message)
+                await backend.addItem(message)
+            }
+        }
     })
 }
 
@@ -369,8 +388,8 @@ function viewEntryAreaTools() {
         m("button.ml2.mt2", {onclick: sendChatMessage}, "Send (ctrl-enter)"),
         m("button.ml2.mt2", {onclick: uploadDocumentClicked}, m("i.fa.mr1" + (isUploading ? ".fa-refresh.fa-spin" : ".fa-upload")), "Upload document..."),
         m("button.ml2.mt2", {onclick: exportChatAsMarkdownClicked, title: "Export filtered chat as Markdown"}, "Export Markdown..."),
-        m("button.ml2.mt2", {onclick: exportChatAsJSONClicked, title: "Export filtered chat as JSON"}, "Export JSON..."),
-        m("button.ml2.mt2", {onclick: importChatFromJSONClicked, title: "Import chat messages from JSON"}, "Import JSON..."),
+        m("button.ml2.mt2", {onclick: exportChatAsJSONClicked, title: "Export filtered chat as JSONL"}, "Export JSONL..."),
+        m("button.ml2.mt2", {onclick: importChatFromJSONClicked, title: "Import chat messages from JSONL"}, "Import JSONL..."),
     )
 }
 
