@@ -149,6 +149,15 @@ function isFilePreviewable(fileName) {
     return isPreviewable
 }
 
+function checkIfFileAlreadyExists(newFileName) {
+    for (const fileInfo of directoryFiles) {
+        if (fileInfo.name === newFileName) {
+            return true
+        }
+    }
+    return false
+}
+
 async function newFile() {
     let newFileName = ""
     let openWithApplication = ""
@@ -216,11 +225,9 @@ async function newFile() {
         )
     })
     if (ok && newFileName) {
-        for (const fileInfo of directoryFiles) {
-            if (fileInfo.name === newFileName) {
-                showError("A file with that name already exists: " + newFileName)
-                return
-            }
+        if (checkIfFileAlreadyExists(newFileName)) {
+            showError("A file with that name already exists: " + newFileName)
+            return
         }
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileSave(fileName, "")
@@ -252,11 +259,9 @@ async function uploadFile() {
         m.redraw()
         // console.log("loadFromFile result", filename, contents, bytes)
 
-        for (const fileInfo of directoryFiles) {
-            if (fileInfo.name === filename) {
-                showError("A file with that name already exists: " + filename)
-                return
-            }
+        if (checkIfFileAlreadyExists(filename)) {
+            showError("A file with that name already exists: " + filename)
+            return
         }
 
         isUploading = true
@@ -294,11 +299,9 @@ async function uploadFile() {
 async function newDirectory() {
     const newFileName = await modalPrompt("New directory name?")
     if (newFileName) {
-        for (const fileInfo of directoryFiles) {
-            if (fileInfo.name === newFileName) {
-                showError("A file with that name already exists: " + newFileName)
-                return
-            }
+        if (checkIfFileAlreadyExists(newFileName)) {
+            showError("A file with that name already exists: " + newFileName)
+            return
         }
         const fileName = directoryPath + newFileName
         const apiResult = await TwirlipServer.fileNewDirectory(fileName)
@@ -314,6 +317,10 @@ async function renameFile() {
     const fileNameBefore = fileNameFromPath(Object.keys(selectedFiles)[0])
     const fileNameAfter = await modalPrompt("New file name after rename?", fileNameBefore)
     if (fileNameAfter) {
+        if (checkIfFileAlreadyExists(fileNameAfter)) {
+            showError("A file with that name already exists: " + fileNameAfter)
+            return
+        }
         const oldFileName = directoryPath + fileNameBefore
         const newFileName = directoryPath + fileNameAfter
         const apiResult = await TwirlipServer.fileRenameOne(oldFileName, newFileName)
