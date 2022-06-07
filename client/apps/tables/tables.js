@@ -4,46 +4,53 @@
 "use strict"
 /* eslint-disable no-console */
 
+/* global m */
+
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
+import { Toast } from "../../common/Toast.js"
+import { UUID } from "../../common/UUID.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
-import NameTracker from "./NameTracker.js"
-
-import { Pointrel20190820 } from "./Pointrel20190820.js"
-
-const p = new Pointrel20190820()
-
-p.setDefaultApplicationName("tables")
-
-const nameTracker = new NameTracker({
-    hashNameField: "name",
-    displayNameLabel: "Name",
-    defaultName: "test",
-    nameChangedCallback: startup
-})
-
-function getTablesName() {
-    if (!nameTracker.name || nameTracker.name === "tables") return "tables:test"
-    return "tables:" + nameTracker.name
+function showError(error) {
+    console.log("error", error)
+    const errorMessage = error.message
+        ? error.message
+        : error
+    Toast.toast(errorMessage)
 }
+
+const t = Triplestore(showError)
 
 const showFormulasForTable = {}
 
+function convertNumber(numberString) {
+    const prefix = "number:"
+    if (!numberString.startsWith(prefix)) return NaN
+    return parseFloat(numberString.substring(prefix.length))
+}
+
+function convertText(textString) {
+    const prefix = "text:"
+    if (!textString.startsWith(prefix)) return ""
+    return textString.substring(prefix.length)
+}
+
 class Table {
     constructor(uuid) {
-        this.uuid = uuid || p.uuidv4()
+        this.uuid = uuid || ("table:" + UUID.uuidv4())
     }
 
     getName() {
-        return p.findC(this.uuid, "name") || ""
+        return convertText(t.findLast(this.uuid, "name") || "text:Unnamed")
     }
 
     setName(name) {
-        p.addTriple(this.uuid, "name", name)
+        t.addTriple({a: this.uuid, b: "name", c: "text:" + name})
     }
 
     getWidth() {
-        return p.findC(this.uuid, "width") || 5
+        return convertNumber(t.findLast(this.uuid, "width") || "number:5")
     }
 
     setWidth(width) {
@@ -51,64 +58,61 @@ class Table {
         if (!width) return
         width = Math.max(1, width)
         width = Math.min(26, width)
-        p.addTriple(this.uuid, "width", width)
+        t.addTriple({a: this.uuid, b: "width", c: "number:" + width})
     }
 
     getHeight() {
-        return p.findC(this.uuid, "height") || 10
+        return convertNumber(t.findLast(this.uuid, "height") || "number:10")
     }
 
     setHeight(height) {
-        p.addTriple(this.uuid, "height", height)
+        t.addTriple({a: this.uuid, b: "height", c: "number:" + height})
     }
 
     getShowFormulas() {
-        // return p.findC(this.uuid, "showFormulas") || false
+        // return t.findLast(this.uuid, "showFormulas") || false
         return showFormulasForTable[this.uuid]
     }
 
     setShowFormulas(showFormulas) {
-        // p.addTriple(this.uuid, "showFormulas", showFormulas)
+        // t.addTriple({a: this.uuid, b: "showFormulas", c: "boolean" + showFormulas})
         showFormulasForTable[this.uuid] = showFormulas
     }
 
     getCell(x, y) {
-        return p.findC(this.uuid, JSON.stringify({x: x, y: y})) || ""
+        return convertText(t.findLast(this.uuid, JSON.stringify({x: x, y: y})) || "text:")
     }
 
     setCell(x, y, contents) {
         if (this.getCell(x, y) !== contents) {
-            p.addTriple(this.uuid, JSON.stringify({x: x, y: y}), contents)
+            t.addTriple({a: this.uuid, b: JSON.stringify({x: x, y: y}), c: "text:" + contents})
         }
     } 
     
     getColumnWidth(x) {
-        return p.findC(this.uuid, JSON.stringify({columnWidth: x})) || 8
+        return convertNumber(t.findLast(this.uuid, JSON.stringify({columnWidth: x})) || "number:8")
     }
 
     setColumnWidth(x, value) {
         value = Math.max(2, value)
-        p.addTriple(this.uuid, JSON.stringify({columnWidth: x}), value)
+        t.addTriple({a: this.uuid, b: JSON.stringify({columnWidth: x}), c: "number:" + value})
     } 
 }   
 
+const tablesRoot = "tables:root"
+
 class TablesApplication {
+
     getTables() {
-        const result = []
-        const bcMap = p.findBC(getTablesName(), "table")
-        for (let key in bcMap) {
-            const uuid = bcMap[key]
-            if (uuid) result.push(new Table(uuid))
-        }
-        return result
+        return t.find(tablesRoot, "hasTable").map(uuid => new Table(uuid))
     }
 
     addTable(table) {
-        p.addTriple(getTablesName(), {table: table.uuid}, table.uuid)
+        t.addTriple({a: tablesRoot, b: "hasTable", c: table.uuid, o: "insert"})
     }
 
     deleteItem(table) {
-        p.addTriple(getTablesName(), {table: table.uuid}, null)
+        t.addTriple({a: tablesRoot, b: "hasTable", c: table.uuid, o: "remove"})
     }
 
     getTableForName(name) {
@@ -163,6 +167,7 @@ function displayTable(table) {
         currentTable = t
         if (!t) throw new Error("No table named: " + tableName)
 
+        // eslint-disable-next-line no-unused-vars
         const [discard0, discard1, discard2, letter, discard3, number] = new RegExp(cellRefRegex).exec(cellName)
         const c = letter.charCodeAt(0) - "a".charCodeAt(0)
         const r = parseInt(number) - 1
@@ -202,6 +207,7 @@ function displayTable(table) {
         return result
     }
 
+    // eslint-disable-next-line no-unused-vars
     function _(cellName, tableName) {
         return cell(cellName, tableName)
     }
@@ -293,17 +299,17 @@ function displayTable(table) {
                     onfocus: () => focusedCell = {tableName: table.getName(), column: column, row: row },
                     value: displayText, 
                     onchange: event => table.setCell(column, row, event.target.value),
-                    oncopy: (e) => {
+                    oncopy: (event) => {
                         event.redraw = false
                         lastCellCopiedFrom = {row, column}
                         lastTextCopied = getSelection(e.target)
                     },
-                    oncut: (e) => {
+                    oncut: (event) => {
                         event.redraw = false
                         lastCellCopiedFrom = {row, column}
                         lastTextCopied = getSelection(e.target)
                     },
-                    onpaste: (e) => {
+                    onpaste: (event) => {
                         event.redraw = false
 
                         // Get pasted data via clipboard API
@@ -356,23 +362,20 @@ function displayTables() {
 
 const TablesViewer = {
     view: function() {
-        // console.log("p.getLatestSequence() ", p.getLatestSequence(),  p.isOffline())
         const result = m(".main.ma1", [
-            p.isOffline() ? m("div.h2.pa1.ba.b--red", "OFFLINE", m("button.ml1", { onclick: p.goOnline }, "Try to go online")) : [],
-            nameTracker.displayNameEditor(),
-            p.isLoaded() ?
+            Toast.viewToast(),
+            t.getLoadingState().isFileLoaded ? 
                 displayTables() :
-                "Loading... " + (p.getLatestSequence() || "")
+                "Loading... " 
         ])
         return result
     }
 }
 
 async function startup() {
-    p.setRedrawFunction(m.redraw)
-    p.setStreamId(getTablesName())
-    await p.updateFromStorage()
-    m.redraw()
+    const filePathFromParams = decodeURI(window.location.pathname)
+    t.setFileName(filePathFromParams)
+    await t.loadFileContents()
 }
 
 m.mount(document.body, TablesViewer)
