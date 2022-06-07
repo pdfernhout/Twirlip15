@@ -173,10 +173,12 @@ async function newFile() {
             const name = newFileName || "Unnamed"
             if (value === "chat") {
                 newFileName = name + ".twirlip-chat.jsonl"
-            } else if (value === "ibis") {
-                newFileName = name + ".twirlip-ibis.jsonl"
             } else if (value === "edit") {
                 newFileName = name + ".txt"
+            } else if (value === "ibis") {
+                newFileName = name + ".twirlip-ibis.jsonl"
+            } else if (value === "tables") {
+                newFileName = name + ".twirlip-tables.jsonl"
             } else if (value === "triples") {
                 newFileName = name + ".twirlip-triples.jsonl"
             }
