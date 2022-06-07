@@ -144,6 +144,10 @@ let lastTextCopied = ""
 // Other cell refs need to be separated from operators by spaces.
 const cellRefRegex = /(^| |=|\+|-|\*|\/|\(|\))(\$?)([a-z]+)(\$?)([0-9]+)/g
 
+function nextCharacter(c) {
+    return String.fromCharCode(c.charCodeAt(0) + 1)
+}
+
 function displayTable(table) {
     const width = table.getWidth()
     const height =  table.getHeight()
@@ -210,6 +214,26 @@ function displayTable(table) {
     // eslint-disable-next-line no-unused-vars
     function _(cellName, tableName) {
         return cell(cellName, tableName)
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    function sum(range) {
+        console.log("sum", range)
+        const [start, end] = range.split(":")
+        let total = 0
+        let cellName = start
+        while (cellName <= end) {
+            const callValue = cell(cellName)
+            if (!isNaN(callValue)) total += cell(cellName)
+            if (start[1] !== end[1]) {
+                cellName = cellName[0] + nextCharacter(cellName[1]) 
+            } else if (start[0] !== end[0]) {
+                cellName = nextCharacter(cellName[0]) + cellName[1]
+            } else {
+                break
+            }
+        }
+        return total
     }
 
     function setWidth(column) {

@@ -30,3 +30,13 @@
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c4\",\"cable\")","index":30}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c5\",\"cable\")","index":31}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":4}","c":"text:from cable:","index":32}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(b1:b4)","index":33}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(\"b1:b4\"))","index":34}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"columnWidth\":1}","c":"number:12","index":35}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(\"b1:b4\")","index":36}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"text:==========","index":37}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"text:--------","index":38}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":6}","c":"text:=sum(\"b1:b5\")","index":39}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":6}","c":"text:Total:","index":40}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:12","index":41}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:10","index":42}
