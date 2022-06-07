@@ -40,3 +40,7 @@
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":6}","c":"text:Total:","index":40}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:12","index":41}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:10","index":42}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":7}","c":"text:10","index":43}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":3,\"y\":7}","c":"text:20","index":44}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":7}","c":"text:5","index":45}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":4,\"y\":7}","c":"text:=sum(\"b8:d8\")","index":46}
