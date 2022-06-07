@@ -15,7 +15,7 @@ export function Triplestore(showError, fileName) {
     let triples = []
     let isFileLoaded = false
     let isFileLoading = false
-    let isFileSaveInProgress = false
+    let isFileSaveInProgress = 0
 
     const TwirlipServer = new Twirlip15ServerAPI(showError)
 
@@ -24,9 +24,13 @@ export function Triplestore(showError, fileName) {
     }
 
     async function createNewFile(successCallback) {
-        isFileSaveInProgress = true
-        const apiResult = await TwirlipServer.fileSave(fileName, "")
-        isFileSaveInProgress = false
+        isFileSaveInProgress++
+        let apiResult
+        try {
+            apiResult = await TwirlipServer.fileSave(fileName, "")
+        } finally {
+            isFileSaveInProgress--
+        }
         if (apiResult && successCallback) {
             successCallback()
         }
@@ -49,8 +53,12 @@ export function Triplestore(showError, fileName) {
                     try {
                         triple = JSON.parse(line)
                     } catch (error) {
-                        console.log("problem parsing line in file", error, line)
+                        console.log("problem parsing line:", "\"" + line + "\"", "error:", error)
                         continue
+                    }
+                    if (triple.a === undefined|| triple.b === undefined || triple.c === undefined) {
+                        console.log("problem parsing line:", "\"" + line + "\"", "error:", "a, b, or c is undefined")
+                        continue  
                     }
                     triple.index = index++
                     addTriple(triple, false)
@@ -63,10 +71,14 @@ export function Triplestore(showError, fileName) {
     
     async function appendFile(stringToAppend, successCallback) {
         if (!fileName) return showError(new Error("fileName not set yet"))
-        if (isFileSaveInProgress) return showError(new Error("Previous file save still in progress!"))
-        isFileSaveInProgress = true
-        const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
-        isFileSaveInProgress = false
+        // if (isFileSaveInProgress) return showError(new Error("Previous file save still in progress!"))
+        isFileSaveInProgress++
+        let apiResult
+        try {
+            apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
+        } finally {
+            isFileSaveInProgress--
+        }
         if (apiResult && successCallback) {
             successCallback()
         }
