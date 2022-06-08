@@ -8,6 +8,7 @@ export const applicationList = [
     "ideas",
     "mail",
     "search",
+    "sketcher",
     "tables",
     "triples",
     "view-md"

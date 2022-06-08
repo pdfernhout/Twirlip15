@@ -1,0 +1,11 @@
+{"a":"sketcher:root","b":"currentSketch","c":"sketch:d8f78e07-1d80-44ec-a9d8-eb145d7d20c2","index":1}
+{"a":"sketchItem:f7c11d01-5e6a-476f-9767-aac202affc6c","b":"type","c":"sketchType:circle","o":"replace","index":2}
+{"a":"sketchItem:f7c11d01-5e6a-476f-9767-aac202affc6c","b":"bounds","c":"json:{\"x1\":0,\"y1\":0,\"x2\":50,\"y2\":50}","o":"replace","index":3}
+{"a":"sketch:d8f78e07-1d80-44ec-a9d8-eb145d7d20c2","b":"items","c":"sketchItem:f7c11d01-5e6a-476f-9767-aac202affc6c","o":"insert","index":4}
+{"a":"sketchItem:41b672c9-d271-436e-ae34-add021fdee89","b":"type","c":"sketchType:rectangle","o":"replace","index":5}
+{"a":"sketchItem:41b672c9-d271-436e-ae34-add021fdee89","b":"bounds","c":"json:{\"x1\":0,\"y1\":0,\"x2\":50,\"y2\":50}","o":"replace","index":6}
+{"a":"sketch:d8f78e07-1d80-44ec-a9d8-eb145d7d20c2","b":"items","c":"sketchItem:41b672c9-d271-436e-ae34-add021fdee89","o":"insert","index":7}
+{"a":"sketchItem:1bde557a-3b86-489e-a7bf-0e921c4b448c","b":"type","c":"sketchType:line","o":"replace","index":8}
+{"a":"sketchItem:1bde557a-3b86-489e-a7bf-0e921c4b448c","b":"bounds","c":"json:{\"x1\":0,\"y1\":0,\"x2\":50,\"y2\":50}","o":"replace","index":9}
+{"a":"sketchItem:1bde557a-3b86-489e-a7bf-0e921c4b448c","b":"strokeWidth","c":"5:undefined","o":"replace","index":10}
+{"a":"sketch:d8f78e07-1d80-44ec-a9d8-eb145d7d20c2","b":"items","c":"sketchItem:1bde557a-3b86-489e-a7bf-0e921c4b448c","o":"insert","index":11}

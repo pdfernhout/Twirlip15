@@ -177,6 +177,8 @@ async function newFile() {
                 newFileName = name + ".txt"
             } else if (value === "ibis") {
                 newFileName = name + ".twirlip-ibis.jsonl"
+            } else if (value === "sketcher") {
+                newFileName = name + ".twirlip-sketcher.jsonl"
             } else if (value === "tables") {
                 newFileName = name + ".twirlip-tables.jsonl"
             } else if (value === "triples") {

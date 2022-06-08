@@ -1,28 +1,26 @@
 "use strict"
 /* eslint-disable no-console */
 
+/* global m */
+
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
 
-import NameTracker from "./NameTracker.js"
+import { ItemMap, drawPolylines } from "../../common/ItemMap.js"
 
-import { ItemMap, drawPolylines } from "./ItemMap.js"
+import { UUID } from "../../common/UUID.js"
+import { Toast } from "../../common/Toast.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
-import { Pointrel20190820 } from "./Pointrel20190820.js"
-
-const p = new Pointrel20190820()
-p.setDefaultApplicationName("sketcher")
-
-const nameTracker = new NameTracker({
-    hashNameField: "sketch",
-    displayNameLabel: "Sketch",
-    defaultName: "test",
-    nameChangedCallback: updateSketch
-})
-
-function getSketchName() {
-    return "sketch:" + nameTracker.name
+function showError(error) {
+    console.log("error", error)
+    const errorMessage = error.message
+        ? error.message
+        : error
+    Toast.toast(errorMessage)
 }
+
+const t = Triplestore(showError)
 
 let sketch = null
 
@@ -31,25 +29,7 @@ let sketchViewportHeight = 500
 const itemMap = ItemMap()
 
 function getCurrentSketchUUID() {
-    return p.findC("sketcher", "current-sketch")
-}
-
-function resetForSketchChange() {
-    let currentSketch = getCurrentSketchUUID() || p.uuidv4()
-    sketch = new Sketch(currentSketch)
-    itemMap.initDragInformation()
-}
-
-async function startup() {
-    p.setRedrawFunction(m.redraw)
-    updateSketch()
-}
-
-async function updateSketch() {
-    p.setStreamId(getSketchName())
-    await p.updateFromStorage(true)
-    resetForSketchChange()
-    m.redraw()
+    return t.findLast("sketcher:root", "currentSketch")
 }
 
 function raiseItem() {
@@ -98,21 +78,83 @@ function splitText(text, bounds) {
     return result
 }
 
-class Item {
+function convertText(textString) {
+    const prefix = "text:"
+    if (!textString.startsWith(prefix)) return ""
+    return textString.substring(prefix.length)
+}
+
+function convertNumber(numberString) {
+    const prefix = "number:"
+    if (!numberString.startsWith(prefix)) return NaN
+    return parseFloat(numberString.substring(prefix.length))
+}
+
+function convertJSON(jsonString) {
+    const prefix = "json:"
+    if (!jsonString.startsWith(prefix)) return undefined
+    return JSON.parse(jsonString.substring(prefix.length))
+}
+
+class ObjectInTriplestore {
+    constructor(triplestore, uuid, type) {
+        this.triplestore = triplestore
+        this.uuid = uuid || (type + ":" + UUID.uuidv4())
+    }
+
+    getField(fieldName, type, defaultValue) {
+        const value = this.triplestore.findLast(this.uuid, fieldName)
+        if (value === null) return defaultValue
+        if (type === "text") return convertText(value)
+        if (type === "number") return convertNumber(value)
+        if (type === "json") return convertJSON(value)
+        return value.substring(type.length)
+    }
+
+    setField(fieldName, type, value) {
+        let textToStore
+        if (type === "json") {
+            textToStore = "json:" + JSON.stringify(value)
+        } else {
+            textToStore = type + ":" + value
+        }
+        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: textToStore, o: "replace"})
+    }
+
+    getFieldSet(fieldName, itemCallback) {
+        const items = this.triplestore.find(this.uuid, fieldName)
+        if (itemCallback) return items.map(itemCallback)
+        return items
+    }
+
+    insertIntoFieldSet(fieldName, itemUUID) {
+        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: itemUUID, o: "insert"})
+    }
+
+    removeFromFieldSet(fieldName, itemUUID) {
+        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: itemUUID, o: "remove"})
+    }
+
+    clearFieldSet(fieldName) {
+        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: null, o: "clear"})
+    }  
+}
+
+class Item extends ObjectInTriplestore {
     constructor(uuid) {
-        this.uuid = uuid || p.uuidv4()
+        super(t, uuid, "sketchItem")
     }
 
     getType() {
-        return p.findC(this.uuid, "type")
+        return this.getField("type", "sketchType")
     }
 
     setType(type) {
-        p.addTriple(this.uuid, "type", type)
+        this.setField("type", "sketchType", type)
     }
 
     getBounds() {
-        let bounds = JSON.parse(p.findC(this.uuid, "bounds") || "{}")
+        let bounds = this.getField("bounds", "json", {})
         if (!bounds || (!bounds.x1 && !bounds.y1 && !bounds.x2 && !bounds.y2)) {
             bounds =  { x1: 0, y1: 0, x2: 20, y2: 20 }
         }
@@ -120,65 +162,65 @@ class Item {
     }
 
     setBounds(bounds) {
-        p.addTriple(this.uuid, "bounds", JSON.stringify(bounds))
+        this.setField("bounds", "json", bounds)
     }
 
     getLayer() {
-        return JSON.parse(p.findC(this.uuid, "layer") || "1")
+        return this.getField("layer", "number", 1)
     }
 
     setLayer(layer) {
-        p.addTriple(this.uuid, "layer", JSON.stringify(layer))
+        this.setField("layer", "number", layer)
     }
 
     getText() {
-        return p.findC(this.uuid, "text") || ""
+        return this.getField("text", "text", "")
     }
 
     setText(text) {
-        p.addTriple(this.uuid, "text", text)
+        this.setField("text", "text", text)
     }
 
     getStroke() {
-        return p.findC(this.uuid, "stroke") || "#006600"
+        return this.getField("stroke", "cssStroke", "#006600")
     }
 
     setStroke(stroke) {
-        p.addTriple(this.uuid, "stroke", stroke)
+        this.setField("stroke", "cssStroke", stroke)
     }
 
     getStrokeWidth() {
-        return p.findC(this.uuid, "strokeWidth") || "1"
+        return this.getField("strokeWidth", "number", 1)
     }
 
     setStrokeWidth(width) {
-        p.addTriple(this.uuid, "strokeWidth", width)
+        this.setField("strokeWidth", width)
     }
 
     getFill() {
-        return p.findC(this.uuid, "fill") || "#00cc00"
+        return this.getField("fill", "cssColor", "#00cc00")
     }
 
     setFill(text) {
-        p.addTriple(this.uuid, "fill", text)
+        this.setField("fill", "cssColor", text)
     }
 
     // To support sketch of segments of polylines
     getExtraData() {
-        return p.findC(this.uuid, "extraData") || null
+        return this.getField("extraData", "json", null)
     }
 
     setExtraData(extraData) {
-        p.addTriple(this.uuid, "extraData", extraData)
+        this.setField("extraData","json", extraData)
     }
 
     getArrows() {
-        return p.findC(this.uuid, "arrows") || "none"
+        return this.getField("arrows", "arrowsEnum", "none")
     }
 
     // none, start, end, both
     setArrows(arrows) {
-        p.addTriple(this.uuid, "arrows", arrows)
+        this.setField("arrows", "arrowsEnum", arrows)
     }
 
     // dragOffset and dragHandleName may both be undefined -- used for drawing while dragging
@@ -276,31 +318,25 @@ class Item {
     }
 }
 
-class Sketch {
+class Sketch extends ObjectInTriplestore {
     constructor(uuid) {
-        this.uuid = uuid
+        super(t, uuid, "sketch")
     }
 
     getItems() {
-        const result = []
-        const bcMap = p.findBC(this.uuid, "item")
-        for (let key in bcMap) {
-            const uuid = bcMap[key]
-            if (uuid) result.push(new Item(uuid))
-        }
-        return result
+        return this.getFieldSet("items", uuid => new Item(uuid))
     }
 
     addItem(item) {
-        p.addTriple(this.uuid, { item: item.uuid }, item.uuid)
+        this.insertIntoFieldSet("items", item.uuid)
     }
 
     deleteItem(item) {
-        p.addTriple(this.uuid, { item: item.uuid }, null)
+        this.removeFromFieldSet("items", item.uuid)
     }
 
     getExtent() {
-        let extent = JSON.parse(p.findC(this.uuid, "extent") || "{}")
+        let extent = this.getField("extent", "json", {})
         if (!extent.width || !extent.height) {
             extent = { width: 600, height: 200 }
         }
@@ -308,7 +344,7 @@ class Sketch {
     }
 
     setExtent(extent) {
-        p.addTriple(this.uuid, "extent", JSON.stringify(extent))
+        this.setField("extent", "json", extent)
     }
 
     setWidth(width) {
@@ -330,37 +366,37 @@ function calculateBounds() {
 }
 
 function addRectangle() {
-    p.newTransaction("sketcher/addRectangle")
+    // MAYBE p.newTransaction("sketcher/addRectangle")
     const item = new Item()
     item.setType("rectangle")
     item.setBounds(calculateBounds())
     sketch.addItem(item)
-    p.sendCurrentTransaction()
+    // MAYBE p.sendCurrentTransaction()
 }
 
 function addCircle() {
-    p.newTransaction("sketcher/addCircle")
+    // MAYBE p.newTransaction("sketcher/addCircle")
     const item = new Item()
     item.setType("circle")
     item.setBounds(calculateBounds())
     sketch.addItem(item)
-    p.sendCurrentTransaction()
+    // MAYBE p.sendCurrentTransaction()
 }
 
 function addLine() {
-    p.newTransaction("sketcher/addLine")
+    // MAYBE p.newTransaction("sketcher/addLine")
     const item = new Item()
     item.setType("line")
     item.setBounds(calculateBounds())
     item.setStrokeWidth("5")
     sketch.addItem(item)
-    p.sendCurrentTransaction()
+    // MAYBE p.sendCurrentTransaction()
 }
 
 function addFreehandScribble() {
     const scribble = itemMap.toggleFreehandScribble()
     if (scribble && scribble.bounds) {
-        p.newTransaction("sketcher/addPolylines")
+        // MAYBE p.newTransaction("sketcher/addPolylines")
         const item = new Item()
         item.setType("polylines")
         item.setStrokeWidth("3")
@@ -369,20 +405,20 @@ function addFreehandScribble() {
         item.setBounds(scribble.bounds)
         item.setExtraData(scribble.scribbleSegments)
         sketch.addItem(item)
-        p.sendCurrentTransaction()
+        // MAYBE p.sendCurrentTransaction()
     }
 }
 
 function addText() {
     const text = prompt("Text to add?")
     if (!text) return
-    p.newTransaction("sketcher/addText")
+    // MAYBE p.newTransaction("sketcher/addText")
     const item = new Item()
     item.setType("text")
     item.setBounds(calculateBounds())
     item.setText(text)
     sketch.addItem(item)
-    p.sendCurrentTransaction()
+    // MAYBE p.sendCurrentTransaction()
 }
 
 function exportSketchText() {
@@ -512,24 +548,31 @@ function displaySketch() {
 }
 
 function promptToCreateSketch() {
-    const uuid = prompt("Start a sketch with this UUID?", sketch.uuid)
+    const uuid = prompt("Start a sketch with this UUID?", "sketch:" + UUID.uuidv4())
     if (!uuid) return
-    sketch.uuid = uuid
-    p.addTriple("sketcher", "current-sketch", uuid)
+    sketch = new Sketch(uuid)
+    t.addTriple({a: "sketcher:root", b: "currentSketch", c: uuid})
 }
 
 const SketchViewer = {
     view: function() {
         return m(".main.ma1", [
-            p.isOffline() ? m("div.h2.pa1.ba.b--red", "OFFLINE", m("button.ml1", { onclick: p.goOnline }, "Try to go online")) : [],
-            nameTracker.displayNameEditor(),
-            p.isLoaded()
+            t.getLoadingState().isFileLoaded
                 ? getCurrentSketchUUID()
                     ? displaySketch()
                     : m("button.ma3", {onclick: promptToCreateSketch}, "No sketch here yet. Click to start a sketch.")
-                : "Loading... " + (p.getLatestSequence() || "")
+                : "Loading... "
         ])
     }
+}
+
+async function startup() {
+    const filePathFromParams = decodeURI(window.location.pathname)
+    t.setFileName(filePathFromParams)
+    await t.loadFileContents()
+    let currentSketch = getCurrentSketchUUID()
+    if (currentSketch) sketch = new Sketch(currentSketch)
+    // itemMap.initDragInformation()
 }
 
 m.mount(document.body, SketchViewer)
