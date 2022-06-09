@@ -19,6 +19,7 @@ function showError(error) {
         : error
     Toast.toast(errorMessage)
 }
+window.addEventListener("error", event => showError(event))
 
 const t = Triplestore(showError)
 
@@ -108,10 +109,13 @@ class ObjectInTriplestore {
         if (type === "text") return convertText(value)
         if (type === "number") return convertNumber(value)
         if (type === "json") return convertJSON(value)
-        return value.substring(type.length)
+        return value.substring(type.length + 1)
     }
 
     setField(fieldName, type, value) {
+        if (value === undefined) {
+            throw new Error("value should not be undefined for " + fieldName + " with type " + type)
+        }
         let textToStore
         if (type === "json") {
             textToStore = "json:" + JSON.stringify(value)
@@ -146,11 +150,11 @@ class Item extends ObjectInTriplestore {
     }
 
     getType() {
-        return this.getField("type", "sketchType")
+        return this.getField("type", "sketchItemType")
     }
 
     setType(type) {
-        this.setField("type", "sketchType", type)
+        this.setField("type", "sketchItemType", type)
     }
 
     getBounds() {
@@ -190,11 +194,11 @@ class Item extends ObjectInTriplestore {
     }
 
     getStrokeWidth() {
-        return this.getField("strokeWidth", "number", 1)
+        return this.getField("strokeWidth", "cssStrokeWidth", "1")
     }
 
     setStrokeWidth(width) {
-        this.setField("strokeWidth", width)
+        this.setField("strokeWidth", "cssStrokeWidth", width)
     }
 
     getFill() {
@@ -215,12 +219,12 @@ class Item extends ObjectInTriplestore {
     }
 
     getArrows() {
-        return this.getField("arrows", "arrowsEnum", "none")
+        return this.getField("arrows", "arrowsType", "none")
     }
 
     // none, start, end, both
     setArrows(arrows) {
-        this.setField("arrows", "arrowsEnum", arrows)
+        this.setField("arrows", "arrowsType", arrows)
     }
 
     // dragOffset and dragHandleName may both be undefined -- used for drawing while dragging
@@ -551,12 +555,14 @@ function promptToCreateSketch() {
     const uuid = prompt("Start a sketch with this UUID?", "sketch:" + UUID.uuidv4())
     if (!uuid) return
     sketch = new Sketch(uuid)
+    itemMap.initDragInformation()
     t.addTriple({a: "sketcher:root", b: "currentSketch", c: uuid})
 }
 
 const SketchViewer = {
     view: function() {
         return m(".main.ma1", [
+            Toast.viewToast(),
             t.getLoadingState().isFileLoaded
                 ? getCurrentSketchUUID()
                     ? displaySketch()
@@ -571,8 +577,10 @@ async function startup() {
     t.setFileName(filePathFromParams)
     await t.loadFileContents()
     let currentSketch = getCurrentSketchUUID()
-    if (currentSketch) sketch = new Sketch(currentSketch)
-    // itemMap.initDragInformation()
+    if (currentSketch) {
+        sketch = new Sketch(currentSketch)
+        itemMap.initDragInformation()
+    }
 }
 
 m.mount(document.body, SketchViewer)

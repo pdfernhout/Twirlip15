@@ -1,6 +1,8 @@
 // ItemMap is a surface for dragging items around on
 // and also making freehand scribbles.
 
+/* global m */
+
 // Rounding choices to reduce noise in JSON files...
 // const round = value => Math.round(value)
 const round = value => Math.round(value * 100) / 100
@@ -35,8 +37,8 @@ export function ItemMap() {
         selectedItems = []
         draggedHandle = null // { item: null, handleName: "x1y1", originalBounds: null }
         isDragging = false
-        dragStart = { x: 0, y:0 }
-        dragDelta = { x: 0, y:0 }
+        dragStart = { x: 0, y: 0 }
+        dragDelta = { x: 0, y: 0 }
         wasMouseDownOnItemOrHandle = false
     }
 
@@ -51,7 +53,7 @@ export function ItemMap() {
     function selectItem(item) {
         if (isItemSelected(item)) return
         const index = selectedItems.indexOf(item)
-        selectedItems.push(item)
+        if (index === -1) selectedItems.push(item)
     }
 
     function unselectItem(item) {
@@ -322,7 +324,7 @@ export function ItemMap() {
             totalBounds.x2 = Math.max(totalBounds.x2, itemBounds.x1, itemBounds.x2)
             totalBounds.y2 = Math.max(totalBounds.y2, itemBounds.y1, itemBounds.y2)
         })
-        /* If wanted to have integert bounds
+        /* If wanted to have integer bounds
         totalBounds.x1 = Math.floor(totalBounds.x1)
         totalBounds.y1 = Math.floor(totalBounds.y1)
         totalBounds.x2 = Math.ceil(totalBounds.x2)
