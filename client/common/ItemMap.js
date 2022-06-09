@@ -17,6 +17,33 @@ export function drawPolylines(segments, style) {
     })
 }
 
+function calculateOffsetForScrolledItemMap(element) {
+    if (element.classList.contains("ItemMap")) {
+        const div = element.parentElement
+        const divPosition = getElementPositionOnPage(div)
+        return { x: div.scrollLeft - divPosition.x, y: div.scrollTop - divPosition.y}
+    }
+    if (!element.parentElement) throw new Error("missing parent searching for ItemMap")
+    return calculateOffsetForScrolledItemMap(element.parentElement)
+}
+
+// Derived from: https://stackoverflow.com/questions/3741056/get-real-position-of-objects-in-javascript-with-chrome
+function getElementPositionOnPage(element) {
+    let x = 0
+    let y = 0
+
+    while (element.offsetParent) {
+        x += element.offsetLeft
+        y += element.offsetTop
+        element = element.offsetParent
+    }
+
+    x += element.offsetLeft
+    y += element.offsetTop
+
+    return { x, y }
+}
+
 // Items passed to ItemMap need to have these attributes and methods:
 // uuid, getBounds(), setBounds(), getType(), getLayer(), setLayer(), draw()
 
@@ -171,21 +198,29 @@ export function ItemMap() {
             isDragging = true
         }
 
-        dragStart = { x: round(event.offsetX), y: round(event.offsetY) }
+        const extraOffset = calculateOffsetForScrolledItemMap(event.target)
+        const x = round(event.pageX + extraOffset.x)
+        const y = round(event.pageY + extraOffset.y)
+
+        dragStart = { x, y }
         dragDelta = { x: 0, y: 0 }
 
         if (isScribbling) {
-            scribblePoints = [{ x: round(event.offsetX), y: round(event.offsetY) }]
+            scribblePoints = [{ x, y }]
             scribbleSegments.push(scribblePoints)
         }
     }
 
     function sketchMouseMove(event) {
+        const extraOffset = calculateOffsetForScrolledItemMap(event.target)
+        const x = round(event.pageX + extraOffset.x)
+        const y = round(event.pageY + extraOffset.y)
+
         if (isScribbling && scribblePoints) {
-            scribblePoints.push({ x: round(event.offsetX), y: round(event.offsetY) })
+            scribblePoints.push({ x, y })
         } else if (isDragging) {
-            const dx = round(event.offsetX) - dragStart.x
-            const dy = round(event.offsetY) - dragStart.y
+            const dx = x - dragStart.x
+            const dy = y - dragStart.y
             if (dragDelta.x === dx && dragDelta.y === dy) {
                 event.redraw = false
                 return
