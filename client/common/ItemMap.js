@@ -11,8 +11,8 @@ const round = value => Math.round(value * 100) / 100
 export function drawPolylines(segments, style) {
     return segments.map(sketchSegment => {
         return m("polyline", {
-            points: sketchSegment.map(point => "" +  point.x + "," + point.y).join(" "),
-            style: style ? style : "fill:none;stroke:black;stroke-width:3" 
+            points: sketchSegment.map(point => "" + point.x + "," + point.y).join(" "),
+            style: style ? style : "fill:none;stroke:black;stroke-width:3"
         })
     })
 }
@@ -21,7 +21,7 @@ function calculateOffsetForScrolledItemMap(element) {
     if (element.classList.contains("ItemMap")) {
         const div = element.parentElement
         const divPosition = getElementPositionOnPage(div)
-        return { x: div.scrollLeft - divPosition.x, y: div.scrollTop - divPosition.y}
+        return { x: div.scrollLeft - divPosition.x, y: div.scrollTop - divPosition.y }
     }
     if (!element.parentElement) throw new Error("missing parent searching for ItemMap")
     return calculateOffsetForScrolledItemMap(element.parentElement)
@@ -51,7 +51,7 @@ export function ItemMap() {
 
     let selectedItems
     let draggedHandle
-    let isDragging 
+    let isDragging
     let dragStart
     let dragDelta
     let wasMouseDownOnItemOrHandle
@@ -59,6 +59,17 @@ export function ItemMap() {
     let isScribbling = false
     let scribblePoints = null
     let scribbleSegments = []
+
+    let itemCreationCallback = null
+    let itemCompletionCallback = null
+
+    function setItemCreationCallback(callback) {
+        itemCreationCallback = callback
+    }
+
+    function setItemCompletionCallback(callback) {
+        itemCompletionCallback = callback
+    }
 
     function initDragInformation() {
         selectedItems = []
@@ -119,25 +130,25 @@ export function ItemMap() {
 
         if (!allowNegativeVolume) {
             switch (handleName) {
-            case "x1y1":
-                bounds.x1 = Math.min(bounds.x1, bounds.x2)
-                bounds.y1 = Math.min(bounds.y1, bounds.y2)
-                break
-            case "x1y2":
-                bounds.x1 = Math.min(bounds.x1, bounds.x2)
-                bounds.y2 = Math.max(bounds.y1, bounds.y2)
-                break
-            case "x2y1":
-                bounds.x2 = Math.max(bounds.x1, bounds.x2)
-                bounds.y1 = Math.min(bounds.y1, bounds.y2)
-                break
-            case "x2y2":
-                bounds.x2 = Math.max(bounds.x1, bounds.x2)
-                bounds.y2 = Math.max(bounds.y1, bounds.y2)
-                break
-            default:
-                console.log("copyRectWithHandleDelta: Unexpected handleName", handleName)
-                break
+                case "x1y1":
+                    bounds.x1 = Math.min(bounds.x1, bounds.x2)
+                    bounds.y1 = Math.min(bounds.y1, bounds.y2)
+                    break
+                case "x1y2":
+                    bounds.x1 = Math.min(bounds.x1, bounds.x2)
+                    bounds.y2 = Math.max(bounds.y1, bounds.y2)
+                    break
+                case "x2y1":
+                    bounds.x2 = Math.max(bounds.x1, bounds.x2)
+                    bounds.y1 = Math.min(bounds.y1, bounds.y2)
+                    break
+                case "x2y2":
+                    bounds.x2 = Math.max(bounds.x1, bounds.x2)
+                    bounds.y2 = Math.max(bounds.y1, bounds.y2)
+                    break
+                default:
+                    console.log("copyRectWithHandleDelta: Unexpected handleName", handleName)
+                    break
             }
         }
 
@@ -192,18 +203,31 @@ export function ItemMap() {
     function mouseDownInSketch(event) {
         // This happens even when an item or handle has a mouse down
 
-        // Reset selection if mouse down outside of any item or handle
-        if (!wasMouseDownOnItemOrHandle) {
-            if (!event.ctrlKey && !event.shiftKey) deselectAllItems()
-            isDragging = true
-        }
-
         const extraOffset = calculateOffsetForScrolledItemMap(event.target)
         const x = round(event.pageX + extraOffset.x)
         const y = round(event.pageY + extraOffset.y)
 
         dragStart = { x, y }
         dragDelta = { x: 0, y: 0 }
+
+        if (!isScribbling && itemCreationCallback) {
+            const bounds = { x1: x, y1: y, x2: x, y2: y }
+            const createdItem = itemCreationCallback(bounds)
+            itemCreationCallback = null
+            if (createdItem) {
+                deselectAllItems()
+                selectedItems = [createdItem]
+                wasMouseDownOnItemOrHandle = true
+                isDragging = true
+                draggedHandle = { item: createdItem, handleName: "x2y2", originalBounds: createdItem.getBounds() }
+            } else {
+                itemCompletionCallback = null
+            }
+        } else if (!wasMouseDownOnItemOrHandle) {
+            // Reset selection if mouse down outside of any item or handle
+            if (!event.ctrlKey && !event.shiftKey) deselectAllItems()
+            isDragging = true
+        }
 
         if (isScribbling) {
             scribblePoints = [{ x, y }]
@@ -233,7 +257,7 @@ export function ItemMap() {
     }
 
     function areRectsIntersecting(rect1, rect2) {
-        return (rect1.x1 <= rect2.x2 && rect1.x2 >= rect2.x1 && rect1.y1 <= rect2.y2 && rect1.y2 >= rect2.y1) 
+        return (rect1.x1 <= rect2.x2 && rect1.x2 >= rect2.x1 && rect1.y1 <= rect2.y2 && rect1.y2 >= rect2.y1)
     }
 
     function rectForGroupSelection() {
@@ -260,10 +284,10 @@ export function ItemMap() {
 
         function drawHandle(item, name, x, y) {
             if (y === undefined) throw new Error("bug")
-            return  m("circle", {
+            return m("circle", {
                 cx: x,
                 cy: y,
-                r: 5, 
+                r: 5,
                 style: {
                     stroke: "#006600",
                     fill: "#000000"
@@ -276,7 +300,7 @@ export function ItemMap() {
             return selectedItems.map(item => {
                 const itemBounds = item.getBounds()
                 const bounds = (isDragging && wasMouseDownOnItemOrHandle)
-                    ? (draggedHandle 
+                    ? (draggedHandle
                         ? copyRectWithHandleDelta(itemBounds, draggedHandle.handleName, dragDelta, item.getType() === "line")
                         : copyRectWithDelta(itemBounds, dragDelta))
                     : itemBounds
@@ -298,7 +322,7 @@ export function ItemMap() {
                     y: selectionRect.y1,
                     width: selectionRect.x2 - selectionRect.x1,
                     height: selectionRect.y2 - selectionRect.y1,
-                    style: { fill: "grey", stroke: "#000000", "fill-opacity": 0.1, "stroke-opacity": 0.5 } 
+                    style: { fill: "grey", stroke: "#000000", "fill-opacity": 0.1, "stroke-opacity": 0.5 }
                 })
             }
             return []
@@ -327,6 +351,10 @@ export function ItemMap() {
                     const newBounds = copyRectWithHandleDelta(item.getBounds(), draggedHandle.handleName, dragDelta, item.getType() === "line")
                     item.setBounds(newBounds)
                 })
+                if (itemCompletionCallback) {
+                    itemCompletionCallback()
+                    itemCompletionCallback = null
+                }
             } else if (wasMouseDownOnItemOrHandle) {
                 selectedItems.forEach(item => {
                     const newBounds = copyRectWithDelta(item.getBounds(), dragDelta)
@@ -349,7 +377,7 @@ export function ItemMap() {
     }
 
     function calculateBoundsForItems(items) {
-        if (!items.length) return {x1: 0, y1: 0, x2: 0, y2: 0}
+        if (!items.length) return { x1: 0, y1: 0, x2: 0, y2: 0 }
         const totalBounds = items[0].getBounds()
         items.forEach(item => {
             const itemBounds = item.getBounds()
@@ -438,8 +466,8 @@ export function ItemMap() {
             const newScribbleSegments = scribbleSegments
             scribbleSegments = []
             const bounds = calculateBoundsForScribble(newScribbleSegments)
-            adjustPointsForScribble(newScribbleSegments, {x: bounds.x1, y:bounds.y1})
-            return {bounds, scribbleSegments: newScribbleSegments}
+            adjustPointsForScribble(newScribbleSegments, { x: bounds.x1, y: bounds.y1 })
+            return { bounds, scribbleSegments: newScribbleSegments }
         } else {
             isScribbling = true
             scribbleSegments = []
@@ -449,7 +477,7 @@ export function ItemMap() {
     }
 
     function viewItemMap(items, extent) {
-        return m("svg.ItemMap", 
+        return m("svg.ItemMap",
             {
                 width: extent.width,
                 height: extent.height,
@@ -471,7 +499,7 @@ export function ItemMap() {
             m("rect", {
                 width: extent.width,
                 height: extent.height,
-                style: { fill: "none", stroke: isScribbling ? "#33FFFF" : "#006600" } 
+                style: { fill: "none", stroke: isScribbling ? "#33FFFF" : "#006600" }
             }),
             drawItems(items)
         )
@@ -480,6 +508,8 @@ export function ItemMap() {
     initDragInformation()
 
     return {
+        setItemCreationCallback,
+        setItemCompletionCallback,
         initDragInformation,
         mouseDownInItem,
         copyRectWithDelta,

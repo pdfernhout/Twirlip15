@@ -364,37 +364,37 @@ class Sketch extends ObjectInTriplestore {
     }
 }
 
-function calculateBounds() {
-    // TODO: change how app works so place new items when click
-    return { x1: 0, y1: 0, x2: 50, y2: 50 }
-}
-
-function addRectangle() {
+function addRectangle(bounds) {
     // MAYBE p.newTransaction("sketcher/addRectangle")
     const item = new Item()
     item.setType("rectangle")
-    item.setBounds(calculateBounds())
+    item.setBounds(bounds)
     sketch.addItem(item)
     // MAYBE p.sendCurrentTransaction()
+    return item
 }
 
-function addCircle() {
+function addCircle(bounds) {
     // MAYBE p.newTransaction("sketcher/addCircle")
     const item = new Item()
     item.setType("circle")
-    item.setBounds(calculateBounds())
+    item.setBounds(bounds)
     sketch.addItem(item)
     // MAYBE p.sendCurrentTransaction()
+    return item
 }
 
-function addLine() {
+function addLine(bounds) {
+    bounds.x2 += 5
+    bounds.y2 += 5
     // MAYBE p.newTransaction("sketcher/addLine")
     const item = new Item()
     item.setType("line")
-    item.setBounds(calculateBounds())
+    item.setBounds(bounds)
     item.setStrokeWidth("5")
     sketch.addItem(item)
     // MAYBE p.sendCurrentTransaction()
+    return item
 }
 
 function addFreehandScribble() {
@@ -413,16 +413,18 @@ function addFreehandScribble() {
     }
 }
 
-function addText() {
+function addText(bounds) {
     const text = prompt("Text to add?")
+    drawMode = "pointer"
     if (!text) return
     // MAYBE p.newTransaction("sketcher/addText")
     const item = new Item()
     item.setType("text")
-    item.setBounds(calculateBounds())
+    item.setBounds(bounds)
     item.setText(text)
     sketch.addItem(item)
     // MAYBE p.sendCurrentTransaction()
+    return item
 }
 
 function exportSketchText() {
@@ -480,7 +482,7 @@ function displaySelectedItemProperties() {
     const selectedItems = itemMap.getSelectedItems()
     const item = selectedItems.length ? selectedItems[selectedItems.length - 1] : null
     if (!item) return m("div.mt2.relative", [
-        itemMap.getIsScribbling() ? m("span.absolute.pl2", "Scribbling...") : [],
+        itemMap.getIsScribbling() ? m("span.absolute.pl2" + selectedClass(true), "Scribbling...") : [],
         m("span.tr.w5.dib", "Sketch width"), m("input.ml1", { value: sketch.getExtent().width, onchange: (event) => sketch.setWidth(event.target.value) }),
         m("br"),
         m("span.tr.w5.dib", "Sketch height"), m("input.ml1", { value: sketch.getExtent().height, onchange: (event) => sketch.setHeight(event.target.value) }),
@@ -489,6 +491,8 @@ function displaySelectedItemProperties() {
     ])
     const type = item.getType()
     if (type === "text") return m("div.mt2", [
+        m("span.tr.w5.dib", "Layer"), m("input.ml1", { value: item.getLayer(), onchange: (event) => item.setLayer("" + Math.parseInt(event.target.value)) }),
+        m("br"),
         "Text:",
         m("br"),
         m("textarea", { rows: 5, cols: 60,  value: item.getText(), onchange: (event) => item.setText(event.target.value) })
@@ -497,6 +501,8 @@ function displaySelectedItemProperties() {
     return m("div.mt2", [
         // m("span.tr.w5.dib", type),
         // m("br"),
+        m("span.tr.w5.dib", "Layer"), m("input.ml1", { value: item.getLayer(), onchange: (event) => item.setLayer("" + Math.parseInt(event.target.value)) }),
+        m("br"),
         m("span.tr.w5.dib", "Fill"), m("input.ml1", { value: item.getFill(), onchange: (event) => item.setFill(event.target.value) }),
         m("br"),
         m("span.tr.w5.dib", "Stroke"), m("input.ml1", { value: item.getStroke(), onchange: (event) => item.setStroke(event.target.value) }),
@@ -514,14 +520,53 @@ function displaySelectedItemProperties() {
     ])
 }
 
+let drawMode = "pointer" // pointer, rectangle, circle, text, line, freehand
+
+function setDrawMode(mode) {
+    // close scribble if scribbling
+    if (itemMap.getIsScribbling() && mode !== "scribble") {
+        addFreehandScribble()
+    }
+
+    if (mode === "scribble") {
+        // scribble handled specially as can have multiple segments with mouse up and down
+        itemMap.setItemCreationCallback(null)
+        itemMap.setItemCompletionCallback(null)
+        addFreehandScribble()
+        if (!itemMap.getIsScribbling()) mode = "pointer"
+    } else {
+        const itemCreationCallback = {
+            pointer: null,
+            rectangle: addRectangle,
+            circle: addCircle,
+            text: addText,
+            line: addLine
+        }[mode]
+
+        itemMap.setItemCreationCallback(itemCreationCallback)
+
+        itemMap.setItemCompletionCallback((itemCreationCallback && itemCreationCallback !== addText)
+            ? () => drawMode = "pointer" 
+            : null
+        )
+    }
+
+    drawMode = mode
+}
+
+function selectedClass(isSelected) {
+    return isSelected ? ".bg-light-blue" : ""
+}
+
 function displayActions() {
     return m("div.mt1.mb1", [
-        m("button", { onclick: addRectangle }, "Rectangle"),
-        m("button.ml1", { onclick: addCircle }, "Circle"),
-        m("button.ml1", { onclick: addText }, "Text"),
-        m("button.ml1", { onclick: addLine }, "Line"),
-        m("button.ml1.w4" + (itemMap.getIsScribbling() ? ".bg-light-blue" : ""), 
-            { onclick: addFreehandScribble }, 
+        m("button" + selectedClass(drawMode === "pointer"), { onclick: () => setDrawMode("pointer") }, "Pointer"),
+        m("button.ml1" + selectedClass(drawMode === "rectangle"), { onclick: () => setDrawMode("rectangle") }, "Rectangle"),
+        m("button.ml1" + selectedClass(drawMode === "circle"), { onclick: () => setDrawMode("circle") }, "Circle"),
+        m("button.ml1" + selectedClass(drawMode === "text"), { onclick: () => setDrawMode("text")}, "Text"),
+        m("button.ml1" + selectedClass(drawMode === "line"), { onclick: () => setDrawMode("line") }, "Line"),
+        m("button.ml1.w4" + selectedClass(itemMap.getIsScribbling()), 
+            { onclick: () => setDrawMode("scribble") }, 
             itemMap.getIsScribbling() ? "<Finish>": "Freehand"
         ),
         m("button.ml3", { onclick: raiseItem }, "Raise"),
