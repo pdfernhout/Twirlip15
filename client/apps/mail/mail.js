@@ -221,6 +221,25 @@ function getFromField(message) {
     return name + " <" + address + ">"
 }
 
+function getToField(message) {
+    console.log("message.headers", message.headers)
+    let to
+    if (message.headers.newsgroup) {
+        to = message.headers.newsgroup[0]
+    } else if (message.headers.to) {
+        to = message.headers.to[0]
+    }
+    if (!to) return ("UNKNOWN")
+    const address = to.value[0].address
+    const name = to.value[0].name
+    if (!address && name.includes(" at ") && to.initial.includes(")")) {
+        const addressDerivedFromName = name.replace(" at ", "@")
+        const nameInsideParens = to.initial.match(/\(([^)]*)\)/)[1]
+        return nameInsideParens.trim() + " <" + addressDerivedFromName.trim() + ">"
+    }
+    return name + " <" + address + ">"
+}
+
 // Recursive
 function getTextPlain(message) {
     let result = ""
@@ -296,6 +315,7 @@ function viewEmail(message) {
        console.log("missing subject", message)
     }
     const from = getFromField(message)
+    const to = getToField(message)
     let date = "MISSING DATE"
     try {
         date = message.headers.date[0].value
@@ -311,9 +331,10 @@ function viewEmail(message) {
     // const body = getTextPlain(message)
     const body = viewEmailPart(message)
     return m("div", 
-        m("div", 
+        m("div",
             m("div.ml4", date),
-            m("div.ml4", from),
+            m("div.ml4", "From: ", from),
+            m("div.ml4", "To: ", to),
             m("div.ml4", { onclick: () => {
                 expandedMessage[messageId] = !expandedMessage[messageId]
                 if (expandedMessage[messageId]) {
