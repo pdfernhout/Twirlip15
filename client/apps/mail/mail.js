@@ -222,7 +222,6 @@ function getFromField(message) {
 }
 
 function getToField(message) {
-    console.log("message.headers", message.headers)
     let to
     if (message.headers.newsgroup) {
         to = message.headers.newsgroup[0]
