@@ -1,0 +1,129 @@
+// Example files in order to build exampleNotebook.js
+
+// Metadata for triples -- can be overridden for each file
+{"entity": "Twirlip7 examples"}
+{"contributor": "Paul D. Fernhout <pdfernhout@kurtz-fernhout.com>"}
+{"timestamp": "2017-06-06T03:50:08.037Z"}
+{"license": "MIT"}
+{"contentType": "application/javascript"}
+
+// Basic
+alert-hello-world.js
+one-plus-one.js
+inspecting-an-object.js
+canonical-json-example.js
+my-add.js
+
+// Counters
+counter-needs-reloading.js
+counter-closable.js
+counter-closable-styled.js
+counter-component-up-down.js
+
+// Using the show function
+show-hello.js
+counter-component-show.js
+
+// iframe
+iframe-example-energy-patent.js
+iframe-example-engelbart-unrevii.js
+iframe-example-video.js
+
+// embed
+embed-mp3.js
+
+// Mithril forms
+temperature-converter.js
+simple-done-app.js
+currency-converter-three.js
+currency-converter-many.js
+
+// More features
+font-awesome-example.js
+popups-and-menus.js
+modal-dialog.js
+three-3D.js
+
+// SVG
+svg-example.js
+svg-with-updating.js
+svg-with-dragging.js
+svg-multi-drag.js
+
+// HTML draggables
+draggables-extended.js
+draggables-better.js
+draggable-simplified.js
+
+// Canvas
+canvas-example.js
+
+// Proxy
+proxy-web-page.js
+proxy-rss-reader.js
+proxy-news-article-reader.js
+
+// Markdown library
+markdown-library-use.js
+
+// Categorize this as an extension
+{"entity": "Twirlip7 extensions"}
+extension-markdown-preview.js
+
+// Go back to adding examples
+{"entity": "Twirlip7 examples"}
+
+// Other file types -- user has to change editor mode
+
+{"contentType": "text/markdown; charset=UTF-8"}
+markdown-example.md
+
+{"contentType": "text/html"}
+html-example.html
+
+{"contentType": "text/x-fortran"}
+fortran-example.txt
+
+{"contentType": "text/plain"}
+text-example.txt
+
+// Include a JSON file that IBIS can read
+{"entity": "Knife sharpening"}
+{"attribute": "contents"}
+{"contentType": "application/json"}
+ibis-knife-sharpening.json
+
+{"entity": "The Earth seen from Apollo 17"}
+{"attribute": "contents"}
+{"contentType": "image/jpeg"}
+{"encoding": "base64"}
+image-definition-earth-from-space.txt
+
+// Go back to JavaScript as default content type for this file
+{"entity": "Twirlip7 examples"}
+{"attribute": ""}
+{"contentType": "application/javascript"}
+{"encoding": ""}
+
+// Image reading
+image-reading.js
+
+// Adding to the notebook
+{"entity": "Twirlip7 examples"}
+notebook-adding.js
+
+// IBIS application
+ibis_icons.js
+ibis_application.js
+
+// Sound
+sound-recorder.js
+
+// Extending the editor
+{"entity": "Twirlip7 extensions"}
+extension-simple.js
+extension-convert-text.js
+extension-search-plain.js
+extension-search-regex.js
+extension-navigation-eav-tree.js
+extension-diff.js
