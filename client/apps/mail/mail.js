@@ -228,7 +228,7 @@ function getToField(message) {
     } else if (message.headers.to) {
         to = message.headers.to[0]
     }
-    if (!to) return ("UNKNOWN")
+    if (!to) return null
     const address = to.value[0].address
     const name = to.value[0].name
     if (!address && name.includes(" at ") && to.initial.includes(")")) {
@@ -333,7 +333,7 @@ function viewEmail(message) {
         m("div",
             m("div.ml4", date),
             m("div.ml4", "From: ", from),
-            m("div.ml4", "To: ", to),
+            to && m("div.ml4", "To: ", to),
             m("div.ml4", { onclick: () => {
                 expandedMessage[messageId] = !expandedMessage[messageId]
                 if (expandedMessage[messageId]) {
