@@ -1,23 +1,24 @@
 "use strict"
 
-/* global ace */
+/* global m, ace */
 
 // Assumes ace is imported from script tag with noconflict version
 
 // Mithril only needs to be imported once in the application as it sets a global "m"
-import "./vendor/mithril.js"
+// defines m
+import "../../vendor/mithril.js"
 
 // sha256 only needs to be imported once in the application as it sets a global sha256
-import "./vendor/sha256.js"
+import "../../vendor/sha256.js"
 
 import { NotebookView } from "./NotebookView.js"
 import { NotebookBackend } from "./NotebookBackend.js"
 import { StoreUsingLocalStorage } from "./StoreUsingLocalStorage.js"
 import { StoreUsingServer } from "./StoreUsingServer.js"
-import { FileUtils } from "./FileUtils.js"
-import { HashUtils } from "./HashUtils.js"
+import { FileUtils } from "../../common/FileUtils.js"
+import { HashUtils } from "../../common/HashUtils.js"
 import { CanonicalJSON } from "./CanonicalJSON.js"
-import { UUID } from "./UUID.js"
+import { UUID } from "../../common/UUID.js"
 
 import { menu, popup } from "./popup.js"
 
@@ -161,7 +162,7 @@ function startLoadingFromServer() {
         }
     })
     console.log("about to setup link to server", new Date().toISOString())
-    NotebookUsingServer.setup()
+    // TODO: NotebookUsingServer.setup()
 }
 
 function runStartupItem(itemId) {

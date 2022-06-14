@@ -4,7 +4,7 @@
 /* global io */
 
 import { CanonicalJSON } from "./CanonicalJSON.js"
-import { UUID } from "./UUID.js"
+import { UUID } from "../../common/UUID.js"
 
 // returns position + 1 for item reference to avoid first item being "0"
 export function StoreUsingServer(redrawCallback, streamId = "common", userId = "anonymous", serverURL = "") {

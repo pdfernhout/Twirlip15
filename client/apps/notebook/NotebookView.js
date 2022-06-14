@@ -1,16 +1,16 @@
 /* global sha256 */
 
-import { FileUtils } from "./FileUtils.js"
-import { HashUtils } from "./HashUtils.js"
+import { FileUtils } from "../../common/FileUtils.js"
+import { HashUtils } from "../../common/HashUtils.js"
 import { EvalUtils } from "./EvalUtils.js"
-import { Progress } from "./Progress.js"
-import { Toast } from "./Toast.js"
+import { Progress } from "../../common/Progress.js"
+import { Toast } from "../../common/Toast.js"
 
 import { NotebookExamplesLoader } from "./NotebookExamplesLoader.js"
 import { CanonicalJSON } from "./CanonicalJSON.js"
 
 // defines sha256
-import "./vendor/sha256.js"
+import "../../vendor/sha256.js"
 
 "use strict"
 

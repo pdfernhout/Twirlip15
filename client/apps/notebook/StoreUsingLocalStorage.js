@@ -1,7 +1,7 @@
 "use strict"
 /* global sha256 */
 
-// import sha256 from "./vendor/sha256.js"
+// import sha256 from "../../vendor/sha256.js"
 
 const hashToItemPrefix = "_h2i_"
 const hashToLocationPrefix = "_h2l_"

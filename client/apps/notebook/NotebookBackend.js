@@ -1,6 +1,6 @@
 "use strict"
 
-// import { sha256 } from "./vendor/sha256.js"
+// import { sha256 } from "../../vendor/sha256.js"
 
 /* global sha256 */
 
