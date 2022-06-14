@@ -1,13 +1,18 @@
 "use strict"
 
+/* global m */
+
 import { CanonicalJSON } from "./CanonicalJSON.js"
 
 const exampleNotebookConfigurationFileName = "_exampleNotebookConfiguration.txt"
 
+const url = import.meta.url
+const baseDir = url.substring(0, url.lastIndexOf("/")) + "/examples/"
+
 export const NotebookExamplesLoader = {
 
     async loadFile(fileName) {
-        const fullFileName = "examples/" + fileName
+        const fullFileName = baseDir + fileName
 
         const response = await fetch(fullFileName)
         const result = await response.text()
@@ -16,7 +21,7 @@ export const NotebookExamplesLoader = {
     },
 
     async loadAllFiles(progressCallback, doneCallback) {
-        const response = await fetch("examples/" + exampleNotebookConfigurationFileName)
+        const response = await fetch(baseDir + exampleNotebookConfigurationFileName)
         const configFileContents = await response.text()
         m.redraw()
         // console.log("configFileContents", configFileContents)
