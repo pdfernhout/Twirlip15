@@ -1,4 +1,4 @@
-/* global sha256 */
+/* global m, sha256, Twirlip7 */
 
 import { FileUtils } from "../../common/FileUtils.js"
 import { HashUtils } from "../../common/HashUtils.js"
@@ -100,6 +100,12 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         }
     }
 
+    function title(config) {
+        if (config.title === undefined || config.title === null) return "Untitled"
+        if (typeof config.title === "function") return config.title()
+        return config.title
+    }
+
     // Convenience function which examples could use to put up closeable views
     function show(userComponentOrViewFunction, config, componentConfig) {
         try {
@@ -122,12 +128,6 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
 
             let collapsed = false
 
-            function title() {
-                if (config.title === undefined || config.title === null) return "Untitled"
-                if (typeof config.title === "function") return config.title()
-                return config.title
-            }
-
             const isCloseButtonHidden = !!HashUtils.getHashParams()["launch"]
 
             let currentTitle
@@ -139,7 +139,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
             const ClosableComponent = {
                 view() {
                     if (collapsed || isCloseButtonHidden) {
-                        const newTitle = title()
+                        const newTitle = title(config)
                         if (newTitle !== currentTitle) {
                             currentTitle = newTitle
                             if (isCloseButtonHidden) {
@@ -513,25 +513,25 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         }
     }
 
+    // Recursive function
+    function followDerivedFrom(dataURLs, itemId) {
+        if (itemId) {
+            const dataURLConversionResult = makeDataURLForItemId(itemId)
+            dataURLs.unshift(dataURLConversionResult.dataURL)
+            const item = Twirlip7.getItemForJSON(dataURLConversionResult.itemText)
+            return followDerivedFrom(dataURLs, item.derivedFrom)
+        } else {
+            return null
+        }
+    }
+
     function displayDataURLForCurrentNoteAndHistory() {
         if (currentItemId) {
             if (!confirmClear()) return
             let dataURLs = []
 
-            // Recursive function
-            function followDerivedFrom(itemId) {
-                if (itemId) {
-                    const dataURLConversionResult = makeDataURLForItemId(itemId)
-                    dataURLs.unshift(dataURLConversionResult.dataURL)
-                    const item = Twirlip7.getItemForJSON(dataURLConversionResult.itemText)
-                    return followDerivedFrom(item.derivedFrom)
-                } else {
-                    return null
-                }
-            }
-
             try {
-                followDerivedFrom(currentItemId)
+                followDerivedFrom(dataURLs, currentItemId)
                 const textForAllItems = dataURLs.join("\n")
                 showText(textForAllItems, "text/plain")
                 editor.selection.selectAll()
