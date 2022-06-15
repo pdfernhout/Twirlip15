@@ -6,17 +6,17 @@
 
 // A NotebookBackend maintains an ordered collection of items (JSON objects).
 // Each item can be referenced by its zero-based position
-// or by the SHA256 of its canoncial JSON representation.
+// or by the SHA256 of its canonical JSON representation.
 // This collection (stream) is stored in memory.
 // A Store can be connected to the NotebookBackend for persistence.
 
-export function NotebookBackend(store) {
+export function NotebookBackend(store, defaultOLoadedCallback=null) {
 
     let itemForLocation = []
     let itemForHash = {}
 
     let isLoaded = false
-    let onLoadedCallback = null
+    let onLoadedCallback = defaultOLoadedCallback
 
     function getCapabilities() {
         return {
@@ -49,11 +49,9 @@ export function NotebookBackend(store) {
         return result
     }
 
-
     function onAddItem(item) {
         addItemToMemory(item)
     }
-
 
     function getItem(reference) {
         if (reference === null) return null
@@ -203,7 +201,13 @@ export function NotebookBackend(store) {
     }
 
     if (store) {
-        store.connect(stream)
+        const connectToStore = async () => {
+            await store.connect(stream)
+            if (store.loadFile) {
+                await store.loadFile()
+            }
+        }
+        connectToStore()
     } else {
         onLoaded()
     }

@@ -5,12 +5,15 @@ import { io } from "/socket.io/socket.io.esm.min.js"
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, responder, defaultFileName, defaultLoadFailureCallback) {
+export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback) {
 
+    let responder = defaultResponder
     const deferredFileChanges = []
     let isLoaded = false
+    let isSetup = false
 
-    async function connect() {
+    async function connect(aResponder) {
+        if (aResponder) responder = aResponder
 
         const socket = io()
 
@@ -38,12 +41,14 @@ export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, respond
             })
         })
 
+        isSetup = true
+        
         return promise
     }
 
     // Need to await connect before calling loadFile if not using defaultFileName.
     // Should await loadFile before calling it a second time due to isLoading flag use.
-    async function loadFile(fileName, failureCallback) {
+    async function loadFile(fileName=defaultFileName, failureCallback=defaultLoadFailureCallback) {
 
         if (!defaultFileName) defaultFileName = fileName
 
@@ -94,7 +99,7 @@ export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, respond
         await loadFile(defaultFileName, defaultLoadFailureCallback)
     }
 
-    if (defaultFileName) {
+    if (defaultFileName && defaultResponder) {
         defaultSetup()
     }
 
@@ -102,5 +107,6 @@ export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, respond
         connect,
         loadFile,
         addItem,
+        isSetup: () => isSetup
     }
 }

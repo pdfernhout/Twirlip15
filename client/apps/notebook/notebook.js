@@ -11,10 +11,13 @@ import "../../vendor/mithril.js"
 // sha256 only needs to be imported once in the application as it sets a global sha256
 import "../../vendor/sha256.js"
 
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Toast } from "../../common/Toast.js"
+import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
+
 import { NotebookView } from "./NotebookView.js"
 import { NotebookBackend } from "./NotebookBackend.js"
 import { StoreUsingLocalStorage } from "./StoreUsingLocalStorage.js"
-import { StoreUsingServer } from "./StoreUsingServer.js"
 import { FileUtils } from "../../common/FileUtils.js"
 import { HashUtils } from "../../common/HashUtils.js"
 import { CanonicalJSON } from "./CanonicalJSON.js"
@@ -24,13 +27,30 @@ import { menu, popup } from "./popup.js"
 
 let initialKeyToGoTo = null
 
-let notebookId = "common"
-
 const NotebookUsingMemory = NotebookBackend()
 const NotebookUsingLocalStorage = NotebookBackend(StoreUsingLocalStorage(m.redraw))
 
-const serverBackend = StoreUsingServer(m.redraw, notebookId) 
-const NotebookUsingServer = NotebookBackend(serverBackend)
+function showError(error) {
+    Toast.toast(error)
+}
+
+const filePathFromParams = decodeURI(window.location.pathname)
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+console.log("about to setup link to server", new Date().toISOString())
+const itemStore = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, null, filePathFromParams, () => Toast.toast("loading chat file failed"))
+const NotebookUsingServer = NotebookBackend(itemStore, function () {
+    // assuming callback will always be done before get here to go to initialKeyToGoTo
+    if (launchItem) {
+        runStartupItem(launchItem)
+        launchItem = null
+        m.redraw()
+    } else if (initialKeyToGoTo && notebookView.getNotebookChoice() === "server") {
+        notebookView.goToKey(initialKeyToGoTo)
+        m.redraw()
+    } else {
+        m.redraw()
+    }
+})
 
 const modelistWrapper = {
     modelist: null
@@ -41,7 +61,7 @@ let notebookView = NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper)
 let launchItem = null
 
 // TODO: improve import for ace somehow via ES6 probably by getting a new version of ace
-ace.require(["ace/ext/modelist"], function(modelist) {
+ace.require(["ace/ext/modelist"], function (modelist) {
     modelistWrapper.modelist = modelist
     m.redraw()
 })
@@ -51,7 +71,7 @@ function getItemForJSON(itemJSON) {
     if (itemJSON.startsWith("{")) {
         try {
             return JSON.parse(itemJSON)
-        } catch(e) {
+        } catch (e) {
             // fall through
         }
     }
@@ -118,7 +138,7 @@ function setupTwirlip7Global() {
                 }
                 if (isMatch) {
                     const key = notebook.keyForLocation(index)
-                    result.push({location: index, item, key})
+                    result.push({ location: index, item, key })
                 }
             }
             // Sort so later items are earlier in list
@@ -147,24 +167,6 @@ function setupTwirlip7Global() {
     }
 }
 
-function startLoadingFromServer() {
-    NotebookUsingServer.setOnLoadedCallback(function() {
-        // assuming callback will always be done before get here to go to initialKeyToGoTo
-        if (launchItem) {
-            runStartupItem(launchItem)
-            launchItem = null
-            m.redraw()
-        } else if (initialKeyToGoTo && notebookView.getNotebookChoice() === "server") {
-            notebookView.goToKey(initialKeyToGoTo)
-            m.redraw()
-        } else {
-            m.redraw()
-        }
-    })
-    console.log("about to setup link to server", new Date().toISOString())
-    // TODO: NotebookUsingServer.setup()
-}
-
 function runStartupItem(itemId) {
     try {
         const item = notebookView.getCurrentNotebook().getItem(itemId)
@@ -177,14 +179,14 @@ function runStartupItem(itemId) {
             } catch (error) {
                 console.log("Error running startup item", itemId)
                 console.log("Error message\n", error)
-                console.log("Beginning of item contents\n", item.substring(0,500) + (item.length > 500 ? "..." : ""))
+                console.log("Beginning of item contents\n", item.substring(0, 500) + (item.length > 500 ? "..." : ""))
                 return "failed"
             }
         } else {
             console.log("startup item not found", itemId)
             return "missing"
         }
-    } catch(error) {
+    } catch (error) {
         console.log("Problem in runStartupItem", error)
         return "error"
     }
@@ -199,7 +201,7 @@ function runAllStartupItems() {
                 for (let startupItemId of startupInfo.startupItemIds) {
                     const status = runStartupItem(startupItemId)
                     if (status !== "ok") {
-                        console.log("Removing " +  status + " startup item from bootstrap: ", startupItemId)
+                        console.log("Removing " + status + " startup item from bootstrap: ", startupItemId)
                         invalidStartupItems.push(startupItemId)
                     }
                 }
@@ -211,7 +213,7 @@ function runAllStartupItems() {
                     }
                     notebookView.setStartupInfo(startupInfo)
                 }
-            } catch(error) {
+            } catch (error) {
                 console.log("Problem in runAllStartupItems", error)
             }
             m.redraw()
@@ -232,22 +234,12 @@ function startEditor(preMountCallback, postMountCallback) {
     }, 0)
 }
 
-function changeServerNotebookId(notebookIdParam) {
-    if (notebookIdParam !== notebookId) {
-        notebookId = notebookIdParam
-        NotebookUsingServer.reset()
-        serverBackend.configure(notebookId)
-    }
-}
-
 function hashChange() {
     const hashParams = HashUtils.getHashParams()
     const notebookParam = hashParams["notebook"] || notebookView.getNotebookChoice()
     if (notebookParam !== notebookView.getNotebookChoice()) {
         notebookView.restoreNotebookChoice(notebookParam)
     }
-    const notebookIdParam = hashParams["notebook-id"] || "common"
-    changeServerNotebookId(notebookIdParam)
 
     // do our own routing and ignore things that don't match in case other evaluated code is using Mithril's router
     const itemId = hashParams["item"]
@@ -273,11 +265,6 @@ function startup() {
     const evalParam = hashParams["eval"]
     const editParam = hashParams["edit"]
     const notebookParam = hashParams["notebook"]
-    const notebookIdParam = hashParams["notebook-id"] || "common"
-
-    changeServerNotebookId(notebookIdParam)
-
-    startLoadingFromServer()
 
     if (launchParam) {
         notebookView.restoreNotebookChoice(notebookParam)
@@ -292,21 +279,21 @@ function startup() {
         const startupFileNames = startupSelection.split("|")
         console.log("startupFileNames", startupFileNames)
         for (let startupFileName of startupFileNames) {
-            m.request({method: "GET", url: startupFileName, deserialize: value => value}).then(function (startupFileContents) {
+            m.request({ method: "GET", url: startupFileName, deserialize: value => value }).then(function (startupFileContents) {
                 eval(startupFileContents)
             })
         }
     } else if (!itemParam && editParam) {
         const startupSelection = editParam
-        m.request({method: "GET", url: startupSelection, deserialize: value => value}).then(function (startupFileContents) {
+        m.request({ method: "GET", url: startupSelection, deserialize: value => value }).then(function (startupFileContents) {
             startEditor(
-                null, 
+                null,
                 () => {
                     const currentItem = notebookView.getCurrentItem()
                     currentItem.entity = startupSelection
                     currentItem.attribute = "contents"
                     notebookView.setEditorContents(startupFileContents)
-                }   
+                }
             )
         })
     } else {

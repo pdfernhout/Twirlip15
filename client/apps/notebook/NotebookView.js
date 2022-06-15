@@ -213,11 +213,6 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         const hashParams = HashUtils.getHashParams()
         localStorage.setItem("_currentNotebookChoice", notebookChoice)
         hashParams["notebook"] = notebookChoice
-        hashParams["notebook-id"] = Twirlip7.NotebookUsingServer.getStore().getStreamId()
-        if (hashParams["notebook-id"] === "common") {
-            // Only specify notebook-id when it is not the default
-            delete hashParams["notebook-id"]
-        }
         HashUtils.setHashParams(hashParams)
     }
 
@@ -452,11 +447,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
             alert("To launch an item in its own window, you need to\nnavigate to an item first or save a new one.")
             return
         }
-        const streamId = Twirlip7.NotebookUsingServer.getStore().getStreamId()
-        const extra = (notebookChoice === "server" && streamId !== "common")
-            ? "&notebook-id=" + streamId 
-            : ""
-        window.open("#notebook=" + notebookChoice + extra + "&launch=" + currentItemId)
+        window.open("#notebook=" + notebookChoice + "&launch=" + currentItemId)
     }
 
     function importText(convertToBase64) {
