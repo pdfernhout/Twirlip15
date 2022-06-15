@@ -934,17 +934,16 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         }
     }
 
-    function mergeNotebook() {
+    async function mergeNotebook() {
         if (currentNotebook.itemCount() && !confirm("Merge items from JSON in editor into the current notebook?")) return
         try {
             // TODO: Had empty Promise -- was it needed?
             let addedItemCount = 0
             const newNotebookItems = JSON.parse(getEditorContents())
-            newNotebookItems.map((itemJSON) => {
-                const addResult = currentNotebook.addItem(itemJSON)
+            for (let itemJSON of newNotebookItems) {
+                const addResult = await currentNotebook.addItem(itemJSON)
                 if (!addResult.existed) addedItemCount++
-                return true
-            })
+            }
             Toast.toast("Added " + addedItemCount + " item" + ((addedItemCount === 1 ? "" : "s")) + " to current notebook")
             // Update lastLoadedItem.value in case pasted in contents to avoid warning later since data was processed as intended
             lastLoadedItem.value = getEditorContents()

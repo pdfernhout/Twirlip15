@@ -24,10 +24,12 @@ export function NotebookBackend(store, defaultOLoadedCallback=null) {
         }
     }
 
-    function addItem(item) {
+    async function addItem(item) {
         const storedItem = addItemToMemory(item)
         if (store && !storedItem.existed) {
-            const storeResult = store.addItem(item)
+            const storeResult = store.addItemAsync
+                ? await store.addItemAsync(item)
+                : await store.addItem(item)
             if (storeResult && storeResult.error) {
                 storedItem.error = storeResult.error 
             }
@@ -91,7 +93,7 @@ export function NotebookBackend(store, defaultOLoadedCallback=null) {
     }
 
     function clearItems() {
-        if (store) {
+        if (itemCount() && store) {
             if (!store.clearItems) {
                 throw new Error("clearItems not supported for current store")
             }
@@ -102,10 +104,10 @@ export function NotebookBackend(store, defaultOLoadedCallback=null) {
         return true
     }
 
-    function loadFromNotebookText(notebookText) {
+    async function loadFromNotebookText(notebookText) {
         const items = JSON.parse(notebookText)
         clearItems()
-        for (let item of items) { addItem(item) }
+        for (let item of items) { await addItem(item) }
         return true
     }
 
