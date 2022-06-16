@@ -125,9 +125,9 @@ function messageReceived(message) {
     // TODO: remove
 }
 
-function sendMessage(message) {
+async function sendMessage(message) {
     try {
-        const storedItem = Twirlip7.getCurrentNotebook().addItem(Twirlip7.CanonicalJSON.stringify(message))
+        const storedItem = await Twirlip7.getCurrentNotebook().addItem(Twirlip7.CanonicalJSON.stringify(message))
         console.log("stored as", storedItem)
     } catch(error) {
         console.log("Send failed with error", error)

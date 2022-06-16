@@ -305,7 +305,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         return CanonicalJSON.stringify(currentItem)
     }
 
-    function save() {
+    async function save() {
         if (!isEditorDirty()) {
             if (!confirm("There are no changes.\nSave a new item anyway with a later timestamp?")) return false
         }
@@ -314,7 +314,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         }
         const newContents = getEditorContents()
         const itemJSON = prepareCurrentItemForSaving(newContents)
-        const addResult = currentNotebook.addItem(itemJSON)
+        const addResult = await currentNotebook.addItem(itemJSON)
         if (addResult.error) {
             alert("save failed -- maybe too many localStorage items?\n" + addResult.error)
             return false
@@ -536,7 +536,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         }
     }
 
-    function makeNoteForDataURL(dataURL) {
+    async function makeNoteForDataURL(dataURL) {
         if (dataURL) {
             if (!dataURL.startsWith(twirlip7DataUrlPrefix)) {
                 alert("Twirlip7 data URL should start with: " + twirlip7DataUrlPrefix)
@@ -573,7 +573,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
 
             // TODO: Consolidate the copy/paste adding of item with where this is copied from
             try {
-                const addResult = currentNotebook.addItem(itemText)
+                const addResult = await currentNotebook.addItem(itemText)
                 if (addResult.error) {
                     alert("save failed -- maybe too many localStorage items?\n" + addResult.error)
                     return null
@@ -590,7 +590,7 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
     }
 
     // Also does a redraw when needed
-    function readNotesFromDataURLs() {
+    async function readNotesFromDataURLs() {
         const textForAllItems = getSelectedEditorText().text.trim()
         const dataURLs = textForAllItems.split("\n")
         const keys = []
@@ -598,20 +598,20 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
         const dataURLStack = dataURLs.slice()
 
         // Recursive function
-        function recursivelyMakeNotes() {
+        async function recursivelyMakeNotes() {
             if (!dataURLStack.length) return true
             const dataURL = dataURLStack.shift()
-            const key = makeNoteForDataURL(dataURL)
+            const key = await makeNoteForDataURL(dataURL)
             if (key) {
                 keys.push(key)
-                return recursivelyMakeNotes()
+                return await recursivelyMakeNotes()
             } else {
                 return false
             }
         }
 
         try {
-            recursivelyMakeNotes()
+            await recursivelyMakeNotes()
             if (keys.length && keys.length === dataURLs.length) {
                 goToKey(keys[keys.length - 1], {ignoreDirty: true})
             }

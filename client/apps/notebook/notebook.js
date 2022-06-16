@@ -108,11 +108,11 @@ function setupTwirlip7Global() {
         getItemForJSON: getItemForJSON,
         newItem: notebookView.newItem,
 
-        saveItem: (item) => {
+        saveItem: async (item) => {
             if (!item.timestamp) item.timestamp = new Date().toISOString()
             if (!item.contributor) item.contributor = notebookView.getCurrentContributor()
             const itemJSON = CanonicalJSON.stringify(item)
-            return notebookView.getCurrentNotebook().addItem(itemJSON)
+            return await notebookView.getCurrentNotebook().addItem(itemJSON)
         },
 
         findItem(match, configuration) {
