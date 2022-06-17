@@ -79,7 +79,7 @@ function viewerForURL(url) {
         return url + "?twirlip=view-md"
     } else {
         let subdomain = ""
-        if (url.toLowerCase().includes("download")) subdomain = md5(url) + ".download."
+        if (url.toLowerCase().includes("/download")) subdomain = md5(url) + ".download."
         return window.location.protocol + "//" + subdomain + window.location.host + url
     }
 }
