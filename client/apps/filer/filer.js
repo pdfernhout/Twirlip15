@@ -7,7 +7,7 @@ import Dexie from "../../vendor/dexie.mjs"
 import { FileUtils } from "../../common/FileUtils.js"
 import "../../vendor/md5.js"
 import { ModalInputView, modalAlert, modalConfirm, modalPrompt, customModal } from "../../common/ModalInputView.js"
-import { applicationList } from "./applicationList.js"
+import { applicationList, extensionForApplication } from "./applicationList.js"
 
 var previewCache = new Dexie("preview-cache")
 previewCache.version(1).stores({
@@ -163,29 +163,19 @@ async function newFile() {
     let openWithApplication = ""
 
     function applicationChanged(value) {
+        const oldExtension = extensionForApplication[openWithApplication]
+        if (oldExtension && newFileName.endsWith(oldExtension)) {
+            newFileName = newFileName.slice(0, -oldExtension.length)
+        }
         openWithApplication = value
-        // Could improve to remove old extension if previously set
         if (!newFileName 
             || !newFileName.includes(".")
             || newFileName.startsWith("Unnamed.twirlip-")
             || newFileName === "Unnamed.txt"
         ) {
             const name = newFileName || "Unnamed"
-            if (value === "chat") {
-                newFileName = name + ".twirlip-chat.jsonl"
-            } else if (value === "edit") {
-                newFileName = name + ".txt"
-            } else if (value === "ibis") {
-                newFileName = name + ".twirlip-ibis.jsonl"
-            } else if (value === "notebook") {
-                newFileName = name + ".twirlip-notebook.jsonl"
-            } else if (value === "sketcher") {
-                newFileName = name + ".twirlip-sketcher.jsonl"
-            } else if (value === "tables") {
-                newFileName = name + ".twirlip-tables.jsonl"
-            } else if (value === "triples") {
-                newFileName = name + ".twirlip-triples.jsonl"
-            }
+            const extension = extensionForApplication[value]
+            if (extension) newFileName = name + extension
         }
     }
 
