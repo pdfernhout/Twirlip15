@@ -7,7 +7,7 @@ import { Progress } from "../../common/Progress.js"
 import { Toast } from "../../common/Toast.js"
 
 import { NotebookExamplesLoader } from "./NotebookExamplesLoader.js"
-import { CanonicalJSON } from "./CanonicalJSON.js"
+import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 
 // defines sha256
 import "../../vendor/sha256.js"

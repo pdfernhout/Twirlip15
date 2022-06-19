@@ -3,7 +3,7 @@
 // Assumes socket.io loaded from script tag to define io
 /* global io */
 
-import { CanonicalJSON } from "./CanonicalJSON.js"
+import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 import { UUID } from "../../common/UUID.js"
 
 // returns position + 1 for item reference to avoid first item being "0"

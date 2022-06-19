@@ -2,7 +2,7 @@
 
 /* global m */
 
-import { CanonicalJSON } from "./CanonicalJSON.js"
+import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 
 const exampleNotebookConfigurationFileName = "_exampleNotebookConfiguration.txt"
 

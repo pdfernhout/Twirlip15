@@ -20,7 +20,7 @@ import { NotebookBackend } from "./NotebookBackend.js"
 import { StoreUsingLocalStorage } from "./StoreUsingLocalStorage.js"
 import { FileUtils } from "../../common/FileUtils.js"
 import { HashUtils } from "../../common/HashUtils.js"
-import { CanonicalJSON } from "./CanonicalJSON.js"
+import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 import { UUID } from "../../common/UUID.js"
 
 import { menu, popup } from "./popup.js"
