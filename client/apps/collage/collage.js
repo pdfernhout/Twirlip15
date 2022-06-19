@@ -45,19 +45,19 @@ https://stackoverflow.com/questions/13165913/draw-an-arrow-between-two-circles#1
 **************************************/
 
 /* eslint-disable no-console */
-/* global CompendiumIcons */
+/* global CompendiumIcons, m */
 
 "use strict"
 
 // defines CompendiumIcons
-import "./examples/ibis_icons.js"
+import "../notebook/examples/ibis_icons.js"
 
 // defines m
 import "./vendor/mithril.js"
 
 import { HashUUIDTracker } from "./HashUUIDTracker.js"
 import { Pointrel20190914 } from "./Pointrel20190914.js"
-import { CanonicalJSON } from "./CanonicalJSON.js"
+import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 import { SqlUtils } from "./SqlUtils.js"
 import { SqlLoaderForCompendium } from "./SqlLoaderForCompendium.js"
 
