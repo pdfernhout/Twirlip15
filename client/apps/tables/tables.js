@@ -326,12 +326,12 @@ function displayTable(table) {
                     oncopy: (event) => {
                         event.redraw = false
                         lastCellCopiedFrom = {row, column}
-                        lastTextCopied = getSelection(e.target)
+                        lastTextCopied = getSelection(event.target)
                     },
                     oncut: (event) => {
                         event.redraw = false
                         lastCellCopiedFrom = {row, column}
-                        lastTextCopied = getSelection(e.target)
+                        lastTextCopied = getSelection(event.target)
                     },
                     onpaste: (event) => {
                         event.redraw = false
