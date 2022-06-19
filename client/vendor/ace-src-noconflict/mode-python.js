@@ -135,6 +135,9 @@ var PythonHighlightRules = function() {
             token: "paren.rparen",
             regex: "[\\]\\)\\}]"
         }, {
+            token: ["keyword", "text", "entity.name.function"],
+            regex: "(def|class)(\\s+)(\\w+)"
+         }, {
             token: "text",
             regex: "\\s+"
         }, {
@@ -343,10 +346,10 @@ var PythonHighlightRules = function() {
             regex: "\\s+"
         }, {
             token: "string",
-            regex: "'(.)*'"
+            regex: "'[^']*'"
         }, {
             token: "string",
-            regex: '"(.)*"'
+            regex: '"[^"]*"'
         }, {
             token: "function.support",
             regex: "(!s|!r|!a)"
@@ -494,6 +497,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/python";
+    this.snippetFileId = "ace/snippets/python";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

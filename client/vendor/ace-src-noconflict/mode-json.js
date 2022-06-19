@@ -40,6 +40,9 @@ var JsonHighlightRules = function() {
                 token : "paren.rparen",
                 regex : "[\\])}]"
             }, {
+                token : "punctuation.operator",
+                regex : /[,]/
+            }, {
                 token : "text",
                 regex : "\\s+"
             }
@@ -275,6 +278,9 @@ oop.inherits(Mode, TextMode);
 
 (function() {
 
+    this.lineCommentStart = "//";
+    this.blockComment = {start: "/*", end: "*/"};
+    
     this.getNextLineIndent = function(state, line, tab) {
         var indent = this.$getIndent(line);
 
