@@ -1,44 +1,59 @@
 "use strict"
 /* eslint-disable no-console */
+/* global m */
 
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
 
-import NameTracker from "./NameTracker.js"
+import { UUID } from "../../common/UUID.js"
+import { Toast } from "../../common/Toast.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
-import { Pointrel20190820 } from "./Pointrel20190820.js"
+function showError(error) {
+    console.log("error", error)
+    const errorMessage = error.message
+        ? error.message
+        : error
+    Toast.toast(errorMessage)
+}
+window.addEventListener("error", event => showError(event))
 
-const p = new Pointrel20190820()
-p.setDefaultApplicationName("outliner")
+const t = Triplestore(showError)
 
 const menuButtonWithStyle = "button.ma1.f7"
 
-const nameTracker = new NameTracker({
-    nameChangedCallback: startup
-})
-
-function getOutlinerName() {
-    return "outliner:" + nameTracker.name
-}
-
 let root = null
 
+function getCurrentOutlineUUID() {
+    return t.findLast("outliner:root", "currentOutline")
+}
+
 async function startup() {
-    // preserve copiedNodeRepresentation but clear cutNode as node triple data is in a different outline
+    // If calling a second time, preserve copiedNodeRepresentation but clear cutNode as node triple data is in a different outline
     cutNode = null
 
-    root = new Node("root:" + getOutlinerName())
+    const filePathFromParams = decodeURI(window.location.pathname)
+    t.setFileName(filePathFromParams)
+    await t.loadFileContents()
 
-    p.setRedrawFunction(m.redraw)
-    p.setStreamId(getOutlinerName())
-    m.redraw()
-    await p.updateFromStorage(true)
+    const currentOutline = getCurrentOutlineUUID()
+
+    if (currentOutline) {
+        root = new Node(currentOutline)
+    }
+
     m.redraw()
 }
 
 function firstLine(text) {
     if (!text) return ""
     return text.split("\n")[0]
+}
+
+function convertText(textString) {
+    const prefix = "text:"
+    if (!textString.startsWith(prefix)) return ""
+    return textString.substring(prefix.length)
 }
 
 class Node {
@@ -48,11 +63,11 @@ class Node {
     }
 
     getContents() {
-        return p.findC(this.uuid, "contents") || ""
+        return convertText(t.findLast(this.uuid, "contents") || "text:")
     }
 
-    setContents(contents) {
-        p.addTriple(this.uuid, "contents", contents)
+    async setContents(contents) {
+        await t.addTriple({a: this.uuid, b: "contents", c: "text:" + contents})
     }
 
     getFirstLine() {
@@ -69,15 +84,10 @@ class Node {
         return firstLine(contents) !== contents
     }
 
-    // This is a copy of children, so any changes to children need to be resaved
+    // This is a copy of children, so any changes to children need to be saved again
     getChildrenAsUUIDs() {
-        const result = []
-        const bcMap = p.findBC(this.uuid, "child")
-        for (let key in bcMap) {
-            const uuid = bcMap[key]
-            if (uuid) result.push(uuid)
-        }
-        return result
+        const items = t.find(this.uuid, "child")
+        return items
     }
 
     getChildrenAsNodes() {
@@ -87,46 +97,45 @@ class Node {
     }
 
     getParent() {
-        return p.findC(this.uuid, "parent")
+        return t.findLast(this.uuid, "parent")
     }
 
-    setParent(parent) {
-        p.addTriple(this.uuid, "parent", parent)
+    async setParent(parent) {
+        await t.addTriple({a: this.uuid, b: "parent", c: parent})
     }
 
-    addChild(uuid) {
-        p.addTriple(this.uuid, {child: uuid}, uuid)
+    async addChild(uuid) {
+        await t.addTriple({a: this.uuid, b: "child", c: uuid, o: "insert"})
         // new Node(uuid).setParent(this.uuid)
     }
 
-    deleteChild(uuid) {
-        p.addTriple(this.uuid, {child: uuid}, null)
+    async deleteChild(uuid) {
+        await t.addTriple({a: this.uuid, b: "child", c: uuid, o: "remove"})
     }
 }
 
 function addNode(parentNode) {
     const contents = prompt("contents?")
     if (contents) {
-        p.newTransaction("outliner/addNode")
-        const node = new Node(p.uuidv4())
+        // MAYBE: p.newTransaction("outliner/addNode")
+        const node = new Node("outlinerNode:" + UUID.uuidv4())
         node.setContents(contents)
         node.setParent(parentNode.uuid)
         parentNode.addChild(node.uuid)
-        p.sendCurrentTransaction()
+        // MAYBE: p.sendCurrentTransaction()
     }
 }
 
 function deleteNode(node) {
-    console.log("DeleteNode", node)
     const ok = true // confirm("cut " + node.getFirstLine() + "?")
     if (ok) {
-        p.newTransaction("outliner/deleteNode")
+        // MAYBE: p.newTransaction("outliner/deleteNode")
         const parent = node.getParent()
         if (parent) {
             new Node(parent).deleteChild(node.uuid)
             node.setParent("")
         }
-        p.sendCurrentTransaction()
+        // MAYBE: p.sendCurrentTransaction()
     }
     return ok
 }
@@ -189,7 +198,7 @@ function copyNodeRepresentation(node) {
 
 // Recursive
 function recreateNode(nodeRepresentation, parentNode) {
-    const node = new Node(p.uuidv4())
+    const node = new Node("outlinerNode:" + UUID.uuidv4())
     node.setContents(nodeRepresentation.contents)
     node.setParent(parentNode.uuid)
     parentNode.addChild(node.uuid)
@@ -269,16 +278,16 @@ function displayNode(node) {
             disabled: !cutNode && !copiedNodeRepresentation,
             onclick: () => {
                 if (cutNode) {
-                    p.newTransaction("outliner/cutNode")
+                    // MAYBE: p.newTransaction("outliner/cutNode")
                     node.addChild(cutNode.uuid)
                     cutNode.setParent(node.uuid)
-                    p.sendCurrentTransaction()
+                    // MAYBE: p.sendCurrentTransaction()
                     cutNode = null
                     copiedNodeRepresentation = null
                 } else if (copiedNodeRepresentation) {
-                    p.newTransaction("outliner/pasteNode")
+                    // MAYBE: p.newTransaction("outliner/pasteNode")
                     recreateNode(copiedNodeRepresentation, node)
-                    p.sendCurrentTransaction()
+                    // MAYBE: p.sendCurrentTransaction()
                 }
             }
         }, "Paste Child")
@@ -372,7 +381,7 @@ function displayNode(node) {
 }
 
 /*
-function displayFormattetText(text) {
+function displayFormattedText(text) {
     const lines = text.split(/\r?\n/g)
     return lines.map(line => [line, m("br")])
 }
@@ -390,15 +399,22 @@ function displayOutliner() {
     ])
 }
 
+async function promptToCreateOutline() {
+    const uuid = prompt("Start an outline with this UUID?", "outlinerNode:" + UUID.uuidv4())
+    if (!uuid) return
+    root = new Node(uuid)
+    await t.addTriple({a: "outliner:root", b: "currentOutline", c: uuid})
+}
+
 const NodeSystemViewer = {
     view: function() {
         return m(".main", [
-            m("h1.ba.b--blue", { class: "title" }, "Twirlip7 Outliner"),
-            p.isOffline() ? m("div.h2.pa1.ba.b--red", "OFFLINE", m("button.ml1", {onclick: p.goOnline }, "Try to go online")) : [],
-            nameTracker.displayNameEditor(),
-            p.isLoaded() ?
-                displayOutliner() :
-                "Loading..."
+            m("h1.ba.b--blue", { class: "title" }, "Twirlip15 Outliner"),
+            t.getLoadingState().isFileLoaded
+                ? getCurrentOutlineUUID()
+                    ? displayOutliner()
+                    : m("button.ma3", {onclick: promptToCreateOutline}, "No outline here yet. Click to start an outline.")
+                : "Loading..."
         ])
     }
 }
