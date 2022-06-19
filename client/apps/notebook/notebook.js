@@ -2,7 +2,23 @@
 
 /* global m, ace */
 
-// Assumes ace is imported from script tag with noconflict version
+// defines ace
+import "../../vendor/ace-src-noconflict/ace.js"
+
+// Needed so ace can load editor definitions for different file types
+ace.config.set("basePath", "/twirlip15/vendor/ace-src-noconflict") 
+
+// defines modelist indirectly so ace can require it
+import "../../vendor/ace-src-noconflict/ext-modelist.js"
+
+const modelistWrapper = {
+    modelist: null
+}
+
+ace.require(["ace/ext/modelist"], function (modelist) {
+    modelistWrapper.modelist = modelist
+    m.redraw()
+})
 
 // Mithril only needs to be imported once in the application as it sets a global "m"
 // defines m
@@ -52,19 +68,9 @@ const NotebookUsingServer = NotebookBackend(itemStore, function () {
     }
 })
 
-const modelistWrapper = {
-    modelist: null
-}
-
 let notebookView = NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper)
 
 let launchItem = null
-
-// TODO: improve import for ace somehow via ES6 probably by getting a new version of ace
-ace.require(["ace/ext/modelist"], function (modelist) {
-    modelistWrapper.modelist = modelist
-    m.redraw()
-})
 
 function getItemForJSON(itemJSON) {
     if (itemJSON === null) return null

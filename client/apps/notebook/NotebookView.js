@@ -1339,6 +1339,18 @@ export function NotebookView(NotebookUsingLocalStorage, ace, modelistWrapper) {
                     }
                 })
 
+                // disable "Missing semicolon" warning for JavaScript
+                session.on("changeMode", (e, session) => {
+                    if("ace/mode/javascript" === session.getMode().$id) {
+                        if(session.$worker) {
+                            session.$worker.send("changeOptions", [{
+                                asi: true
+                            }])
+                        }
+                    }
+                })
+                
+
                 // Bind a key for saving
                 editor.commands.addCommand({
                     name: "save",
