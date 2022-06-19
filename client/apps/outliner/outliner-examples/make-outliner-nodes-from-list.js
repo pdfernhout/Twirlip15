@@ -1,6 +1,6 @@
 // make-outliner-nodes-from-list.js
 /* eslint-disable no-console */
-/* global p */
+/* global root, UUID */
 
 // This can be eval-ed in the outliner to make a bunch of new nodes under root on two levels
 
@@ -45,12 +45,12 @@ Context:
 * Kansas / Nebraska / Second Life Virtual Worlds (a form of IDE?)`
 
 function makeNode(contents, parentNode) {
-    p.newTransaction("make-outliner-nodes-from-list")
-    const node = new Node(p.uuidv4())
+    // MAYBE: p.newTransaction("make-outliner-nodes-from-list")
+    const node = new Node("outlinerNode:" + UUID.uuidv4())
     node.setContents(contents)
     node.setParent(parentNode.uuid)
     parentNode.addChild(node.uuid)
-    p.sendCurrentTransaction()
+    // MAYBE: p.sendCurrentTransaction()
     return node
 }
 
