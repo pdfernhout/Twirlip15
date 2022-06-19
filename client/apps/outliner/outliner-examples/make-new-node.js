@@ -1,18 +1,18 @@
 // test of eval
 /* eslint-disable no-console */
-/* global p */
+/* global t, root, UUID */
 
 // This can be eval-ed in the outliner to make a new node under root.
 
-console.log("p", p)
+console.log("t", t)
 console.log("root", root)
 
-const node = new Node(p.uuidv4())
+const node = new Node("outlinerNode:" + UUID.uuidv4())
 console.log("new node", node)
 const contents = "Test on Eval to Make New Node"
 
-p.newTransaction("make-new-node")
+// MAYBE: p.newTransaction("make-new-node")
 node.setContents(contents)
 node.setParent(root.uuid)
 root.addChild(node.uuid)
-p.sendCurrentTransaction()
+// MAYBE: p.sendCurrentTransaction()
