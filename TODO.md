@@ -30,4 +30,7 @@ ibis should be multi-user like chat is
 ibis should support transclusions in multiple maps
 ibis should support search across multiple maps
 
+TripleStore should queue triples to be written rather than have async addTriple
+Notebook should queue items to be written rather than have async addItem
+
 think about stream (of JSON drops or maybe triples) with trees (indexes or structures maybe of triples) and rocks (hashed contents blobs or maybe triple sets) and paths (something analogous to user experience?) :-)
