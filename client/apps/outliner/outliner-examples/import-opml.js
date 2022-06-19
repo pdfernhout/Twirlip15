@@ -1,6 +1,6 @@
 // Importer code for OPML converted to JSON
 /* eslint-disable no-console */
-/* global p */
+/* global root, UUID */
 
 // OPML is an file format for outlines encoded in XML.
 
@@ -23,7 +23,7 @@ function repeat(str, times) {
 }
 
 function makeNewNode(contents, parent) {
-    const node = new Node(p.uuidv4())
+    const node = new Node("outlinerNode:" + UUID.uuidv4())
     node.setContents(contents)
     node.setParent(parent.uuid)
     parent.addChild(node.uuid)
@@ -51,12 +51,16 @@ function displayOutline(item, level, parent, lead) {
     }
 }
 
-p.newTransaction("import-opml")
+// MAYBE: p.newTransaction("import-opml")
 try {
-    displayOutline(window.opmlExample.opml.body, 0, root, "")
-    p.sendCurrentTransaction()
+    if (!window.opmlExample) {
+        alert("please set window.opmlExample first")
+    } else {
+        displayOutline(window.opmlExample.opml.body, 0, root, "")
+    }
+    // MAYBE: p.sendCurrentTransaction()
 } catch (e) {
-    p.cancelCurrentTransaction()
+    // MAYBE: p.cancelCurrentTransaction()
 }
 
 console.log("=== DONE")
