@@ -2,6 +2,7 @@ export const applicationList = [
     "appender",
     "archiver",
     "chat",
+    "collage",
     "edit",
     "filer",
     "ibis",
@@ -18,6 +19,7 @@ export const applicationList = [
 
 export const extensionForApplication = {
     chat: ".twirlip-chat.jsonl",
+    collage: ".twirlip-collage.jsonl",
     edit: ".txt",
     ibis: ".twirlip-ibis.jsonl",
     notebook: ".twirlip-notebook.jsonl",
