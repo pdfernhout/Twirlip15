@@ -516,6 +516,7 @@ async function promptToCreateCollage() {
 
 const TwirlipCollageApp = {
     view: () => m("div.pa3.h-100.overflow-auto",
+        Toast.viewToast(),
         m("div.mt2.fixed",
             {style: {top: "0px", right: "20px"}},
             !t.getLoadingState().isFileLoaded
