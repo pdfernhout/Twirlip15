@@ -1,4 +1,5 @@
 import { Twirlip15ServerAPI } from "./twirlip15-api.js"
+import { base64decode } from "../vendor/base64.js"
 
 // Future design ideas for API:
 // triples[id]["+"].map(...)
@@ -37,13 +38,53 @@ export function Triplestore(showError, fileName) {
         return apiResult
     }
 
+    async function loadPartialFile(fileName, start, length) {
+        const apiResult = await TwirlipServer.fileReadBytes(fileName, start, length, "base64")
+        if (apiResult) {
+            return apiResult.data
+        }
+        return false
+    }
+
+    function showStatus(text) {
+        console.log("showStatus", text)
+    }
+
     async function loadFileContents() {
         if (!fileName) return showError(new Error("fileName not set yet"))
         isFileLoaded = false
+
+        const apiResult = await TwirlipServer.fileStats(fileName)
+        if (!apiResult) return
+
+        const fileSize = apiResult.stats.size
+        if (!fileSize) return
+
         isFileLoading = true
-        const apiResult = await TwirlipServer.fileContents(fileName)
+    
+        const segments = []
+        const chunkSize = 1200000
+        let start = 0
+        while (start < fileSize) {
+            showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
+            const countToRead = Math.min(chunkSize, fileSize - start)
+            const data = await loadPartialFile(fileName, start, countToRead)
+            if (data === false) {
+                console.log("Unexpected: got false")
+                showStatus("")
+                showStatus("reading failed at end")
+                return
+            }
+            // new TextDecoder("utf-8").decode(uint8array)
+            // iso8859-1
+            segments.push(base64decode(data, new TextDecoder("ascii")))
+            start += chunkSize
+        }
+    
+        showStatus("done loading data; processing")
+    
         if (apiResult) {
-            const chosenFileContents = apiResult.contents
+            const chosenFileContents = segments.join("")
             const lines = chosenFileContents.split("\n")
             triples = []
             let index = 1
