@@ -1,12 +1,16 @@
 import { SqlUtils } from "./SqlUtils.js"
 
+/* global m */
+
 // TODO: Generify to load any Compendium SQL dump file
 
 let compendiumFeatureSuggestionsTables = null
 let loadingPromise = null
 
 async function _loadCompendiumFeatureSuggestions() {
-    const response = await fetch("examples/feature_suggestions_compendium_map.sql")
+    const url = import.meta.url
+    const baseDir = url.substring(0, url.lastIndexOf("/")) + "/../notebook/examples/"
+    const response = await fetch(baseDir + "feature_suggestions_compendium_map.sql")
     const fileContents = await response.text()
     compendiumFeatureSuggestionsTables = SqlUtils.parseSqlIntoTables(fileContents)
     m.redraw()
@@ -18,10 +22,10 @@ function loadCompendiumFeatureSuggestions() {
     return loadingPromise
 }
 
-function importNodeTable(p, nodeTable) {
+function importNodeTable(t, nodeTable) {
     // console.log("nodeTable", nodeTable)
     for (let node of nodeTable) {
-        const id = {collageUUID: node.NodeID}
+        const id = "collageNode:" + node.NodeID
         for (let fieldName of [
             "Author",
             "CreationDate",
@@ -36,10 +40,12 @@ function importNodeTable(p, nodeTable) {
             "OriginalID"
         ]) {
             let value = node[fieldName]
-            if (fieldName.endsWith("Date")) value = new Date(value).toISOString()
-            if (fieldName === "Detail") value = value.replace(/\\n/g, "\n")
+            if (fieldName.endsWith("ID")) value = "collageNode:" + value
+            else if (fieldName.endsWith("Date")) value = "date:" + (new Date(value).toISOString())
+            else if (fieldName === "Detail") value = "text:" + value.replace(/\\n/g, "\n")
+            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
-            p.addTriple(id, fieldNameAdjusted, value)
+            t.addTripleABC(id, fieldNameAdjusted, value)
         }
         const typeName = {
             0: "General",
@@ -75,14 +81,14 @@ function importNodeTable(p, nodeTable) {
             51: "Trashbin",
             52: "Inbox",
         }[node.NodeType]
-        p.addTriple(id, "type", typeName)
+        t.addTripleABC(id, "type", "collageNodeType:" + typeName)
     }
 }
 
-function importViewNodeTable(p, viewNodeTable) {
+function importViewNodeTable(t, viewNodeTable) {
     // console.log("viewNodeTable", viewNodeTable)
     for (let row of viewNodeTable) {
-        const id = {collageUUID: row.ViewID}
+        const id = "collageNode:" + row.ViewID
         const modifiedRow = {}
         for (let fieldName of [
             "Background",
@@ -106,16 +112,24 @@ function importViewNodeTable(p, viewNodeTable) {
             "YPos"
         ]) {
             let value = row[fieldName]
-            if (fieldName.endsWith("Date")) {
-                value = new Date(value).toISOString()
+            if (fieldName.endsWith("ID")) value = "collageNode:" + value
+            else if (fieldName.endsWith("Pos")) value = "number:" + value
+            else if (fieldName.endsWith("Width")) value = "number:" + value
+            else if (fieldName.endsWith("Size")) value = "number:" + value
+            else if (fieldName.endsWith("Background")) value = "color:" + value
+            else if (fieldName.endsWith("Foreground")) value = "color:" + value
+            else if (fieldName.endsWith("Date")) {
+                value = "date:" + new Date(value).toISOString()
                 row[fieldName] = value
             }
+            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
             modifiedRow[fieldNameAdjusted] = value
         }
         modifiedRow.id = modifiedRow.nodeID
         // console.log("adding for ", modifiedRow.id, {contains: modifiedRow.id})
-        p.addTriple(id, {contains: modifiedRow.id}, modifiedRow)
+        // TODO: Make this into a nested triple-defined object
+        t.addTriple({a: id, b: "contains", c: "JSON:" + JSON.stringify(modifiedRow), o: "insert"})
     }
 }
 
@@ -130,10 +144,10 @@ const linkTypeNumberToName = {
     46: "About"
 }
 
-function importLinkTable(p, linkTable) {
+function importLinkTable(t, linkTable) {
     // console.log("linkTable", linkTable)
     for (let link of linkTable) {
-        const id = {collageUUID: link.LinkID}
+        const id = "collageNode:" + link.LinkID
         for (let fieldName of [
             "Author",
             "CreationDate",
@@ -147,21 +161,24 @@ function importLinkTable(p, linkTable) {
             "ToNode"
         ]) {
             let value = link[fieldName]
-            if (fieldName.endsWith("Date")) {
-                value = new Date(value).toISOString()
+            if (fieldName.endsWith("ID")) value = "collageNode:" + value
+            else if (fieldName.endsWith("Node")) value = "collageNode:" + value
+            else if (fieldName.endsWith("Date")) {
+                value = "date:" + new Date(value).toISOString()
             }
-            if (fieldName === "LinkType") value = linkTypeNumberToName[value] || "RespondsTo"
+            else if (fieldName === "LinkType") value = "collageLinkType:" + linkTypeNumberToName[value] || "collageLinkType:RespondsTo"
+            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
-            p.addTriple(id, fieldNameAdjusted, value)
+            t.addTripleABC(id, fieldNameAdjusted, value)
         }
-        p.addTriple(id, "type", "Link")
+        t.addTripleABC(id, "type", "collageNodeType:Link")
     }
 }
      
-function importViewLinkTable(p, viewLinkTable) {
+function importViewLinkTable(t, viewLinkTable) {
     // console.log("viewLinkTable", viewLinkTable)
     for (let row of viewLinkTable) {
-        const id = {collageUUID: row.ViewID}
+        const id = "collageNode:" + row.ViewID
         const modifiedRow = {}
         for (let fieldName of [
             "ArrowType",
@@ -182,16 +199,25 @@ function importViewLinkTable(p, viewLinkTable) {
             "ViewID"
         ]) {
             let value = row[fieldName]
-            if (fieldName.endsWith("Date")) {
-                value = new Date(value).toISOString()
+            if (fieldName.endsWith("ID")) value = "collageNode:" + value
+            else if (fieldName.endsWith("Pos")) value = "number:" + value
+            else if (fieldName.endsWith("Weight")) value = "number:" + value
+            else if (fieldName.endsWith("Size")) value = "number:" + value
+            else if (fieldName.endsWith("Background")) value = "color:" + value
+            else if (fieldName.endsWith("Foreground")) value = "color:" + value
+            else if (fieldName.endsWith("Colour")) value = "color:" + value
+            else if (fieldName.endsWith("Date")) {
+                value = "date:" + new Date(value).toISOString()
                 row[fieldName] = value
             }
+            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
             modifiedRow[fieldNameAdjusted] = value
         }
         modifiedRow.id = modifiedRow.linkID
         // TODO: Maybe "hasLink" should be "contains" with some way to distinguish links from other items?
-        p.addTriple(id, {hasLink: modifiedRow.id}, modifiedRow)
+        // TODO: Make this into a nested triple-defined object
+        t.addTriple({a: id, b: "hasLink", c: "JSON:" + JSON.stringify(modifiedRow), o: "insert"})
     }
 }
 

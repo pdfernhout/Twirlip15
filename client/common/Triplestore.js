@@ -103,6 +103,11 @@ export function Triplestore(showError, fileName) {
         }
     }
 
+    // Convenience function
+    async function addTripleABC(a, b, c) {
+        return await addTriple({a, b, c})
+    }
+
     async function addTriple(triple, write=true, successCallback) {
         if (!isString(triple.a) ||
             !isString(triple.b) ||
@@ -201,6 +206,7 @@ export function Triplestore(showError, fileName) {
         createNewFile,
         loadFileContents,
         addTriple,
+        addTripleABC,
         filterTriples,
         find,
         last,

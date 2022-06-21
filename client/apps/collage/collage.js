@@ -53,24 +53,39 @@ https://stackoverflow.com/questions/13165913/draw-an-arrow-between-two-circles#1
 import "../notebook/examples/ibis_icons.js"
 
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
 
-import { HashUUIDTracker } from "./HashUUIDTracker.js"
-import { Pointrel20190914 } from "./Pointrel20190914.js"
-import { CanonicalJSON } from "../../common/CanonicalJSON.js"
 import { SqlUtils } from "./SqlUtils.js"
 import { SqlLoaderForCompendium } from "./SqlLoaderForCompendium.js"
+import { UUID } from "../../common/UUID.js"
+import { Toast } from "../../common/Toast.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
-const p = new Pointrel20190914()
+function showError(error) {
+    console.log("error", error)
+    const errorMessage = error.message
+        ? error.message
+        : error
+    Toast.toast(errorMessage)
+}
+window.addEventListener("error", event => showError(event))
+
+const t = Triplestore(showError)
+
+function getCurrentCollageUUID() {
+    return t.findLast("collage:root", "currentCollage")
+}
 
 let collageUUID
-let userID = localStorage.getItem("userID") || "anonymous"
 
-function userIDChange(event) {
-    userID = event.target.value
-    // TODO: Fix how userId is handled with Pointrel20190914
-    // backend.configure(undefined, userID)
-    localStorage.setItem("userID", userID)
+async function startup() {
+    const filePathFromParams = decodeURI(window.location.pathname)
+    t.setFileName(filePathFromParams)
+    await t.loadFileContents()
+
+    collageUUID = getCurrentCollageUUID()
+
+    m.redraw()
 }
 
 // Make (invisible) arrowhead marker which is then used by lines
@@ -90,7 +105,7 @@ function myWrap(offset, itemText, maxWidth) {
     const words = itemText.split(/\s+/)
     const lines = []
     let line = ""
-    words.forEach((word, index) => {
+    words.forEach((word) => {
         // if (lines.length >= 5) {
         //    line = "..."
         //    return
@@ -106,7 +121,7 @@ function myWrap(offset, itemText, maxWidth) {
     })
     if (line !== "") lines.push(line)
     let lineNumber = 0
-    return lines.map((line, index) => {
+    return lines.map((line) => {
         return m("tspan", {
             x: offset.x,
             y: offset.y,
@@ -199,40 +214,40 @@ function viewMapItem(mapItem, origin) {
 }
 
 function viewMap(uuid) {
-    const mapId = {collageUUID: uuid}
+    const mapId = uuid
 
-    const mapViewLinks = Object.values(p.findBC(mapId, "hasLink"))
+    const mapViewLinks = t.find(mapId, "hasLink").map(itemJSON => JSON.parse(itemJSON))
     const mapLinks = mapViewLinks.map(link => {
         const id = link.id
         return {
-            fromNode: p.findC({collageUUID: id}, "fromNode") || "MISSING_FROM",
-            toNode: p.findC({collageUUID: id}, "toNode") || "MISSING_FROM",
+            fromNode: t.findLast(id, "fromNode") || "MISSING_FROM",
+            toNode: t.findLast(id, "toNode") || "MISSING_FROM",
         }
     })
 
     const nodes = {}
 
-    const mapViewItems = Object.values(p.findBC(mapId, "contains"))
+    const mapViewItems = t.find(mapId, "contains").map(itemJSON => JSON.parse(itemJSON))
     const mapItems = mapViewItems.map(item => {
         const id = item.id
         nodes[id] = item
-        let type = p.findC({collageUUID: id}, "type") || "missing"
+        let type = t.findLast(id, "type") || "missing"
         type = type.charAt(0).toLowerCase() + type.substring(1)
         if (type === "pro") type = "plus"
         if (type === "con") type = "minus"
         return {
-            id: {collageUUID: id},
-            label: p.findC({collageUUID: id}, "label") || "",
+            id: id,
+            label: t.findLast(id, "label") || "",
             labelWrapWidth: item.labelWrapWidth,
             type: type,
             x: item.xPos || 0,
             y: item.yPos || 0,
-            // detail: p.findC(id, "detail")
+            // detail: t.findLast(id, "detail")
         }
     })
     // mapItems.sort((a, b) => a.label.localeCompare(b.label))
     
-    const label =  p.findC(mapId, "label")
+    const label =  t.findLast(mapId, "label")
 
     // Determine map bounds
     let xSizeMin = 0
@@ -256,7 +271,7 @@ function viewMap(uuid) {
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) p.addTriple({collageUUID: uuid}, "label", newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -285,15 +300,15 @@ let editedNote = null
 function viewNote(uuid) {
     if (uuid !== editedNote) editedNote = null
 
-    const label =  p.findC({collageUUID: uuid}, "label")
-    const detail =  p.findC({collageUUID: uuid}, "detail") || ""
+    const label =  t.findLast(uuid, "label")
+    const detail =  t.findLast(uuid, "detail") || ""
     return m("div", 
         m("div", "Note: ", uuid),
         m("div.mt2", 
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) p.addTriple({collageUUID: uuid}, "label", newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -303,7 +318,7 @@ function viewNote(uuid) {
             m("div",
                 editedNote 
                     ? m("textarea", {rows: 10, cols: 80, value: detail, onchange: (event) => {
-                        p.addTriple({collageUUID: uuid}, "detail", event.target.value)
+                        t.addTripleABC(uuid, "detail", "text:" + event.target.value)
                     }})
                     : m("pre", {style: "white-space: pre-wrap", }, detail)
                 
@@ -319,34 +334,35 @@ function promptForNewItemForList(listId) {
     // TODO: Pick the type
     const itemId = makeNewNode("Note", itemLabel)
 
-    p.addTriple(listId, {contains: itemId}, {id: itemId, position: "???"})
+    // Is "position" still needed?
+    t.addTriple({a: listId, b: "contains", c: itemId, o: "insert"})
 }
 
 function viewList(uuid) {
-    const listId = {collageUUID: uuid}
-    const listItemIds = Object.values(p.findBC(listId, "contains")).map(item => item.id)
+    const listId = uuid
+    const listItemIds = t.find(listId, "contains").map(itemJSON => JSON.parse(itemJSON).id)
     const listItems = listItemIds.map(id => {
-        let type = p.findC({collageUUID: id}, "type") || "missing"
+        let type = t.findLast(id, "type") || "missing"
         type = type.charAt(0).toLowerCase() + type.substring(1)
         if (type === "pro") type = "plus"
         if (type === "con") type = "minus"
         return {
-            id: {collageUUID: id},
-            label: p.findC({collageUUID: id}, "label") || "",
+            id: id,
+            label: t.findLast(id, "label") || "",
             type: type
-            // detail: p.findC(id, "detail")
+            // detail: t.findLast(id, "detail")
         }
     })
     listItems.sort((a, b) => a.label.localeCompare(b.label))
     
-    const label =  p.findC(listId, "label")
+    const label =  t.findLast(listId, "label")
     return m("div", 
         m("div", "List: ", uuid),
         m("div.mt2", 
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) p.addTriple({collageUUID: uuid}, "label", newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -369,7 +385,7 @@ function viewList(uuid) {
 
 function viewNode(uuid) {
     if (!uuid) throw new Error("viewNode: uuid is not defined: " + uuid)
-    let type = p.findC({collageUUID: uuid}, "type")
+    let type = t.findLast(uuid, "type")
     // console.log("viewNode", uuid, type)
     if (type === "List") return viewList(uuid)
     if (type === "Map") return viewMap(uuid)
@@ -382,34 +398,34 @@ function viewNode(uuid) {
 
 // Type of Map, List, Note
 function makeNewNode(type, label, detail) {
-    const uuid = p.uuidv4()
-    const id = {collageUUID: uuid}
-    p.addTriple(id, "type", type)
-    if (label) p.addTriple(id, "label", label)
-    if (detail) p.addTriple(id, "detail", detail)
+    const uuid = "collageNode:" + UUID.uuidv4()
+    const id = uuid
+    t.addTripleABC(id, "type", "collageNodeType:" + type)
+    if (label) t.addTripleABC(id, "label", "text:" + label)
+    if (detail) t.addTripleABC(id, "detail", "text:" + detail)
     return id
 }
 
-function makeNewMap(label) {
+function makeNewMap() {
     const uuid = makeNewNode("Map").collageUUID
     changeCollageUUID(uuid)
 }
 
 function getAllMaps() {
-    return p.findAs("type", "Map")
+    return t.find(null, "type", "collageNodeType:Map")
 }
 
-function makeNewList(label) {
+function makeNewList() {
     const uuid = makeNewNode("List").collageUUID
     changeCollageUUID(uuid)
 }
 
 function getAllLists() {
-    return p.findAs("type", "List")
+    return t.find(null, "type", "collageNodeType:List")
 }
 
 function getAllLinks() {
-    return p.findAs("type", "Link")
+    return t.find(null, "type", "collageNodeType:Link")
 }
 
 const expanded = {}
@@ -424,8 +440,8 @@ function expander(name, callback) {
 }
 
 function sortItems(a, b) {
-    const aLabel = p.findC(a, "label") || a.collageUUID
-    const bLabel = p.findC(b, "label") || b.collageUUID
+    const aLabel = t.findLast(a, "label") || a.collageUUID
+    const bLabel = t.findLast(b, "label") || b.collageUUID
     return aLabel.localeCompare(bLabel)
 }
 
@@ -434,7 +450,7 @@ function viewLists() {
         m("div", getAllLists().sort(sortItems).map(item =>
             m("div",
                 { onclick: () => changeCollageUUID(item.collageUUID) },
-                p.findC(item, "label") || item.collageUUID
+                t.findLast(item, "label") || item.collageUUID
             )
         ))
     )
@@ -445,18 +461,18 @@ function viewMaps() {
         m("div", getAllMaps().sort(sortItems).map(item =>
             m("div", 
                 { onclick: () => changeCollageUUID(item.collageUUID) }, 
-                p.findC(item, "label") || item.collageUUID
+                t.findLast(item, "label") || item.collageUUID
             )
         ))
     ) 
 }
 
 function sortLinks(a, b) {
-    const aFrom = p.findC(a, "fromNode") || ""
-    const bFrom = p.findC(b, "fromNode") || ""
+    const aFrom = t.findLast(a, "fromNode") || ""
+    const bFrom = t.findLast(b, "fromNode") || ""
     if (aFrom === bFrom) {
-        const aTo = p.findC(a, "toNode") || ""
-        const bTo = p.findC(b, "toNode") || ""
+        const aTo = t.findLast(a, "toNode") || ""
+        const bTo = t.findLast(b, "toNode") || ""
         return aTo.localeCompare(bTo)
     }
     return aFrom.localeCompare(bFrom)
@@ -465,10 +481,10 @@ function sortLinks(a, b) {
 function viewLinks() {
     return expander("Links", () => 
         m("div", getAllLinks().sort(sortLinks).map(link => {
-            const fromNode = p.findC(link, "fromNode") || "MISSING_FROM"
-            const fromLabel = p.findC({collageUUID: fromNode}, "label") || ""
-            const toNode = p.findC(link, "toNode") || "MISSING_TO"
-            const toLabel = p.findC({collageUUID: toNode}, "label") || ""
+            const fromNode = t.findLast(link, "fromNode") || "MISSING_FROM"
+            const fromLabel = t.findLast({collageUUID: fromNode}, "label") || ""
+            const toNode = t.findLast(link, "toNode") || "MISSING_TO"
+            const toLabel = t.findLast({collageUUID: toNode}, "label") || ""
             return m("div", 
                 { onclick: () => changeCollageUUID(link.collageUUID) },
                 m("span", link.collageUUID),
@@ -485,50 +501,49 @@ function viewCollageButtons() {
     return m("div.ma1.pa1",
         m("button.ml2", {onclick: () => makeNewMap()}, "New Map"),
         m("button.ml2", {onclick: () => makeNewList()}, "New List"),
-        m("button.ml2", {onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(p).then(() => alert("Done with import"))}, "Import Compendum Feature Suggestions"),
-        m("button.ml2", {onclick: () => console.log(p)}, "Debug P"),
+        m("button.ml2", {onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(t).then(() => alert("Done with import"))}, "Import Compendum Feature Suggestions"),
+        m("button.ml2", {onclick: () => console.log(t)}, "Debug T"),
     )
 }
+
+async function promptToCreateCollage() {
+    const uuid = prompt("Start a collage with this UUID?", "collageNode:" + UUID.uuidv4())
+    if (!uuid) return
+    collageUUID = uuid
+    await t.addTriple({a: "collage:root", b: "currentCollage", c: uuid})
+}
+
 
 const TwirlipCollageApp = {
     view: () => m("div.pa3.h-100.overflow-auto",
-        m("div.mt2.fixed", {style: {top: "0px", right: "20px"}}, p.isLoading() ? m("i.fa.fa-spinner.fa-spin") : ""),
+        m("div.mt2.fixed",
+            {style: {top: "0px", right: "20px"}},
+            !t.getLoadingState().isFileLoaded
+                ? m("i.fa.fa-spinner.fa-spin")
+                : ""
+        ),
         // m("b", "Twirlip Collage: ", collageUUID),
-        m(".mb2.pa2.ba.br3", viewNode(collageUUID)),
-        viewLists(),
-        viewMaps(),
-        // viewLinks(),
-        viewCollageButtons(),
-        expander("Compendium Feature Suggestions SQL Tables", () => {
-            SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
-            return m("div.ma3.ba.b--light-silver.pa2",
-                SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables() && SqlUtils.viewSqlTables(SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables())
-            )
-        }),
+        (t.getLoadingState().isFileLoaded
+            ? getCurrentCollageUUID()
+                ? m(".mb2.pa2.ba.br3", viewNode(collageUUID))
+                : m("button.ma3", {onclick: promptToCreateCollage}, "No outline here yet. Click to start an outline.")
+            : "Loading..."
+        ),
+        getCurrentCollageUUID() && [
+            viewLists(),
+            viewMaps(),
+            // viewLinks(),
+            viewCollageButtons(),
+            expander("Compendium Feature Suggestions SQL Tables", () => {
+                SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
+                return m("div.ma3.ba.b--light-silver.pa2",
+                    SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables() && SqlUtils.viewSqlTables(SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables())
+                )
+            }),
+        ]
     )
 }
 
-const { uuidChangedByApp, getUUID } = HashUUIDTracker("collageUUID", (uuid) => {
-    // Called every time UUID changed from hash in the URL
-    collageUUID = uuid
-})
-
-collageUUID = getUUID()
-
-// TODO: optimize exessive stringify use
-function isUUIDMatch(a, b) {
-    return CanonicalJSON.stringify(a) === CanonicalJSON.stringify(b)
-}
-
-let loading = true
-
-p.connect({
-    onLoaded: (streamId) => {
-        // console.log("p onloaded", streamId)
-        if (isUUIDMatch(streamId, {collageUUID: collageUUID})) {
-            loading = false
-        }
-    }
-})
-
 m.mount(document.body, TwirlipCollageApp)
+
+startup()
