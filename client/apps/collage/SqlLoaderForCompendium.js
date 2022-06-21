@@ -9,8 +9,8 @@ let loadingPromise = null
 
 async function _loadCompendiumFeatureSuggestions() {
     const url = import.meta.url
-    const baseDir = url.substring(0, url.lastIndexOf("/")) + "/../notebook/examples/"
-    const response = await fetch(baseDir + "feature_suggestions_compendium_map.sql")
+    const baseDir = url.substring(0, url.lastIndexOf("/"))
+    const response = await fetch(baseDir + "/feature_suggestions_compendium_map.sql")
     const fileContents = await response.text()
     compendiumFeatureSuggestionsTables = SqlUtils.parseSqlIntoTables(fileContents)
     m.redraw()
