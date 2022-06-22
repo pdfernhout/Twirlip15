@@ -107,3 +107,184 @@ like addTriple (or addTransaction) and findTriple? And maybe a few others.
 ALso sqlite requires (for efficiency) a connection and a cursor.
 Maybe no way around cursor? Unless use original Pointrel approach of linked list of same field?
 Then a cursor is just a pointer to the file position of the last triple returned.
+
+2022-06-21 9:27pm ET
+
+Comparing ideas for raw storage of triples -- simplicity vs. expandability (where only last field can have spaces -- or maybe unescaped spaces):
+
+    {"a":"collageNode:1270111357464769636","b":"modificationDate","c":"date:2013-01-06T09:33:20.986Z","index":407}
+
+    collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
+
+    replace collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
+
+2022-06-22 8:30am ET
+
+Or can include a version field at start for upgrades (including json):
+
+    v1 replace collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
+
+    v2 2013-01-06T09:33:20.986Z al.selvin@example.com replace collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
+
+Thinking on how I like the content-type in the last field. 
+And in the first for the class of a uuid.
+
+But I don't like how application code gets littered with error-prone string manipulation like:
+    t.addTripleABC(uuid, "label", "text:" + newLabel)
+
+Might be more explicit to have:
+
+    t.addTripleABTC(uuid, "label", "text", newLabel)
+
+Or:
+
+    t.addTripleABCT(uuid, "label", newLabel, "text")
+
+Where the last field defaults to "text" if not specified.
+
+And maybe then find(a, b, c) functions with and without type for return result or with auto-conversion?
+
+I'm OK with the first UUID field being always of that form,
+although it would be good to hav a uuid function like:
+
+    const uuid = makeUUID("collageNode")
+
+instead of:
+
+    const uuid = "collageNode:" + UUID.uuidv4()
+    
+Although one could argue that a type is superfluous if have a type implicit in the B field:
+
+    collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
+
+Versus:
+
+    collageNode:1270111357464769636 modificationDate 2013-01-06T09:33:20.986Z
+
+But I do like the consistency of every C field having a type, even if just a handful
+of text, json, number, date, or some class. 
+
+I handled that partially before by automatically converting to and from JSON.
+
+But JSON does not have dates.
+But they could be strings the application converts -- or even leaves as strings.
+
+(Idea of having one sentence per line in electronic documents?
+No extra cost for files -- but more scrolling.
+But maybe easier to read conceptually?)
+
+It feels a little odd to not have a type for the B field, even as it is simpler and maybe not needed.
+I see the argument for XML-like namespacing though.
+But you can either add or nto add a type or namespace yourself:
+
+    collageNode:1270111357464769636 myApp:modificationDate date:2013-01-06T09:33:20.986Z
+
+Or even:
+
+    v1 myApp/collageNode:1270111357464769636 myApp/field:modificationDate myApp/date:2013-01-06T09:33:20.986Z
+
+One risk is that once you start using text fields of some sort you get stuck --
+in the sense that it is not easy to change those names in the stored files.
+In a database, you could do some sort fo system-wide upgrade perhaps.
+Fundamental limitation of these sorts of text fields.
+
+I know in past though that I did not like have six required fields to add things:
+
+    addTripleTATBTC("myApp/collageNode", "1270111357464769636", "myApp/field", "modificationDate", "myApp/date", "2013-01-06T09:33:20.986Z")
+
+Realizing having six things exceeds easy mental capacity of three or four things in memory.
+
+From: https://en.wikipedia.org/wiki/XML_namespace
+> Attributes are never subject to the default namespace.
+> An attribute without an explicit namespace prefix is considered not to be in any namespace.
+
+XML Elements may be in a default namespace though after defining one.
+
+What of not using a colon?
+
+    v3 myApp/collageNode/1270111357464769636 myApp/field/modificationDate myApp/date/2013-01-06T09:33:20.986Z
+
+Or pipe?
+
+    v3 myApp|collageNode|1270111357464769636 myApp|field|modificationDate myApp|date|2013-01-06T09:33:20.986Z
+
+Where pipes would have to be escaped if in text?
+    
+    v3 myApp|collageNode|1270111357464769636 myApp|field|detail myApp|text|Some text with a pipe next \| that needs to be escaped.
+
+Although the leaning-forward slash (/) is so common as a separator for levels.
+Is it more standard to use it or is it confusing where will get munged by other code?
+And where slash will need to be escaped in every path stored in a text field?
+
+The colon is also potentially conflicting with JSON fields or URLs.
+
+The colon for type also conflicts conceptually with JSON where the colon is used with a field name not a type.
+
+Related: https://stackoverflow.com/questions/492090/least-used-delimiter-character-in-normal-text-ascii-128
+
+Could use unit separator instead of space?
+
+  https://unicode-table.com/en/001F/
+
+Let's see what a "unit separator" looks like here: 
+
+A small empty box. Seems confusing...
+
+And hard to type for manual editing.
+
+Let's see:
+
+    v4 myApp|collageNode|1270111357464769636myApp|field|detailmyApp|text|Some text with a pipe next \| that needs to be escaped.
+
+Not impossible though.
+
+But then would be issue if try to use other separators and they are also boxes.
+
+Could also do:
+
+    v5 myAppcollageNode1270111357464769636 myAppfielddetail myApptextSome text with a pipe next \| that needs to be escaped.
+
+Again, maybe confusing and hard to type or read.
+
+I kind of like the forward slash the best as a "path".
+But I worry it will be harder to read escaped:
+
+    v6 myApp/collageNode/1270111357464769636 myApp/field/URL myApp/URL/https:\/\/simon.buckinghamshum.net\/2015\/11\/al-selvin-memories-tributes\/
+
+I guess it is not that bad...
+
+But contrast with pipes:
+
+    v6 myApp|collageNode|1270111357464769636 myApp|field|URL myApp|URL|https://simon.buckinghamshum.net/2015/11/al-selvin-memories-tributes/
+
+For the common case.
+
+-----
+
+Thinking that of use the pipe then can use UUIDs as file names if do object storage.
+I liked that idea in Twirlip7 even if it was not clear what the pool of objects would be.
+But "myApp|collageNode|1270111357464769636" can be a file name by itself.
+In Twirlip7 did the sha256 hash of those instead though.
+
+On the other hand, with slashes, could just make subdirectories...
+
+But get a sense this is all fun and interesting to think about but also kind of arbitrary.
+Whatever way I choose, I will need to escape some characters -- at the least newlines
+if want one triple per line.
+Otherwise would need an end character or symbol which would need to be escaped
+or chosen everytime so does nor appear in the text.
+I did that before too.
+
+Right now thigns are in JSON, so the question is, what is the benefit of switching?
+Less computer cycles to parse?
+Easier for humans to read?
+More expandable with (escaped) pipes to have hierarchy of namespaces (or none at all)?
+Maybe harder to parse with escaped pipes? Harder to break into chunks?
+Or just limit number of splits?
+
+Not sure how to split on pipes if some are escaped and no split on escaped pipes?
+
+Ideas on splitting:
+https://stackoverflow.com/questions/34045019/split-string-by-comma-but-not-escaped-in-javascript
+
+But anything coded by hand unlikely to be as fast as built-in JSON parsing.
