@@ -385,6 +385,7 @@ function viewList(uuid) {
 function viewNode(uuid) {
     if (!uuid) throw new Error("viewNode: uuid is not defined: " + uuid)
     let type = t.findLast(uuid, "type")
+    if (type && type.includes(":")) type = type.split(":")[1]
     // console.log("viewNode", uuid, type)
     if (type === "List") return viewList(uuid)
     if (type === "Map") return viewMap(uuid)
@@ -508,7 +509,8 @@ async function promptToCreateCollage() {
     const uuid = prompt("Start a collage with this UUID?", "collageNode:" + UUID.uuidv4())
     if (!uuid) return
     collageUUID = uuid
-    await t.addTriple({a: "collage:root", b: "currentCollage", c: uuid})
+    await t.addTripleABC(uuid, "type", "collageNodeType:Map")
+    await t.addTripleABC("collage:root", "currentCollage", uuid)
 }
 
 
@@ -525,13 +527,13 @@ const TwirlipCollageApp = {
         (t.getLoadingState().isFileLoaded
             ? getCurrentCollageUUID()
                 ? m(".mb2.pa2.ba.br3", viewNode(collageUUID))
-                : m("button.ma3", {onclick: promptToCreateCollage}, "No outline here yet. Click to start an outline.")
+                : m("button.ma3", {onclick: promptToCreateCollage}, "No map here yet. Click to start an map.")
             : "Loading..."
         ),
         getCurrentCollageUUID() && [
             viewLists(),
             viewMaps(),
-            // viewLinks(),
+            viewLinks(),
             viewCollageButtons(),
             expander("Compendium Feature Suggestions SQL Tables", () => {
                 SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
