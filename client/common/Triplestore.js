@@ -58,7 +58,10 @@ export function Triplestore(showError, fileName) {
         if (!apiResult) return
 
         const fileSize = apiResult.stats.size
-        if (!fileSize) return
+        if (!fileSize) {
+            isFileLoaded = true
+            return
+        }
 
         isFileLoading = true
     
@@ -73,6 +76,7 @@ export function Triplestore(showError, fileName) {
                 console.log("Unexpected: got false")
                 showStatus("")
                 showStatus("reading failed at end")
+                isFileLoading = false
                 return
             }
             // new TextDecoder("utf-8").decode(uint8array)
