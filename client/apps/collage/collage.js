@@ -430,10 +430,9 @@ function getAllLinks() {
 const expanded = {}
 function expander(name, callback) {
     return m("div.ma1",
-        name,
         m("span.ml2", {
             onclick: () => expanded[name] = !expanded[name]
-        }, expanded[name] ? "▾" : "▸" ),
+        }, m("span.mr1", name), (expanded[name] ? "▾" : "▸" )),
         expanded[name] && m("div.ml3", callback())
     )
 }
