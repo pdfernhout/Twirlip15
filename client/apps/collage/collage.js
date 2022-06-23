@@ -177,7 +177,6 @@ function viewMapLink(mapLink, origin, nodes) {
 
 function changeCollageUUID(newUUID) {
     collageUUID = newUUID
-    uuidChangedByApp(newUUID)
 }
 
 function viewMapItem(mapItem, origin) {
