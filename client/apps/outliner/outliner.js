@@ -66,8 +66,8 @@ class Node {
         return convertText(t.findLast(this.uuid, "contents") || "text:")
     }
 
-    async setContents(contents) {
-        await t.addTriple({a: this.uuid, b: "contents", c: "text:" + contents})
+    setContents(contents) {
+        t.addTriple({a: this.uuid, b: "contents", c: "text:" + contents})
     }
 
     getFirstLine() {
@@ -100,17 +100,17 @@ class Node {
         return t.findLast(this.uuid, "parent")
     }
 
-    async setParent(parent) {
-        await t.addTriple({a: this.uuid, b: "parent", c: parent})
+    setParent(parent) {
+        t.addTriple({a: this.uuid, b: "parent", c: parent})
     }
 
-    async addChild(uuid) {
-        await t.addTriple({a: this.uuid, b: "child", c: uuid, o: "insert"})
+    addChild(uuid) {
+        t.addTriple({a: this.uuid, b: "child", c: uuid, o: "insert"})
         // new Node(uuid).setParent(this.uuid)
     }
 
-    async deleteChild(uuid) {
-        await t.addTriple({a: this.uuid, b: "child", c: uuid, o: "remove"})
+    deleteChild(uuid) {
+        t.addTriple({a: this.uuid, b: "child", c: uuid, o: "remove"})
     }
 }
 
@@ -399,11 +399,11 @@ function displayOutliner() {
     ])
 }
 
-async function promptToCreateOutline() {
+function promptToCreateOutline() {
     const uuid = prompt("Start an outline with this UUID?", "outlinerNode:" + UUID.uuidv4())
     if (!uuid) return
     root = new Node(uuid)
-    await t.addTriple({a: "outliner:root", b: "currentOutline", c: uuid})
+    t.addTriple({a: "outliner:root", b: "currentOutline", c: uuid})
 }
 
 const NodeSystemViewer = {

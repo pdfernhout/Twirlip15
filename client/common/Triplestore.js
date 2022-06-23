@@ -7,6 +7,9 @@ import { base64decode } from "../vendor/base64.js"
 // triples[id]["+"]["some data"].store()
 // triples.o100000676.plus.102323232.store()
 
+const TripleBuffering_MaxDelay_ms = 2000
+const TripleBuffering_MaxQueuedTriples = 1000
+
 function isString(value) {
     return typeof value === "string"
 }
@@ -20,6 +23,9 @@ export function Triplestore(showError, fileName) {
 
     // triplesByA is to optimize lookup in common case
     let triplesByA = {}
+
+    let unwrittenTriples = []
+    let unwrittenTriplesTimer = null
 
     const TwirlipServer = new Twirlip15ServerAPI(showError)
 
@@ -155,11 +161,11 @@ export function Triplestore(showError, fileName) {
     }
 
     // Convenience function
-    async function addTripleABC(a, b, c) {
-        return await addTriple({a, b, c})
+    function addTripleABC(a, b, c) {
+        return addTriple({a, b, c})
     }
 
-    async function addTriple(triple, write=true, successCallback) {
+    function addTriple(triple, write=true) {
         if (!isString(triple.a) ||
             !isString(triple.b) ||
             !isString(triple.c)
@@ -194,8 +200,33 @@ export function Triplestore(showError, fileName) {
         if (!triplesByA[triple.a]) triplesByA[triple.a] = []
         triplesByA[triple.a].push(triple)
 
+        if (write) {
+            unwrittenTriples.push(triple)
+            queueWriteTriples()
+        }
+    }
+
+    function queueWriteTriples() {
+        if (!unwrittenTriples.length) return
+
+        if (unwrittenTriplesTimer) {
+            if (unwrittenTriples.length < TripleBuffering_MaxQueuedTriples) return
+            // Could also check if max write data size will be exceeded for API
+            clearTimeout(unwrittenTriplesTimer)
+            unwrittenTriplesTimer = null
+            writeTriples()
+        } else {
+            unwrittenTriplesTimer = setTimeout(writeTriples, TripleBuffering_MaxDelay_ms)
+        }
+    }
+
+    async function writeTriples() {
+        const triplesToWrite = unwrittenTriples
+        unwrittenTriplesTimer = null
+        unwrittenTriples = []
+        const triplesTextToWrite = triplesToWrite.map(triple => JSON.stringify(triple)).join("\n") + "\n"
         try {
-            if (write) await appendFile(JSON.stringify(triple) + "\n", successCallback)
+            await appendFile(triplesTextToWrite)
         } catch(e) {
             showError(e)
         }

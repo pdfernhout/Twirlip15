@@ -13,13 +13,13 @@ async function addItem(type, parentId) {
     }
     if (newLabel) {
         const childId = Math.random()
-        await t.addTriple({
+        t.addTriple({
             a: childId,
             b: "type",
             c: type,
             o: "insert"
         })
-        await t.addTriple({
+        t.addTriple({
             a: childId,
             b: "label",
             c: newLabel,
@@ -28,7 +28,7 @@ async function addItem(type, parentId) {
         // above uses triples to add properties
 
         // below uses triple to add a relationship
-        await t.addTriple({
+        t.addTriple({
             a: parentId,
             b: "child",
             c: childId,
@@ -37,19 +37,19 @@ async function addItem(type, parentId) {
 
         // Alternate for defining a relationship -- the way Bill Kent envisioned in Data & Reality
         const relationId = Math.random()
-        await t.addTriple({
+        t.addTriple({
             a: relationId,
             b: "type",
             c: "parent-child-relationship", // "parent-child-table", "hierarchy-table"
             o: "insert"
         })
-        await t.addTriple({
+        t.addTriple({
             a: relationId,
             b: "parent",
             c: parentId,
             o: "insert"
         })
-        await t.addTriple({
+        t.addTriple({
             a: relationId,
             b: "child",
             c: childId,

@@ -505,12 +505,12 @@ function viewCollageButtons() {
     )
 }
 
-async function promptToCreateCollage() {
+function promptToCreateCollage() {
     const uuid = prompt("Start a collage with this UUID?", "collageNode:" + UUID.uuidv4())
     if (!uuid) return
     collageUUID = uuid
-    await t.addTripleABC(uuid, "type", "collageNodeType:Map")
-    await t.addTripleABC("collage:root", "currentCollage", uuid)
+    t.addTripleABC(uuid, "type", "collageNodeType:Map")
+    t.addTripleABC("collage:root", "currentCollage", uuid)
 }
 
 

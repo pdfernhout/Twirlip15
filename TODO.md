@@ -10,7 +10,7 @@ SKIP add twirlip=help or similar to explain commands
 DONE cache thumbnail previews locally somehow (triples in db?)
 
 DONE IBIS (using outline divs)
-add ACE editor
+DONE add ACE editor
 DONE add chat
 DONE add websockets or similar for chat
 DONE add upload menu item to filer
@@ -30,7 +30,7 @@ ibis should be multi-user like chat is
 ibis should support transclusions in multiple maps
 ibis should support search across multiple maps
 
-TripleStore should queue triples to be written rather than have async addTriple
+DONE TripleStore should queue triples to be written rather than have async addTriple
 Notebook should queue items to be written rather than have async addItem
 
 think about stream (of JSON drops or maybe triples) with trees (indexes or structures maybe of triples) and rocks (hashed contents blobs or maybe triple sets) and paths (something analogous to user experience?) :-)

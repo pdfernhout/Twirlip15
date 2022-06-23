@@ -152,7 +152,7 @@ async function editClicked(id) {
         labelForPrompt = newLabel
     }
     if (newLabel && newLabel !== oldLabel) {
-        await t.addTriple({
+        t.addTriple({
             a: id,
             b: "label",
             c: "string:" + newLabel,
@@ -160,7 +160,7 @@ async function editClicked(id) {
         }) 
     }
     if (type !== newType) {
-        await t.addTriple({
+        t.addTriple({
             a: id,
             b: "type",
             c: "IBIS.NodeType:" + newType,
@@ -173,13 +173,13 @@ async function deleteClicked(id) {
     const type = typeForNode(id)
     const label = labelForNode(id)
     if (!await modalConfirm("confirm delete " + type + " \"" + label + "\"?")) return
-    await t.addTriple({
+    t.addTriple({
         a: id,
         b: "attachedTo",
         c: "",
         o: "replace"
     })
-    await t.addTriple({
+    t.addTriple({
         a: id,
         b: "deleted",
         c: "boolean:true",
@@ -201,7 +201,7 @@ async function addItem(type, parentId) {
         // With a schema:
         // const node = new SchematizedObject("IBIS.Node", childId)
         // node.type = type
-        await t.addTriple({
+        t.addTriple({
             a: childId,
             b: "type",
             c: "IBIS.NodeType:" + type,
@@ -209,7 +209,7 @@ async function addItem(type, parentId) {
         })
         // With a schema:
         // node.label = newLabel
-        await t.addTriple({
+        t.addTriple({
             a: childId,
             b: "label",
             c: "string:" + newLabel,
@@ -217,7 +217,7 @@ async function addItem(type, parentId) {
         })
         // With a schema:
         // node.attachedTo = parentId
-        await t.addTriple({
+        t.addTriple({
             a: childId,
             b: "attachedTo",
             c: parentId,
@@ -338,7 +338,7 @@ async function makeInitialQuestion() {
     if (id !== null) {
         // Need special root object with different schema
         // root.value = id
-        await t.addTriple({
+        t.addTriple({
             a: "IBIS.Root:root",
             b: "value",
             c: id,
@@ -382,6 +382,8 @@ t.loadFileContents()
 
 m.mount(document.body, IBISApp)
 
+// NOTE: The async writing concern here is out of date now that triple writing is buffered in background as suggested here
+
 // // Experiments with a schema for using defined classes of objects with triplestore:
 
 // // Try Proxy...
@@ -394,7 +396,7 @@ m.mount(document.body, IBISApp)
 //         return await t.findLast(target.id, property)
 //     },
 
-//     set: async function(target, property, value) {
+//     set: function(target, property, value) {
 //         const fieldSchema = target.schema.fields[property]
 //         if (!fieldSchema) throw new Error("Unexpected field name: " + property)
 //         if (!validateFieldValue(value, fieldSchema)) throw new Error("Unexpected value for field: " + property + " of: " + JSON.stringify(value))
