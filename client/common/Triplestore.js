@@ -18,6 +18,9 @@ export function Triplestore(showError, fileName) {
     let isFileLoading = false
     let isFileSaveInProgress = 0
 
+    // triplesByA is to optimize lookup in common case
+    let triplesByA = {}
+
     const TwirlipServer = new Twirlip15ServerAPI(showError)
 
     function setFileName(newFileName) {
@@ -91,6 +94,7 @@ export function Triplestore(showError, fileName) {
             const chosenFileContents = segments.join("")
             const lines = chosenFileContents.split("\n")
             triples = []
+            triplesByA = {}
             let index = 1
             for (const line of lines) {
                 if (line.trim()) {
@@ -130,8 +134,9 @@ export function Triplestore(showError, fileName) {
     }
 
     function _removeTriple(triple) {
-        for (let i = triples.length - 1; i > 0; i--) {
-            const existingTriple = triples[i]
+        if (!triplesByA[triple.a]) return
+        for (let i = triplesByA[triple.a].length - 1; i > 0; i--) {
+            const existingTriple = triplesByA[triple.a][i]
             if (existingTriple.a === triple.a && existingTriple.b === triple.b && existingTriple.c === triple.c) {
                 existingTriple.ignore = true
                 return
@@ -140,8 +145,9 @@ export function Triplestore(showError, fileName) {
     }
 
     function _replaceTriple(triple) {
-        for (let i = triples.length - 1; i > 0; i--) {
-            const existingTriple = triples[i]
+        if (!triplesByA[triple.a]) return
+        for (let i = triplesByA[triple.a].length - 1; i > 0; i--) {
+            const existingTriple = triplesByA[triple.a][i]
             if (existingTriple.a === triple.a && existingTriple.b === triple.b) {
                 existingTriple.ignore = true
             }
@@ -183,6 +189,11 @@ export function Triplestore(showError, fileName) {
             triple.ignore = true
         }
         triples.push(triple)
+
+        // Update optimization cache
+        if (!triplesByA[triple.a]) triplesByA[triple.a] = []
+        triplesByA[triple.a].push(triple)
+
         try {
             if (write) await appendFile(JSON.stringify(triple) + "\n", successCallback)
         } catch(e) {
@@ -192,7 +203,11 @@ export function Triplestore(showError, fileName) {
 
     function filterTriples(filterTriple, showIgnored=false) {
         const result = []
-        for (const triple of triples) {
+        let triplesToSearch = triples
+        if (filterTriple.a) {
+            triplesToSearch = triplesByA[filterTriple.a] || []
+        }
+        for (const triple of triplesToSearch) {
             if (!showIgnored && (triple.ignore || triple.o === "remove")) continue
             if (filterTriple.a && filterTriple.a !== triple.a) continue
             if (filterTriple.b && filterTriple.b !== triple.b) continue
