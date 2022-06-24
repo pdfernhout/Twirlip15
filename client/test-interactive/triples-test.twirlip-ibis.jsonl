@@ -4,205 +4,205 @@
 {"a":"IBIS.Node:test2","b":"something","c":"string:else"}
 {"a":"IBIS.Node:1","b":"name","c":""}
 {"a":"IBIS.Node:1","b":"label","c":"string:a long label"}
-{"a":"IBIS.Node:1","b":"label","c":"string:different label","index":7}
-{"a":"IBIS.Node:2","b":"pro","c":"IBIS.Node:1","index":8}
-{"a":"IBIS.Node:2","b":"label","c":"string:good!","index":9}
-{"a":"IBIS.Node:1","b":"label","c":"string:another label","index":10}
-{"a":"IBIS.Node:1","b":"+","c":"string:cheap","index":11}
-{"a":"IBIS.Node:2","b":"label","c":"string:the second","index":12}
-{"a":"IBIS.Node:1","b":"+","c":"IBIS.Node:2","index":13}
-{"a":"IBIS.Node:cheap","b":"label","c":"string:Cheap!","index":14}
-{"a":"IBIS.Node:cheap","b":"?","c":"IBIS.Node:3","index":15}
-{"a":"IBIS.Node:3","b":"label","c":"string:Is it really cheaper?","index":16}
-{"a":"IBIS.Node:1","b":"label","c":"string:A big idea","index":17}
-{"a":"IBIS.Node:1","b":"-","c":"string:risky","index":18}
-{"a":"IBIS.Node:risky","b":"label","c":"string:Risky","index":19}
-{"a":"IBIS.Node:2","b":"label","c":"string:another pro","index":20}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next?","index":21}
-{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:1","index":22}
-{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:4","index":23}
-{"a":"IBIS.Node:4","b":"label","c":"string:A small idea","index":24}
-{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:5","index":25}
-{"a":"IBIS.Node:5","b":"label","c":"string:6","index":26}
-{"a":"IBIS.Node:5","b":"label","c":"string:Really really cheap","index":27}
-{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:6","index":28}
-{"a":"IBIS.Node:6","b":"label","c":"string:Low risk","index":29}
-{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:7","index":30}
-{"a":"IBIS.Node:7","b":"label","c":"string:Triples","index":31}
-{"a":"IBIS.Node:7","b":"label","c":"string:Triplestore","index":32}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0","index":33}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:1","index":34}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0","index":35}
-{"a":"IBIS.Root:root","b":"value","c":"","index":36}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:7","index":37}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:1","index":38}
-{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0","index":39}
-{"a":"IBIS.Node:7","b":"+","c":"IBIS.Node:8","index":40}
-{"a":"IBIS.Node:8","b":"label","c":"string:Flexible","index":41}
-{"a":"IBIS.Node:7","b":"-","c":"","index":42}
-{"a":"IBIS.Node:7","b":"-","c":"IBIS.Node:9","index":43}
-{"a":"IBIS.Node:9","b":"label","c":"string:Flabby","index":44}
-{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-replace","o":"replace","index":45}
-{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-insert","o":"insert","index":46}
-{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-insert2","o":"insert","index":47}
-{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-replace2","o":"replace","index":48}
-{"a":"IBIS.Node:7","b":"-","c":"","o":"remove","index":49}
-{"a":"IBIS.Node:test","b":"something","c":"string:else2","o":"replace","index":52}
-{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:1","o":"insert","index":51}
-{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:4","o":"insert","index":52}
-{"a":"IBIS.Node:1","b":"+","c":"string:cheap","o":"insert","index":53}
-{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:5","o":"insert","index":54}
-{"a":"IBIS.Node:3","b":"!","c":"string:Maybe","o":"insert","index":55}
-{"a":"IBIS.Node:3","b":"!","c":"IBIS.Node:10","o":"insert","index":56}
-{"a":"IBIS.Node:3","b":"!","c":"","o":"clear","index":57,"ignore":true}
-{"a":"IBIS.Node:1","b":"+","c":"string:Yet another pro","o":"insert","index":58}
-{"a":"IBIS.Node:1","b":"+","c":"string:Yet another pro","o":"remove","index":59,"ignore":true}
-{"a":"IBIS.Node:1","b":"+","c":"IBIS.Node:11","o":"insert","index":60}
-{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro","o":"insert","index":61}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.2193099557688355","o":"insert","index":62}
-{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro that is longer","o":"replace","index":63}
-{"a":"IBIS.Node:11","b":"?","c":"IBIS.Node:0.4851227118258178","o":"insert","index":64}
-{"a":"IBIS.Node:0.4851227118258178","b":"label","c":"string:Should it be longer?","o":"replace","index":66}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5940495778344923","o":"insert","index":67}
-{"a":"IBIS.Node:0.2193099557688355","b":"label","c":"string:A con","o":"replace","index":69}
-{"a":"IBIS.Node:0.5940495778344923","b":"label","c":"string:Another con","o":"replace","index":68}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5327191062381859","o":"insert","index":69}
-{"a":"IBIS.Node:0.5327191062381859","b":"label","c":"string:A longer con","o":"replace","index":70}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.030601292856757056","o":"insert","index":71}
-{"a":"IBIS.Node:0.030601292856757056","b":"label","c":"string:Yet another con -- after fix","o":"insert","index":72}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5327191062381859","o":"remove","index":73,"ignore":true}
-{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5940495778344923","o":"remove","index":74,"ignore":true}
-{"a":"IBIS.Node:0.2193099557688355","b":"?","c":"IBIS.Node:0.23230973909549857","o":"insert","index":75}
-{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question","o":"insert","index":76}
-{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question?","o":"replace","index":77}
-{"a":"IBIS.Node:0.23230973909549857","b":"*","c":"IBIS.Node:0.10578152847597744","o":"insert","index":78}
-{"a":"IBIS.Node:0.10578152847597744","b":"label","c":"string:subitem?","o":"insert","index":79}
-{"a":"IBIS.Node:0.23230973909549857","b":"*","c":"IBIS.Node:0.7102769674410606","o":"insert","index":80}
-{"a":"IBIS.Node:0.7102769674410606","b":"label","c":"string:subitem2","o":"insert","index":81}
-{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question 2?","o":"replace","index":82}
-{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question? (2)","o":"replace","index":83}
-{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question?","o":"replace","index":84}
-{"a":"IBIS.Node:0.23230973909549857","b":"?","c":"IBIS.Node:0.3346989611778324","o":"insert","index":85}
-{"a":"IBIS.Node:0.3346989611778324","b":"label","c":"string:Yet another question?","o":"insert","index":86}
-{"a":"IBIS.Node:0.3346989611778324","b":"*","c":"IBIS.Node:0.5652519529736341","o":"insert","index":87}
-{"a":"IBIS.Node:0.5652519529736341","b":"label","c":"string:test","o":"insert","index":88}
-{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.27104962525748455","o":"insert","index":89}
-{"a":"IBIS.Node:0.27104962525748455","b":"label","c":"string:option","o":"insert","index":90}
-{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.7824355056975826","o":"insert","index":91}
-{"a":"IBIS.Node:0.7824355056975826","b":"label","c":"string:second option","o":"insert","index":92}
-{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.7824355056975826","o":"remove","index":93,"ignore":true}
-{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro that is somewhat longer","o":"replace","index":94}
-{"a":"IBIS.Node:0.27104962525748455","b":"+","c":"IBIS.Node:0.2677935092479582","o":"insert","index":95}
-{"a":"IBIS.Node:0.2677935092479582","b":"label","c":"string:pro","o":"insert","index":96}
-{"a":"IBIS.Node:0.27104962525748455","b":"-","c":"IBIS.Node:0.5679905439160235","o":"insert","index":97}
-{"a":"IBIS.Node:0.5679905439160235","b":"label","c":"string:con","o":"insert","index":98}
-{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:0.679463033838902","o":"insert","index":99}
-{"a":"IBIS.Node:0.679463033838902","b":"label","c":"string:Another pro!","o":"insert","index":100}
-{"a":"IBIS.Node:0.679463033838902","b":"label","c":"string:Another better pro!","o":"replace","index":101}
-{"a":"IBIS.Node:0.3053399899172159","b":"type","c":"IBIS.NodeType:question","o":"insert","index":102}
-{"a":"IBIS.Node:0.3053399899172159","b":"label","c":"string:A question  about new test question with new items approach?","o":"insert","index":103}
-{"a":"IBIS.Node:0.3053399899172159","b":"attachedTo","c":"IBIS.Node:0","o":"insert","index":104}
-{"a":"IBIS.Node:0.9535092439156513","b":"type","c":"IBIS.NodeType:option","o":"insert","index":105}
-{"a":"IBIS.Node:0.9535092439156513","b":"label","c":"string:Option 1","o":"insert","index":106}
-{"a":"IBIS.Node:0.9535092439156513","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert","index":107}
-{"a":"IBIS.Node:0.12410503876785861","b":"type","c":"IBIS.NodeType:option","o":"insert","index":108}
-{"a":"IBIS.Node:0.12410503876785861","b":"label","c":"string:Option 2","o":"insert","index":109}
-{"a":"IBIS.Node:0.12410503876785861","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert","index":110}
-{"a":"IBIS.Node:0.395706445405279","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":111}
-{"a":"IBIS.Node:0.395706445405279","b":"label","c":"string:A pro","o":"insert","index":112}
-{"a":"IBIS.Node:0.395706445405279","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":113}
-{"a":"IBIS.Node:0.8248494728146751","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":114}
-{"a":"IBIS.Node:0.8248494728146751","b":"label","c":"string:Another pro","o":"insert","index":115}
-{"a":"IBIS.Node:0.8248494728146751","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":116}
-{"a":"IBIS.Node:0.6682054777701786","b":"type","c":"IBIS.NodeType:con","o":"insert","index":117}
-{"a":"IBIS.Node:0.6682054777701786","b":"label","c":"string:A con","o":"insert","index":118}
-{"a":"IBIS.Node:0.6682054777701786","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":119}
-{"a":"IBIS.Node:0.32296544202722466","b":"type","c":"IBIS.NodeType:question","o":"insert","index":120}
-{"a":"IBIS.Node:0.32296544202722466","b":"label","c":"string:Is this reall a con?","o":"insert","index":121}
-{"a":"IBIS.Node:0.32296544202722466","b":"attachedTo","c":"IBIS.Node:0.6682054777701786","o":"insert","index":122}
-{"a":"IBIS.Node:0.6761491936852434","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":123}
-{"a":"IBIS.Node:0.6761491936852434","b":"label","c":"string:Problem that a new pro will go under previous cons","o":"insert","index":124}
-{"a":"IBIS.Node:0.6761491936852434","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":125}
-{"a":"IBIS.Node:0.32296544202722466","b":"label","c":"string:Is this really a con?","o":"replace","index":126}
-{"a":"IBIS.Node:0.4186093527393314","b":"type","c":"IBIS.NodeType:option","o":"insert","index":127}
-{"a":"IBIS.Node:0.4186093527393314","b":"label","c":"string:Maybe","o":"insert","index":128}
-{"a":"IBIS.Node:0.4186093527393314","b":"attachedTo","c":"IBIS.Node:0.32296544202722466","o":"insert","index":129}
-{"a":"IBIS.Node:0.4186093527393314","b":"attachedTo","c":"","o":"replace","index":130}
-{"a":"IBIS.Node:0.4186093527393314","b":"deleted","c":"boolean:true","o":"insert","index":131}
-{"a":"IBIS.Node:0.38282163017300663","b":"type","c":"IBIS.NodeType:question","o":"insert","index":132}
-{"a":"IBIS.Node:0.38282163017300663","b":"label","c":"string:What are ideas from Glyma?","o":"insert","index":133}
-{"a":"IBIS.Node:0.38282163017300663","b":"attachedTo","c":"IBIS.Node:0","o":"insert","index":134}
-{"a":"IBIS.Node:0.0931316508219101","b":"type","c":"IBIS.NodeType:option","o":"insert","index":135}
-{"a":"IBIS.Node:0.0931316508219101","b":"label","c":"string:Embedding iframe that uses web service to transform other web resource","o":"insert","index":136}
-{"a":"IBIS.Node:0.0931316508219101","b":"attachedTo","c":"IBIS.Node:0.38282163017300663","o":"insert","index":137}
-{"a":"IBIS.Node:0.18602523442254926","b":"type","c":"IBIS.NodeType:question","o":"insert","index":138}
-{"a":"IBIS.Node:0.18602523442254926","b":"label","c":"string:Example?","o":"insert","index":139}
-{"a":"IBIS.Node:0.18602523442254926","b":"attachedTo","c":"IBIS.Node:0.0931316508219101","o":"insert","index":140}
-{"a":"IBIS.Node:0.10925926687860388","b":"type","c":"IBIS.NodeType:option","o":"insert","index":141}
-{"a":"IBIS.Node:0.10925926687860388","b":"label","c":"string:Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert","index":142}
-{"a":"IBIS.Node:0.10925926687860388","b":"attachedTo","c":"IBIS.Node:0.18602523442254926","o":"insert","index":143}
-{"a":"IBIS.Node:0","b":"type","c":"IBIS.NodeType:question","o":"insert","index":144}
-{"a":"IBIS.Node:0.5383832460735861","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":145}
-{"a":"IBIS.Node:0.5383832460735861","b":"label","c":"string:Pro again","o":"insert","index":146}
-{"a":"IBIS.Node:0.5383832460735861","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":147}
-{"a":"IBIS.Node:0.6761491936852434","b":"label","c":"string:Problem that a new pro will go under previous cons (FIXED!)","o":"replace","index":148}
-{"a":"IBIS.Node:0.6906403990997534","b":"type","c":"IBIS.NodeType:question","o":"insert","index":149}
-{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question?","o":"insert","index":150}
-{"a":"IBIS.Node:0.6906403990997534","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert","index":151}
-{"a":"IBIS.Node:risky","b":"label","c":"string:Risky2","o":"replace","index":152}
-{"a":"IBIS.Node:test","b":"something","c":"string:else2","o":"replace","index":153}
-{"a":"IBIS.Node:test","b":"something","c":"string:else3","o":"replace","index":154}
-{"a":"IBIS.Node:test","b":"something","c":"string:else4","o":"replace","index":155}
-{"a":"IBIS.Node:test","b":"something","c":"string:else5","o":"replace","index":156}
-{"a":"IBIS.Node:test","b":"something","c":"string:else6","o":"replace","index":157}
-{"a":"IBIS.Node:test","b":"something","c":"string:else7","o":"replace","index":158}
-{"a":"IBIS.Node:test","b":"something","c":"string:else8","o":"replace","index":159}
-{"a":"IBIS.Node:test","b":"something","c":"string:else9","o":"replace","index":160}
-{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and string id)","o":"replace","index":161}
-{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and really string id)","o":"replace","index":162}
-{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated with triple editor and really string id)","o":"replace","index":163}
-{"a":"IBIS.Node:0.23612004982183254","b":"type","c":"IBIS.NodeType:option","o":"insert","index":164}
-{"a":"IBIS.Node:0.23612004982183254","b":"label","c":"string:An answer","o":"insert","index":165}
-{"a":"IBIS.Node:0.23612004982183254","b":"attachedTo","c":"IBIS.Node:0.6906403990997534","o":"insert","index":166}
-{"a":"IBIS.Node:0.4157326364914913","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":167}
-{"a":"IBIS.Node:0.4157326364914913","b":"label","c":"string:A pro","o":"insert","index":168}
-{"a":"IBIS.Node:0.4157326364914913","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert","index":169}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"insert","index":170}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A con","o":"insert","index":171}
-{"a":"IBIS.Node:0.7238145430915051","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert","index":172}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":173}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":174}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:question","o":"replace","index":175}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":176}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:pro","o":"replace","index":177}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":178}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"replace","index":179}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":180}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":181}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:answer","o":"replace","index":182}
-{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace","index":183}
-{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"replace","index":184}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.7285893542130949","o":"replace","index":185}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.7023378814663096","o":"replace","index":186}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.9198210879728924","o":"replace","index":187}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.25453519461458185","o":"replace","index":188}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.4568337823234814","o":"replace","index":189}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.16094831848815638","o":"replace","index":190}
-{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.927373393246828","o":"replace","index":191}
-{"a":"IBIS.Node:0","b":"property:label","c":"string:What to work on next? (a new random number)","o":"replace","index":192}
-{"a":"IBIS.Node:0","b":"string:label","c":"string:What to work on next? (a new random number)","o":"replace","index":193}
-{"a":"IBIS.Node:06456343608204618","b":"type","c":"IBIS.NodeType:pro","o":"insert","index":194}
-{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro","o":"insert","index":195}
-{"a":"IBIS.Node:06456343608204618","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert","index":196}
-{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro edited","o":"replace","index":197}
-{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro edited to a con","o":"replace","index":198}
-{"a":"IBIS.Node:06456343608204618","b":"type","c":"IBIS.NodeType:con","o":"replace","index":199}
-{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:con","o":"insert","index":200}
-{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con","o":"insert","index":201}
-{"a":"IBIS.Node:0993455882768004","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert","index":202}
-{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con (edited)","o":"replace","index":203}
-{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed to a pro","o":"replace","index":204}
-{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:pro","o":"replace","index":205}
-{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed from a pro to a con","o":"replace","index":206}
-{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:con","o":"replace","index":207}
-{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed from a con to a pro to a con","o":"replace","index":208}
+{"a":"IBIS.Node:1","b":"label","c":"string:different label"}
+{"a":"IBIS.Node:2","b":"pro","c":"IBIS.Node:1"}
+{"a":"IBIS.Node:2","b":"label","c":"string:good!"}
+{"a":"IBIS.Node:1","b":"label","c":"string:another label"}
+{"a":"IBIS.Node:1","b":"+","c":"string:cheap"}
+{"a":"IBIS.Node:2","b":"label","c":"string:the second"}
+{"a":"IBIS.Node:1","b":"+","c":"IBIS.Node:2"}
+{"a":"IBIS.Node:cheap","b":"label","c":"string:Cheap!"}
+{"a":"IBIS.Node:cheap","b":"?","c":"IBIS.Node:3"}
+{"a":"IBIS.Node:3","b":"label","c":"string:Is it really cheaper?"}
+{"a":"IBIS.Node:1","b":"label","c":"string:A big idea"}
+{"a":"IBIS.Node:1","b":"-","c":"string:risky"}
+{"a":"IBIS.Node:risky","b":"label","c":"string:Risky"}
+{"a":"IBIS.Node:2","b":"label","c":"string:another pro"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next?"}
+{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:1"}
+{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:4"}
+{"a":"IBIS.Node:4","b":"label","c":"string:A small idea"}
+{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:5"}
+{"a":"IBIS.Node:5","b":"label","c":"string:6"}
+{"a":"IBIS.Node:5","b":"label","c":"string:Really really cheap"}
+{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:6"}
+{"a":"IBIS.Node:6","b":"label","c":"string:Low risk"}
+{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:7"}
+{"a":"IBIS.Node:7","b":"label","c":"string:Triples"}
+{"a":"IBIS.Node:7","b":"label","c":"string:Triplestore"}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0"}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:1"}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0"}
+{"a":"IBIS.Root:root","b":"value","c":""}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:7"}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:1"}
+{"a":"IBIS.Root:root","b":"value","c":"IBIS.Node:0"}
+{"a":"IBIS.Node:7","b":"+","c":"IBIS.Node:8"}
+{"a":"IBIS.Node:8","b":"label","c":"string:Flexible"}
+{"a":"IBIS.Node:7","b":"-","c":""}
+{"a":"IBIS.Node:7","b":"-","c":"IBIS.Node:9"}
+{"a":"IBIS.Node:9","b":"label","c":"string:Flabby"}
+{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-replace","o":"replace"}
+{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-insert","o":"insert"}
+{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-insert2","o":"insert"}
+{"a":"IBIS.Node:test","b":"type","c":"IBIS.NodeType:operation-replace2","o":"replace"}
+{"a":"IBIS.Node:7","b":"-","c":"","o":"remove"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else2","o":"replace"}
+{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:1","o":"insert"}
+{"a":"IBIS.Node:0","b":"!","c":"IBIS.Node:4","o":"insert"}
+{"a":"IBIS.Node:1","b":"+","c":"string:cheap","o":"insert"}
+{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:5","o":"insert"}
+{"a":"IBIS.Node:3","b":"!","c":"string:Maybe","o":"insert"}
+{"a":"IBIS.Node:3","b":"!","c":"IBIS.Node:10","o":"insert"}
+{"a":"IBIS.Node:3","b":"!","c":"","o":"clear","ignore":true}
+{"a":"IBIS.Node:1","b":"+","c":"string:Yet another pro","o":"insert"}
+{"a":"IBIS.Node:1","b":"+","c":"string:Yet another pro","o":"remove","ignore":true}
+{"a":"IBIS.Node:1","b":"+","c":"IBIS.Node:11","o":"insert"}
+{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro","o":"insert"}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.2193099557688355","o":"insert"}
+{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro that is longer","o":"replace"}
+{"a":"IBIS.Node:11","b":"?","c":"IBIS.Node:0.4851227118258178","o":"insert"}
+{"a":"IBIS.Node:0.4851227118258178","b":"label","c":"string:Should it be longer?","o":"replace"}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5940495778344923","o":"insert"}
+{"a":"IBIS.Node:0.2193099557688355","b":"label","c":"string:A con","o":"replace"}
+{"a":"IBIS.Node:0.5940495778344923","b":"label","c":"string:Another con","o":"replace"}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5327191062381859","o":"insert"}
+{"a":"IBIS.Node:0.5327191062381859","b":"label","c":"string:A longer con","o":"replace"}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.030601292856757056","o":"insert"}
+{"a":"IBIS.Node:0.030601292856757056","b":"label","c":"string:Yet another con -- after fix","o":"insert"}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5327191062381859","o":"remove","ignore":true}
+{"a":"IBIS.Node:4","b":"-","c":"IBIS.Node:0.5940495778344923","o":"remove","ignore":true}
+{"a":"IBIS.Node:0.2193099557688355","b":"?","c":"IBIS.Node:0.23230973909549857","o":"insert"}
+{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question","o":"insert"}
+{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question?","o":"replace"}
+{"a":"IBIS.Node:0.23230973909549857","b":"*","c":"IBIS.Node:0.10578152847597744","o":"insert"}
+{"a":"IBIS.Node:0.10578152847597744","b":"label","c":"string:subitem?","o":"insert"}
+{"a":"IBIS.Node:0.23230973909549857","b":"*","c":"IBIS.Node:0.7102769674410606","o":"insert"}
+{"a":"IBIS.Node:0.7102769674410606","b":"label","c":"string:subitem2","o":"insert"}
+{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question 2?","o":"replace"}
+{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question? (2)","o":"replace"}
+{"a":"IBIS.Node:0.23230973909549857","b":"label","c":"string:another question?","o":"replace"}
+{"a":"IBIS.Node:0.23230973909549857","b":"?","c":"IBIS.Node:0.3346989611778324","o":"insert"}
+{"a":"IBIS.Node:0.3346989611778324","b":"label","c":"string:Yet another question?","o":"insert"}
+{"a":"IBIS.Node:0.3346989611778324","b":"*","c":"IBIS.Node:0.5652519529736341","o":"insert"}
+{"a":"IBIS.Node:0.5652519529736341","b":"label","c":"string:test","o":"insert"}
+{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.27104962525748455","o":"insert"}
+{"a":"IBIS.Node:0.27104962525748455","b":"label","c":"string:option","o":"insert"}
+{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.7824355056975826","o":"insert"}
+{"a":"IBIS.Node:0.7824355056975826","b":"label","c":"string:second option","o":"insert"}
+{"a":"IBIS.Node:0.3346989611778324","b":"!","c":"IBIS.Node:0.7824355056975826","o":"remove","ignore":true}
+{"a":"IBIS.Node:11","b":"label","c":"string:Yet another pro that is somewhat longer","o":"replace"}
+{"a":"IBIS.Node:0.27104962525748455","b":"+","c":"IBIS.Node:0.2677935092479582","o":"insert"}
+{"a":"IBIS.Node:0.2677935092479582","b":"label","c":"string:pro","o":"insert"}
+{"a":"IBIS.Node:0.27104962525748455","b":"-","c":"IBIS.Node:0.5679905439160235","o":"insert"}
+{"a":"IBIS.Node:0.5679905439160235","b":"label","c":"string:con","o":"insert"}
+{"a":"IBIS.Node:4","b":"+","c":"IBIS.Node:0.679463033838902","o":"insert"}
+{"a":"IBIS.Node:0.679463033838902","b":"label","c":"string:Another pro!","o":"insert"}
+{"a":"IBIS.Node:0.679463033838902","b":"label","c":"string:Another better pro!","o":"replace"}
+{"a":"IBIS.Node:0.3053399899172159","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.3053399899172159","b":"label","c":"string:A question  about new test question with new items approach?","o":"insert"}
+{"a":"IBIS.Node:0.3053399899172159","b":"attachedTo","c":"IBIS.Node:0","o":"insert"}
+{"a":"IBIS.Node:0.9535092439156513","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.9535092439156513","b":"label","c":"string:Option 1","o":"insert"}
+{"a":"IBIS.Node:0.9535092439156513","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert"}
+{"a":"IBIS.Node:0.12410503876785861","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.12410503876785861","b":"label","c":"string:Option 2","o":"insert"}
+{"a":"IBIS.Node:0.12410503876785861","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert"}
+{"a":"IBIS.Node:0.395706445405279","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:0.395706445405279","b":"label","c":"string:A pro","o":"insert"}
+{"a":"IBIS.Node:0.395706445405279","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0.8248494728146751","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:0.8248494728146751","b":"label","c":"string:Another pro","o":"insert"}
+{"a":"IBIS.Node:0.8248494728146751","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0.6682054777701786","b":"type","c":"IBIS.NodeType:con","o":"insert"}
+{"a":"IBIS.Node:0.6682054777701786","b":"label","c":"string:A con","o":"insert"}
+{"a":"IBIS.Node:0.6682054777701786","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0.32296544202722466","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.32296544202722466","b":"label","c":"string:Is this reall a con?","o":"insert"}
+{"a":"IBIS.Node:0.32296544202722466","b":"attachedTo","c":"IBIS.Node:0.6682054777701786","o":"insert"}
+{"a":"IBIS.Node:0.6761491936852434","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:0.6761491936852434","b":"label","c":"string:Problem that a new pro will go under previous cons","o":"insert"}
+{"a":"IBIS.Node:0.6761491936852434","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0.32296544202722466","b":"label","c":"string:Is this really a con?","o":"replace"}
+{"a":"IBIS.Node:0.4186093527393314","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.4186093527393314","b":"label","c":"string:Maybe","o":"insert"}
+{"a":"IBIS.Node:0.4186093527393314","b":"attachedTo","c":"IBIS.Node:0.32296544202722466","o":"insert"}
+{"a":"IBIS.Node:0.4186093527393314","b":"attachedTo","c":"","o":"replace"}
+{"a":"IBIS.Node:0.4186093527393314","b":"deleted","c":"boolean:true","o":"insert"}
+{"a":"IBIS.Node:0.38282163017300663","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.38282163017300663","b":"label","c":"string:What are ideas from Glyma?","o":"insert"}
+{"a":"IBIS.Node:0.38282163017300663","b":"attachedTo","c":"IBIS.Node:0","o":"insert"}
+{"a":"IBIS.Node:0.0931316508219101","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.0931316508219101","b":"label","c":"string:Embedding iframe that uses web service to transform other web resource","o":"insert"}
+{"a":"IBIS.Node:0.0931316508219101","b":"attachedTo","c":"IBIS.Node:0.38282163017300663","o":"insert"}
+{"a":"IBIS.Node:0.18602523442254926","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.18602523442254926","b":"label","c":"string:Example?","o":"insert"}
+{"a":"IBIS.Node:0.18602523442254926","b":"attachedTo","c":"IBIS.Node:0.0931316508219101","o":"insert"}
+{"a":"IBIS.Node:0.10925926687860388","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.10925926687860388","b":"label","c":"string:Section of video on how to attach resources into Glyma: https://youtu.be/4b6HJbtGZ3w?t=553","o":"insert"}
+{"a":"IBIS.Node:0.10925926687860388","b":"attachedTo","c":"IBIS.Node:0.18602523442254926","o":"insert"}
+{"a":"IBIS.Node:0","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.5383832460735861","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:0.5383832460735861","b":"label","c":"string:Pro again","o":"insert"}
+{"a":"IBIS.Node:0.5383832460735861","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0.6761491936852434","b":"label","c":"string:Problem that a new pro will go under previous cons (FIXED!)","o":"replace"}
+{"a":"IBIS.Node:0.6906403990997534","b":"type","c":"IBIS.NodeType:question","o":"insert"}
+{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question?","o":"insert"}
+{"a":"IBIS.Node:0.6906403990997534","b":"attachedTo","c":"IBIS.Node:0.3053399899172159","o":"insert"}
+{"a":"IBIS.Node:risky","b":"label","c":"string:Risky2","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else2","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else3","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else4","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else5","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else6","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else7","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else8","o":"replace"}
+{"a":"IBIS.Node:test","b":"something","c":"string:else9","o":"replace"}
+{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and string id)","o":"replace"}
+{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated but with triple editor and really string id)","o":"replace"}
+{"a":"IBIS.Node:0.6906403990997534","b":"label","c":"string:A question about a question? (Updated with triple editor and really string id)","o":"replace"}
+{"a":"IBIS.Node:0.23612004982183254","b":"type","c":"IBIS.NodeType:option","o":"insert"}
+{"a":"IBIS.Node:0.23612004982183254","b":"label","c":"string:An answer","o":"insert"}
+{"a":"IBIS.Node:0.23612004982183254","b":"attachedTo","c":"IBIS.Node:0.6906403990997534","o":"insert"}
+{"a":"IBIS.Node:0.4157326364914913","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:0.4157326364914913","b":"label","c":"string:A pro","o":"insert"}
+{"a":"IBIS.Node:0.4157326364914913","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"insert"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A con","o":"insert"}
+{"a":"IBIS.Node:0.7238145430915051","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:question","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:pro","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:answer","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"label","c":"string:A sort of con","o":"replace"}
+{"a":"IBIS.Node:0.7238145430915051","b":"type","c":"IBIS.NodeType:con","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.7285893542130949","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.7023378814663096","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.9198210879728924","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.25453519461458185","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.4568337823234814","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.16094831848815638","o":"replace"}
+{"a":"IBIS.Node:0","b":"label","c":"string:What to work on next? 0.927373393246828","o":"replace"}
+{"a":"IBIS.Node:0","b":"property:label","c":"string:What to work on next? (a new random number)","o":"replace"}
+{"a":"IBIS.Node:0","b":"string:label","c":"string:What to work on next? (a new random number)","o":"replace"}
+{"a":"IBIS.Node:06456343608204618","b":"type","c":"IBIS.NodeType:pro","o":"insert"}
+{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro","o":"insert"}
+{"a":"IBIS.Node:06456343608204618","b":"attachedTo","c":"IBIS.Node:0.23612004982183254","o":"insert"}
+{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro edited","o":"replace"}
+{"a":"IBIS.Node:06456343608204618","b":"label","c":"string:Another pro edited to a con","o":"replace"}
+{"a":"IBIS.Node:06456343608204618","b":"type","c":"IBIS.NodeType:con","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:con","o":"insert"}
+{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con","o":"insert"}
+{"a":"IBIS.Node:0993455882768004","b":"attachedTo","c":"IBIS.Node:0.12410503876785861","o":"insert"}
+{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con (edited)","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed to a pro","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:pro","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed from a pro to a con","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"type","c":"IBIS.NodeType:con","o":"replace"}
+{"a":"IBIS.Node:0993455882768004","b":"label","c":"string:Another con changed from a con to a pro to a con","o":"replace"}

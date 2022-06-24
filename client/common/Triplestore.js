@@ -220,11 +220,16 @@ export function Triplestore(showError, fileName) {
         }
     }
 
+    function ignoreIndexField(key, value) {
+        if (key === "index") return undefined
+        return value
+    }
+
     async function writeTriples() {
         const triplesToWrite = unwrittenTriples
         unwrittenTriplesTimer = null
         unwrittenTriples = []
-        const triplesTextToWrite = triplesToWrite.map(triple => JSON.stringify(triple)).join("\n") + "\n"
+        const triplesTextToWrite = triplesToWrite.map(triple => JSON.stringify(triple, ignoreIndexField)).join("\n") + "\n"
         try {
             await appendFile(triplesTextToWrite)
         } catch(e) {

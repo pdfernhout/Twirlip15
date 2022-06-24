@@ -112,7 +112,7 @@ Then a cursor is just a pointer to the file position of the last triple returned
 
 Comparing ideas for raw storage of triples -- simplicity vs. expandability (where only last field can have spaces -- or maybe unescaped spaces):
 
-    {"a":"collageNode:1270111357464769636","b":"modificationDate","c":"date:2013-01-06T09:33:20.986Z","index":407}
+    {"a":"collageNode:1270111357464769636","b":"modificationDate","c":"date:2013-01-06T09:33:20.986Z"}
 
     collageNode:1270111357464769636 modificationDate date:2013-01-06T09:33:20.986Z
 
