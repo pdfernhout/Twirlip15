@@ -398,7 +398,7 @@ function viewNode(uuid) {
 
 // Type of Map, List, Note
 function makeNewNode(type, label, detail) {
-    const uuid = "collageNode:" + UUID.uuidv4()
+    const uuid = UUID.forType("collageNode")
     const id = uuid
     t.addTripleABC(id, "type", "collageNodeType:" + type)
     if (label) t.addTripleABC(id, "label", "text:" + label)
@@ -506,7 +506,7 @@ function viewCollageButtons() {
 }
 
 function promptToCreateCollage() {
-    const uuid = prompt("Start a collage with this UUID?", "collageNode:" + UUID.uuidv4())
+    const uuid = prompt("Start a collage with this UUID?", UUID.forType("collageNode"))
     if (!uuid) return
     collageUUID = uuid
     t.addTripleABC(uuid, "type", "collageNodeType:Map")

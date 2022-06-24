@@ -211,7 +211,7 @@ function addElement(type) {
     if (!name) return
     const x = lastClickPosition.x + 50
     const y = lastClickPosition.y + 50
-    const element = { type: type, name: name, x: x, y: y, notes: "", id: Twirlip7.UUID.uuidv4() }
+    const element = { type: type, name: name, x: x, y: y, notes: "", id: Twirlip7.UUID.forType(type) }
     diagram.elements.unshift(element)
     if (lastClickPosition) {
         lastClickPosition.x += 50

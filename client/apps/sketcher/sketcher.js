@@ -100,7 +100,7 @@ function convertJSON(jsonString) {
 class ObjectInTriplestore {
     constructor(triplestore, uuid, type) {
         this.triplestore = triplestore
-        this.uuid = uuid || (type + ":" + UUID.uuidv4())
+        this.uuid = uuid || UUID.forType(type)
     }
 
     getField(fieldName, type, defaultValue) {
@@ -597,7 +597,7 @@ function displaySketch() {
 }
 
 function promptToCreateSketch() {
-    const uuid = prompt("Start a sketch with this UUID?", "sketch:" + UUID.uuidv4())
+    const uuid = prompt("Start a sketch with this UUID?", UUID.forType("sketch"))
     if (!uuid) return
     sketch = new Sketch(uuid)
     itemMap.initDragInformation()

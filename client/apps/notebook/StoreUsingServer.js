@@ -41,7 +41,7 @@ export function StoreUsingServer(redrawCallback, streamId = "common", userId = "
 
     function sendMessage(message) {
         // Modify message to have userId, timestamp, and uuid
-        Object.assign(message, {userId: userId, timestamp: new Date().toISOString(), uuid: UUID.uuidv4()})
+        Object.assign(message, {userId: userId, timestamp: new Date().toISOString(), uuid: UUID.forType("message")})
         // console.log("sendMessage", message)
         socket.emit("twirlip", message)
     }

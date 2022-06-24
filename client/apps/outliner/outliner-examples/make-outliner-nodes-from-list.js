@@ -46,7 +46,7 @@ Context:
 
 function makeNode(contents, parentNode) {
     // MAYBE: p.newTransaction("make-outliner-nodes-from-list")
-    const node = new Node("outlinerNode:" + UUID.uuidv4())
+    const node = new Node(UUID.forType("outlinerNode"))
     node.setContents(contents)
     node.setParent(parentNode.uuid)
     parentNode.addChild(node.uuid)

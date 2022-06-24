@@ -23,7 +23,7 @@ function repeat(str, times) {
 }
 
 function makeNewNode(contents, parent) {
-    const node = new Node("outlinerNode:" + UUID.uuidv4())
+    const node = new Node(UUID.forType("outlinerNode"))
     node.setContents(contents)
     node.setParent(parent.uuid)
     parent.addChild(node.uuid)

@@ -38,7 +38,7 @@ function convertText(textString) {
 
 class Table {
     constructor(uuid) {
-        this.uuid = uuid || ("table:" + UUID.uuidv4())
+        this.uuid = uuid || UUID.forType("table")
     }
 
     getName() {

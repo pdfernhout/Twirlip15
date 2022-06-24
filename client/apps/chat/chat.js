@@ -63,7 +63,7 @@ function chatTextChange(event) {
 
 function sendChatMessage() {
     const timestamp = new Date().toISOString()
-    const uuid = "chatMessage:" + UUID.uuidv4()
+    const uuid = UUID.forType("chatMessage")
 
     const newMessage = { chatText, userID, timestamp, uuid }
 

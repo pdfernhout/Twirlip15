@@ -7,7 +7,7 @@
 console.log("t", t)
 console.log("root", root)
 
-const node = new Node("outlinerNode:" + UUID.uuidv4())
+const node = new Node(UUID.forType("outlinerNode"))
 console.log("new node", node)
 const contents = "Test on Eval to Make New Node"
 

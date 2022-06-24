@@ -5,6 +5,11 @@ function uuidv4() {
     })
 }
 
+function forType(type) {
+    return type + "|" + uuidv4()
+}
+
 export const UUID = {
-    uuidv4
+    uuidv4,
+    forType
 }

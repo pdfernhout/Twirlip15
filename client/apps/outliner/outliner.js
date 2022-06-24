@@ -118,7 +118,7 @@ function addNode(parentNode) {
     const contents = prompt("contents?")
     if (contents) {
         // MAYBE: p.newTransaction("outliner/addNode")
-        const node = new Node("outlinerNode:" + UUID.uuidv4())
+        const node = new Node(UUID.forType("outlinerNode"))
         node.setContents(contents)
         node.setParent(parentNode.uuid)
         parentNode.addChild(node.uuid)
@@ -198,7 +198,7 @@ function copyNodeRepresentation(node) {
 
 // Recursive
 function recreateNode(nodeRepresentation, parentNode) {
-    const node = new Node("outlinerNode:" + UUID.uuidv4())
+    const node = new Node(UUID.forType("outlinerNode"))
     node.setContents(nodeRepresentation.contents)
     node.setParent(parentNode.uuid)
     parentNode.addChild(node.uuid)
@@ -400,7 +400,7 @@ function displayOutliner() {
 }
 
 function promptToCreateOutline() {
-    const uuid = prompt("Start an outline with this UUID?", "outlinerNode:" + UUID.uuidv4())
+    const uuid = prompt("Start an outline with this UUID?", UUID.forType("outlinerNode"))
     if (!uuid) return
     root = new Node(uuid)
     t.addTriple({a: "outliner:root", b: "currentOutline", c: uuid})
