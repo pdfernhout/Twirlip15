@@ -176,6 +176,7 @@ function viewMapLink(mapLink, origin, nodes) {
 }
 
 function changeCollageUUID(newUUID) {
+    console.log("changeCollageUUID", newUUID)
     collageUUID = newUUID
 }
 
@@ -270,7 +271,7 @@ function viewMap(uuid) {
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -307,7 +308,7 @@ function viewNote(uuid) {
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -317,7 +318,7 @@ function viewNote(uuid) {
             m("div",
                 editedNote 
                     ? m("textarea", {rows: 10, cols: 80, value: detail, onchange: (event) => {
-                        t.addTripleABC(uuid, "detail", "text:" + event.target.value)
+                        t.addTripleABC(uuid, "detail", event.target.value)
                     }})
                     : m("pre", {style: "white-space: pre-wrap", }, detail)
                 
@@ -361,7 +362,7 @@ function viewList(uuid) {
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
-                if (newLabel) t.addTripleABC(uuid, "label", "text:" + newLabel)
+                if (newLabel) t.addTripleABC(uuid, "label", newLabel)
             }}, "✎"),
             label || "unlabelled"
         ),
@@ -385,7 +386,6 @@ function viewList(uuid) {
 function viewNode(uuid) {
     if (!uuid) throw new Error("viewNode: uuid is not defined: " + uuid)
     let type = t.findLast(uuid, "type")
-    if (type && type.includes(":")) type = type.split(":")[1]
     // console.log("viewNode", uuid, type)
     if (type === "List") return viewList(uuid)
     if (type === "Map") return viewMap(uuid)
@@ -400,9 +400,9 @@ function viewNode(uuid) {
 function makeNewNode(type, label, detail) {
     const uuid = UUID.forType("collageNode")
     const id = uuid
-    t.addTripleABC(id, "type", "collageNodeType:" + type)
-    if (label) t.addTripleABC(id, "label", "text:" + label)
-    if (detail) t.addTripleABC(id, "detail", "text:" + detail)
+    t.addTripleABC(id, "type", type, "collageNodeType")
+    if (label) t.addTripleABC(id, "label", label)
+    if (detail) t.addTripleABC(id, "detail", detail)
     return id
 }
 
@@ -412,7 +412,7 @@ function makeNewMap() {
 }
 
 function getAllMaps() {
-    return t.find(null, "type", "collageNodeType:Map")
+    return t.find(null, "type", "Map")
 }
 
 function makeNewList() {
@@ -421,11 +421,11 @@ function makeNewList() {
 }
 
 function getAllLists() {
-    return t.find(null, "type", "collageNodeType:List")
+    return t.find(null, "type", "List")
 }
 
 function getAllLinks() {
-    return t.find(null, "type", "collageNodeType:Link")
+    return t.find(null, "type", "Link")
 }
 
 const expanded = {}
@@ -439,8 +439,8 @@ function expander(name, callback) {
 }
 
 function sortItems(a, b) {
-    const aLabel = t.findLast(a, "label") || a.collageUUID
-    const bLabel = t.findLast(b, "label") || b.collageUUID
+    const aLabel = t.findLast(a, "label") || a.collageUUID || ""
+    const bLabel = t.findLast(b, "label") || b.collageUUID || ""
     return aLabel.localeCompare(bLabel)
 }
 
@@ -448,8 +448,8 @@ function viewLists() {
     return expander("Lists", () => 
         m("div", getAllLists().sort(sortItems).map(item =>
             m("div",
-                { onclick: () => changeCollageUUID(item.collageUUID) },
-                t.findLast(item, "label") || item.collageUUID
+                { onclick: () => changeCollageUUID(item /* .collageUUID */) },
+                t.findLast(item, "label") || item /* .collageUUID */
             )
         ))
     )
@@ -459,8 +459,8 @@ function viewMaps() {
     return expander("Maps", () => 
         m("div", getAllMaps().sort(sortItems).map(item =>
             m("div", 
-                { onclick: () => changeCollageUUID(item.collageUUID) }, 
-                t.findLast(item, "label") || item.collageUUID
+                { onclick: () => changeCollageUUID(item /* .collageUUID */) }, 
+                t.findLast(item, "label") || item /* .collageUUID */
             )
         ))
     ) 
@@ -500,7 +500,7 @@ function viewCollageButtons() {
     return m("div.ma1.pa1",
         m("button.ml2", {onclick: () => makeNewMap()}, "New Map"),
         m("button.ml2", {onclick: () => makeNewList()}, "New List"),
-        m("button.ml2", {onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(t).then(() => alert("Done with import"))}, "Import Compendum Feature Suggestions"),
+        m("button.ml2", {onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(t).then(imported => { if (imported) alert("Done with import") })}, "Import Compendium Feature Suggestions"),
         m("button.ml2", {onclick: () => console.log(t)}, "Debug T"),
     )
 }
@@ -509,7 +509,7 @@ function promptToCreateCollage() {
     const uuid = prompt("Start a collage with this UUID?", UUID.forType("collageNode"))
     if (!uuid) return
     collageUUID = uuid
-    t.addTripleABC(uuid, "type", "collageNodeType:Map")
+    t.addTripleABC(uuid, "type", "Map", "collageNodeType")
     t.addTripleABC("collage:root", "currentCollage", uuid)
 }
 

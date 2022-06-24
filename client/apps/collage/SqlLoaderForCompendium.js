@@ -25,7 +25,7 @@ function loadCompendiumFeatureSuggestions() {
 function importNodeTable(t, nodeTable) {
     // console.log("nodeTable", nodeTable)
     for (let node of nodeTable) {
-        const id = "collageNode:" + node.NodeID
+        const id = "collageNode|" + node.NodeID
         for (let fieldName of [
             "Author",
             "CreationDate",
@@ -40,12 +40,15 @@ function importNodeTable(t, nodeTable) {
             "OriginalID"
         ]) {
             let value = node[fieldName]
-            if (fieldName.endsWith("ID")) value = "collageNode:" + value
-            else if (fieldName.endsWith("Date")) value = "date:" + (new Date(value).toISOString())
-            else if (fieldName === "Detail") value = "text:" + value.replace(/\\n/g, "\n")
-            else value = "text:" + value
+            let fieldType = undefined
+            if (fieldName.endsWith("ID")) value = "collageNode|" + value
+            else if (fieldName.endsWith("Date")) {
+                value = new Date(value).toISOString()
+                fieldType = "date"
+            }
+            else if (fieldName === "Detail") value = value.replace(/\\n/g, "\n")
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
-            t.addTripleABC(id, fieldNameAdjusted, value)
+            t.addTripleABC(id, fieldNameAdjusted, value, fieldType)
         }
         const typeName = {
             0: "General",
@@ -81,14 +84,14 @@ function importNodeTable(t, nodeTable) {
             51: "Trashbin",
             52: "Inbox",
         }[node.NodeType]
-        t.addTripleABC(id, "type", "collageNodeType:" + typeName)
+        t.addTripleABC(id, "type", typeName, "collageNodeType")
     }
 }
 
 function importViewNodeTable(t, viewNodeTable) {
     // console.log("viewNodeTable", viewNodeTable)
     for (let row of viewNodeTable) {
-        const id = "collageNode:" + row.ViewID
+        const id = "collageNode|" + row.ViewID
         const modifiedRow = {}
         for (let fieldName of [
             "Background",
@@ -112,24 +115,18 @@ function importViewNodeTable(t, viewNodeTable) {
             "YPos"
         ]) {
             let value = row[fieldName]
-            if (fieldName.endsWith("ID")) value = "collageNode:" + value
-            else if (fieldName.endsWith("Pos")) value = "number:" + value
-            else if (fieldName.endsWith("Width")) value = "number:" + value
-            else if (fieldName.endsWith("Size")) value = "number:" + value
-            else if (fieldName.endsWith("Background")) value = "color:" + value
-            else if (fieldName.endsWith("Foreground")) value = "color:" + value
+            if (fieldName.endsWith("ID")) value = "collageNode|" + value
             else if (fieldName.endsWith("Date")) {
-                value = "date:" + new Date(value).toISOString()
+                value = new Date(value).toISOString()
                 row[fieldName] = value
             }
-            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
             modifiedRow[fieldNameAdjusted] = value
         }
         modifiedRow.id = modifiedRow.nodeID
         // console.log("adding for ", modifiedRow.id, {contains: modifiedRow.id})
         // TODO: Make this into a nested triple-defined object
-        t.addTriple({a: id, b: "contains", c: "JSON:" + JSON.stringify(modifiedRow), o: "insert"})
+        t.addTriple({a: id, b: "contains", c: JSON.stringify(modifiedRow), ct: "json", o: "insert"})
     }
 }
 
@@ -147,7 +144,7 @@ const linkTypeNumberToName = {
 function importLinkTable(t, linkTable) {
     // console.log("linkTable", linkTable)
     for (let link of linkTable) {
-        const id = "collageNode:" + link.LinkID
+        const id = "collageNode|" + link.LinkID
         for (let fieldName of [
             "Author",
             "CreationDate",
@@ -161,24 +158,27 @@ function importLinkTable(t, linkTable) {
             "ToNode"
         ]) {
             let value = link[fieldName]
-            if (fieldName.endsWith("ID")) value = "collageNode:" + value
-            else if (fieldName.endsWith("Node")) value = "collageNode:" + value
+            let fieldType = undefined
+            if (fieldName.endsWith("ID")) value = "collageNode|" + value
+            else if (fieldName.endsWith("Node")) value = "collageNode|" + value
             else if (fieldName.endsWith("Date")) {
-                value = "date:" + new Date(value).toISOString()
+                value = new Date(value).toISOString()
+                fieldType = "date"
+            } else if (fieldName === "LinkType") {
+                value = linkTypeNumberToName[value] || "RespondsTo"
+                fieldType = "collageLinkType"
             }
-            else if (fieldName === "LinkType") value = "collageLinkType:" + linkTypeNumberToName[value] || "collageLinkType:RespondsTo"
-            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
-            t.addTripleABC(id, fieldNameAdjusted, value)
+            t.addTripleABC(id, fieldNameAdjusted, value, fieldType)
         }
-        t.addTripleABC(id, "type", "collageNodeType:Link")
+        t.addTripleABC(id, "type", "Link", "collageNodeType")
     }
 }
      
 function importViewLinkTable(t, viewLinkTable) {
     // console.log("viewLinkTable", viewLinkTable)
     for (let row of viewLinkTable) {
-        const id = "collageNode:" + row.ViewID
+        const id = "collageNode|" + row.ViewID
         const modifiedRow = {}
         for (let fieldName of [
             "ArrowType",
@@ -199,31 +199,24 @@ function importViewLinkTable(t, viewLinkTable) {
             "ViewID"
         ]) {
             let value = row[fieldName]
-            if (fieldName.endsWith("ID")) value = "collageNode:" + value
-            else if (fieldName.endsWith("Pos")) value = "number:" + value
-            else if (fieldName.endsWith("Weight")) value = "number:" + value
-            else if (fieldName.endsWith("Size")) value = "number:" + value
-            else if (fieldName.endsWith("Background")) value = "color:" + value
-            else if (fieldName.endsWith("Foreground")) value = "color:" + value
-            else if (fieldName.endsWith("Colour")) value = "color:" + value
+            if (fieldName.endsWith("ID")) value = "collageNode|" + value
             else if (fieldName.endsWith("Date")) {
-                value = "date:" + new Date(value).toISOString()
+                value = new Date(value).toISOString()
                 row[fieldName] = value
             }
-            else value = "text:" + value
             const fieldNameAdjusted = fieldName.charAt(0).toLowerCase() + fieldName.substring(1)
             modifiedRow[fieldNameAdjusted] = value
         }
         modifiedRow.id = modifiedRow.linkID
         // TODO: Maybe "hasLink" should be "contains" with some way to distinguish links from other items?
         // TODO: Make this into a nested triple-defined object
-        t.addTriple({a: id, b: "hasLink", c: "JSON:" + JSON.stringify(modifiedRow), o: "insert"})
+        t.addTriple({a: id, b: "hasLink", c: JSON.stringify(modifiedRow), ct: "json", o: "insert"})
     }
 }
 
 // parameter p is expected to be a Pointrel triple store
 async function importFeatureSuggestions(p) {
-    if (!confirm("Import feature suggestions?\n(This adds a lot of data.)")) return
+    if (!confirm("Import feature suggestions?\n(This adds a lot of data.)")) return false
     await loadCompendiumFeatureSuggestions()
     // console.log("compendiumFeatureSuggestionsTables", compendiumFeatureSuggestionsTables)
     const nodeTable = compendiumFeatureSuggestionsTables["Node"]
@@ -234,6 +227,7 @@ async function importFeatureSuggestions(p) {
     importLinkTable(p, linkTable)
     const viewLinkTable = compendiumFeatureSuggestionsTables["ViewLink"]
     importViewLinkTable(p, viewLinkTable)
+    return true
 }
 
 export const SqlLoaderForCompendium = {

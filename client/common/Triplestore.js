@@ -174,6 +174,11 @@ export function Triplestore(showError, fileName) {
     }
 
     function addTriple(triple, write=true) {
+        if (!triple.ct && typeof triple.c === "number") {
+            // Auto conversion of numbers
+            triple.c = String(triple.c)
+            triple.ct = "number"
+        }
         if (!isString(triple.a) ||
             !isString(triple.b) ||
             !isString(triple.c) ||
