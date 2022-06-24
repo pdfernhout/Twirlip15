@@ -1,46 +1,46 @@
-{"a":"table:3fa3240a-3c75-4b3d-b872-a92f673f0105","b":"name","c":"text:test"}
-{"a":"table:fdcda3e0-e389-438f-bfd0-3231a3303edf","b":"name","c":"text:electric"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"name","c":"text:electric"}
+{"a":"table:3fa3240a-3c75-4b3d-b872-a92f673f0105","b":"name","c":"test"}
+{"a":"table:fdcda3e0-e389-438f-bfd0-3231a3303edf","b":"name","c":"electric"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"name","c":"electric"}
 {"a":"tables:root","b":"hasTable","c":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","o":"insert"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":0}","c":"text:Hello world!"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":1}","c":"text:10"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":2}","c":"text:=20 + 30"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"name","c":"text:cable"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":0}","c":"Hello world!"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":1}","c":"10"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":2}","c":"=20 + 30"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"name","c":"cable"}
 {"a":"tables:root","b":"hasTable","c":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","o":"insert"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":0}","c":"text:jan"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":1}","c":"text:feb"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":2}","c":"text:march"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":3}","c":"text:april"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":0}","c":"text:200"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":1}","c":"text:100"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":2}","c":"text:150"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":3}","c":"text:305"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":4}","c":"text:=sum()"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":4}","c":"text:"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":0}","c":"text:=b1+b2+b3+b4"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":0}","c":"text:"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":4}","c":"text:=b1+b2"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":4}","c":"text:=b1+b2+b3+b4"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":0}","c":"jan"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":1}","c":"feb"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":2}","c":"march"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":0,\"y\":3}","c":"april"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":0}","c":"200"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":1}","c":"100"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":2}","c":"150"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":3}","c":"305"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":4}","c":"=sum()"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":4}","c":""}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":0}","c":"=b1+b2+b3+b4"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":0}","c":""}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":4}","c":"=b1+b2"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":4}","c":"=b1+b2+b3+b4"}
 {"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"columnWidth\":2}","c":"number:60"}
 {"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"columnWidth\":2}","c":"number:16"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cable:c4"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c4\", \"cable\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c4\",\"cable\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:cell(\"c4\",\"cable\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c4\",\"cable\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"text:=cell(\"c5\",\"cable\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":4}","c":"text:from cable:"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(b1:b4)"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(\"b1:b4\"))"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"=cable:c4"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"=cell(\"c4\", \"cable\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"=cell(\"c4\",\"cable\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"cell(\"c4\",\"cable\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"=cell(\"c4\",\"cable\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":4}","c":"=cell(\"c5\",\"cable\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":4}","c":"from cable:"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"=sum(b1:b4)"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"=sum(\"b1:b4\"))"}
 {"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"columnWidth\":1}","c":"number:12"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"text:=sum(\"b1:b4\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"text:=========="}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"text:--------"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":6}","c":"text:=sum(\"b1:b5\")"}
-{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":6}","c":"text:Total:"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":5}","c":"=sum(\"b1:b4\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"=========="}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":5}","c":"--------"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":1,\"y\":6}","c":"=sum(\"b1:b5\")"}
+{"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"x\":0,\"y\":6}","c":"Total:"}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:12"}
 {"a":"table:ae99d1f6-efc5-4e11-93c5-acc2e2c21173","b":"{\"columnWidth\":1}","c":"number:10"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":7}","c":"text:10"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":3,\"y\":7}","c":"text:20"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":7}","c":"text:5"}
-{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":4,\"y\":7}","c":"text:=sum(\"b8:d8\")"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":2,\"y\":7}","c":"10"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":3,\"y\":7}","c":"20"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":1,\"y\":7}","c":"5"}
+{"a":"table:c9e187bd-88c1-4c67-b50a-dc4e8f05d32f","b":"{\"x\":4,\"y\":7}","c":"=sum(\"b8:d8\")"}

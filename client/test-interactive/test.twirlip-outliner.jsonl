@@ -1,16 +1,16 @@
-{"a":"outliner:root","b":"currentOutline","c":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
-{"a":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"contents","c":"text:Test node 1"}
-{"a":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"contents","c":"text:child of test node 1"}
-{"a":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"parent","c":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
-{"a":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"child","c":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","o":"insert"}
-{"a":"outlinerNode:5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"contents","c":"text:another child of test node 1"}
-{"a":"outlinerNode:5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"parent","c":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
-{"a":"outlinerNode:6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"child","c":"outlinerNode:5f7223ab-a4fd-42ed-8aef-1ae08a34d226","o":"insert"}
-{"a":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"contents","c":"text:child of test node 1\n\nAnd there is some more test here!\n\nAnd even another line a bit lower."}
-{"a":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","b":"contents","c":"text:below child"}
-{"a":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63"}
-{"a":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"child","c":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","o":"insert"}
-{"a":"outlinerNode:30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"child","c":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","o":"remove","ignore":true}
-{"a":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":""}
-{"a":"outlinerNode:5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"child","c":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","o":"insert"}
-{"a":"outlinerNode:fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":"outlinerNode:5f7223ab-a4fd-42ed-8aef-1ae08a34d226"}
+{"a":"outliner:root","b":"currentOutline","c":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
+{"a":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"contents","c":"Test node 1"}
+{"a":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"contents","c":"child of test node 1"}
+{"a":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"parent","c":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
+{"a":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"child","c":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","o":"insert"}
+{"a":"outlinerNode|5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"contents","c":"another child of test node 1"}
+{"a":"outlinerNode|5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"parent","c":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680"}
+{"a":"outlinerNode|6ed3ecb9-69e3-4c87-8ceb-cbca2256c680","b":"child","c":"outlinerNode|5f7223ab-a4fd-42ed-8aef-1ae08a34d226","o":"insert"}
+{"a":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"contents","c":"child of test node 1\n\nAnd there is some more test here!\n\nAnd even another line a bit lower."}
+{"a":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","b":"contents","c":"below child"}
+{"a":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63"}
+{"a":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"child","c":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","o":"insert"}
+{"a":"outlinerNode|30605fb8-e53f-4e31-9a29-6b94bc10fb63","b":"child","c":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","o":"remove","ignore":true}
+{"a":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":""}
+{"a":"outlinerNode|5f7223ab-a4fd-42ed-8aef-1ae08a34d226","b":"child","c":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","o":"insert"}
+{"a":"outlinerNode|fadf9850-1301-46c9-99c6-91b6af2bb170","b":"parent","c":"outlinerNode|5f7223ab-a4fd-42ed-8aef-1ae08a34d226"}
