@@ -50,12 +50,6 @@ function firstLine(text) {
     return text.split("\n")[0]
 }
 
-function convertText(textString) {
-    const prefix = "text:"
-    if (!textString.startsWith(prefix)) return ""
-    return textString.substring(prefix.length)
-}
-
 class Node {
 
     constructor(uuid) {
@@ -63,11 +57,11 @@ class Node {
     }
 
     getContents() {
-        return convertText(t.findLast(this.uuid, "contents") || "text:")
+        return t.findLast(this.uuid, "contents") || ""
     }
 
     setContents(contents) {
-        t.addTriple({a: this.uuid, b: "contents", c: "text:" + contents})
+        t.addTriple({a: this.uuid, b: "contents", c: contents})
     }
 
     getFirstLine() {
@@ -323,7 +317,7 @@ function displayNode(node) {
         if (!isContentMatch && !sortedNodes.length) return []
     }
 
-    return m("div.ml3.mt1.mb1", { key: "node:" + node.uuid }, [
+    return m("div.ml3.mt1.mb1", { key: node.uuid }, [
         isExpandable ? m("span.mr1.dib", {
             onclick: () => {
                 expandNode(node)

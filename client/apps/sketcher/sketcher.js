@@ -79,22 +79,12 @@ function splitText(text, bounds) {
     return result
 }
 
-function convertText(textString) {
-    const prefix = "text:"
-    if (!textString.startsWith(prefix)) return ""
-    return textString.substring(prefix.length)
-}
-
 function convertNumber(numberString) {
-    const prefix = "number:"
-    if (!numberString.startsWith(prefix)) return NaN
-    return parseFloat(numberString.substring(prefix.length))
+    return parseFloat(numberString)
 }
 
 function convertJSON(jsonString) {
-    const prefix = "json:"
-    if (!jsonString.startsWith(prefix)) return undefined
-    return JSON.parse(jsonString.substring(prefix.length))
+    return JSON.parse(jsonString)
 }
 
 class ObjectInTriplestore {
@@ -105,11 +95,12 @@ class ObjectInTriplestore {
 
     getField(fieldName, type, defaultValue) {
         const value = this.triplestore.findLast(this.uuid, fieldName)
+        // Could check type against stored ct type
         if (value === null) return defaultValue
-        if (type === "text") return convertText(value)
+        if (type === "text") return value
         if (type === "number") return convertNumber(value)
         if (type === "json") return convertJSON(value)
-        return value.substring(type.length + 1)
+        return value
     }
 
     setField(fieldName, type, value) {
@@ -118,11 +109,11 @@ class ObjectInTriplestore {
         }
         let textToStore
         if (type === "json") {
-            textToStore = "json:" + JSON.stringify(value)
+            textToStore = JSON.stringify(value)
         } else {
-            textToStore = type + ":" + value
+            textToStore = String(value)
         }
-        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: textToStore, o: "replace"})
+        this.triplestore.addTriple({a: this.uuid, b: fieldName, c: textToStore, ct: type, o: "replace"})
     }
 
     getFieldSet(fieldName, itemCallback) {

@@ -74,7 +74,7 @@ function typeForNode(id) {
     // With a schema:
     // return new IBIS.Node(id).type
     let type = "" + t.findLast(id, "type")
-    if (type.startsWith("IBIS.NodeType:")) type = type.substring("IBIS.NodeType:".length)
+    if (type.startsWith("IBIS.NodeType|")) type = type.substring("IBIS.NodeType|".length)
     return type
 }
 
@@ -82,7 +82,6 @@ function labelForNode(id) {
     // With a schema:
     // return new IBIS.Node(id).label
     let label = "" + t.findLast(id, "label")
-    if (label.startsWith("string:")) label = label.substring("string:".length)
     if (!label) label = "Unlabelled"
     return label
 }
@@ -155,7 +154,7 @@ async function editClicked(id) {
         t.addTriple({
             a: id,
             b: "label",
-            c: "string:" + newLabel,
+            c: newLabel,
             o: "replace"
         }) 
     }
@@ -163,7 +162,7 @@ async function editClicked(id) {
         t.addTriple({
             a: id,
             b: "type",
-            c: "IBIS.NodeType:" + newType,
+            c: "IBIS.NodeType|" + newType,
             o: "replace"
         }) 
     }
@@ -197,14 +196,15 @@ async function addItem(type, parentId) {
         labelForPrompt = newLabel
     }
     if (newLabel) {
-        const childId = "IBIS.Node:" + ("" + Math.random()).split(".")[1]
+        // TODO: switch to UUID.forType(...)
+        const childId = "IBIS.Node|" + ("" + Math.random()).split(".")[1]
         // With a schema:
         // const node = new SchematizedObject("IBIS.Node", childId)
         // node.type = type
         t.addTriple({
             a: childId,
             b: "type",
-            c: "IBIS.NodeType:" + type,
+            c: "IBIS.NodeType|" + type,
             o: "insert"
         })
         // With a schema:
@@ -212,7 +212,7 @@ async function addItem(type, parentId) {
         t.addTriple({
             a: childId,
             b: "label",
-            c: "string:" + newLabel,
+            c: newLabel,
             o: "insert"
         })
         // With a schema:

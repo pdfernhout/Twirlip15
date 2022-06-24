@@ -25,15 +25,7 @@ const t = Triplestore(showError)
 const showFormulasForTable = {}
 
 function convertNumber(numberString) {
-    const prefix = "number:"
-    if (!numberString.startsWith(prefix)) return NaN
-    return parseFloat(numberString.substring(prefix.length))
-}
-
-function convertText(textString) {
-    const prefix = "text:"
-    if (!textString.startsWith(prefix)) return ""
-    return textString.substring(prefix.length)
+    return parseFloat(numberString)
 }
 
 class Table {
@@ -42,15 +34,15 @@ class Table {
     }
 
     getName() {
-        return convertText(t.findLast(this.uuid, "name") || "text:Unnamed")
+        return t.findLast(this.uuid, "name") || "Unnamed"
     }
 
     setName(name) {
-        t.addTriple({a: this.uuid, b: "name", c: "text:" + name})
+        t.addTriple({a: this.uuid, b: "name", c: name})
     }
 
     getWidth() {
-        return convertNumber(t.findLast(this.uuid, "width") || "number:5")
+        return convertNumber(t.findLast(this.uuid, "width") || "5")
     }
 
     setWidth(width) {
@@ -58,15 +50,15 @@ class Table {
         if (!width) return
         width = Math.max(1, width)
         width = Math.min(26, width)
-        t.addTriple({a: this.uuid, b: "width", c: "number:" + width})
+        t.addTriple({a: this.uuid, b: "width", c: String(width), tc: "number"})
     }
 
     getHeight() {
-        return convertNumber(t.findLast(this.uuid, "height") || "number:10")
+        return convertNumber(t.findLast(this.uuid, "height") || "10")
     }
 
     setHeight(height) {
-        t.addTriple({a: this.uuid, b: "height", c: "number:" + height})
+        t.addTriple({a: this.uuid, b: "height", c: String(height), tc: "number"})
     }
 
     getShowFormulas() {
@@ -80,22 +72,22 @@ class Table {
     }
 
     getCell(x, y) {
-        return convertText(t.findLast(this.uuid, JSON.stringify({x: x, y: y})) || "text:")
+        return t.findLast(this.uuid, JSON.stringify({x: x, y: y})) || ""
     }
 
     setCell(x, y, contents) {
         if (this.getCell(x, y) !== contents) {
-            t.addTriple({a: this.uuid, b: JSON.stringify({x: x, y: y}), c: "text:" + contents})
+            t.addTriple({a: this.uuid, b: JSON.stringify({x: x, y: y}), c: contents})
         }
     } 
     
     getColumnWidth(x) {
-        return convertNumber(t.findLast(this.uuid, JSON.stringify({columnWidth: x})) || "number:8")
+        return convertNumber(t.findLast(this.uuid, JSON.stringify({columnWidth: x})) || "8")
     }
 
     setColumnWidth(x, value) {
         value = Math.max(2, value)
-        t.addTriple({a: this.uuid, b: JSON.stringify({columnWidth: x}), c: "number:" + value})
+        t.addTriple({a: this.uuid, b: JSON.stringify({columnWidth: x}), c: String(value), tc: "number"})
     } 
 }   
 
@@ -337,7 +329,7 @@ function displayTable(table) {
                         event.redraw = false
 
                         // Get pasted data via clipboard API
-                        const clipboardData = e.clipboardData || window.clipboardData
+                        const clipboardData = event.clipboardData || window.clipboardData
                         const pastedData = clipboardData.getData("Text")
 
                         if (pastedData === lastTextCopied) {

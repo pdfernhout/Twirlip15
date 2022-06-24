@@ -1,6 +1,13 @@
 import { Twirlip15ServerAPI } from "./twirlip15-api.js"
 import { base64decode } from "../vendor/base64.js"
 
+// Triple fields:
+// a: subject, typically a UUID of the form "type|uuidv4"
+// b: field or relation, typically a meaningful string like "creationDate" 
+// c: value, typically a UUID or plain text, but may be a unicode string of any intended content type
+// ct: optional hint about the content type of c; usually text or uuid of unspecified; "number" or "json" may be common uses
+// o: operation, may be replace, insert, clear, or undefined (which is the same as replace)
+
 // Future design ideas for API:
 // triples[id]["+"].map(...)
 // triples[id]["+"].last()
@@ -161,24 +168,18 @@ export function Triplestore(showError, fileName) {
     }
 
     // Convenience function
-    function addTripleABC(a, b, c) {
+    function addTripleABC(a, b, c, ct=undefined) {
+        if (ct) return addTriple({a, b, c, ct})
         return addTriple({a, b, c})
     }
 
     function addTriple(triple, write=true) {
         if (!isString(triple.a) ||
             !isString(triple.b) ||
-            !isString(triple.c)
+            !isString(triple.c) ||
+            (triple.ct && !isString(triple.ct))
         ) {
             return showError(new Error("triple fields must be strings: " + JSON.stringify(triple)))
-        }
-        if ( write && (
-            !triple.a.includes(":") ||
-            // !triple.b.includes(":") ||
-            (triple.c && !triple.c.includes(":"))
-            )
-        ) {
-            return showError(new Error("triple fields A & C must have type at start with a colon: " + JSON.stringify(triple)))
         }
         if (!triple.a || !triple.b) return showError(new Error("Triple a and b fields must be non-empty"))
         triple.index = triples.length + 1
