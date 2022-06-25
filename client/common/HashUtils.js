@@ -17,14 +17,18 @@ function getHashParams() {
     return hashParams
 }
 
-function setHashParams(hashParams) {
+function setHashParams(hashParams, replace=false) {
     let newHash = ""
     for (let key in hashParams) {
         if (newHash) newHash += "&"
         newHash += encodeURIComponent(key) + "=" + encodeURIComponent(hashParams[key])
     }
     if (window.location.hash.substring(1) !== newHash) {
-        window.location.hash = newHash
+        if (replace) {
+            window.history.replaceState(null, "", window.location + "#" + newHash)
+        } else {
+            window.location.hash = newHash
+        }
     }
 }
 

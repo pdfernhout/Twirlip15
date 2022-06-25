@@ -20,7 +20,7 @@ export function HashUUIDTracker(uuidNameInHash = "uuid", onUUIDChangedCallback =
         let newUUID = hashParams[uuidNameInHash]
         if (!newUUID) {
             newUUID = suggestedUUDIfNoneInHash || UUID.uuidv4()
-            uuidChangedByApp(newUUID)
+            uuidChangedByApp(newUUID, true)
         } else {
             updateTitleForUUID()
         }
@@ -39,12 +39,12 @@ export function HashUUIDTracker(uuidNameInHash = "uuid", onUUIDChangedCallback =
         }
     }
 
-    function uuidChangedByApp(newUUID) {
+    function uuidChangedByApp(newUUID, useReplaceState=false) {
         if (uuid !== newUUID) {
             uuid = newUUID
             const hashParams = HashUtils.getHashParams()
             hashParams[uuidNameInHash] = newUUID
-            HashUtils.setHashParams(hashParams)
+            HashUtils.setHashParams(hashParams, useReplaceState)
             updateTitleForUUID()
         }
     }
