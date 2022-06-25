@@ -351,7 +351,7 @@ function promptForNewItemForList(listId) {
 
 function viewList(uuid) {
     const listId = uuid
-    const listItemIds = t.find(listId, "contains").map(itemJSON => JSON.parse(itemJSON).id)
+    const listItemIds = t.find(listId, "contains")
     const listItems = listItemIds.map(id => {
         let type = t.findLast(id, "type") || "missing"
         type = type.charAt(0).toLowerCase() + type.substring(1)
