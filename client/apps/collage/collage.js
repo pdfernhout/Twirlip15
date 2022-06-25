@@ -57,9 +57,12 @@ import "../../vendor/mithril.js"
 
 import { SqlUtils } from "./SqlUtils.js"
 import { SqlLoaderForCompendium } from "./SqlLoaderForCompendium.js"
+import { HashUUIDTracker } from "../../common/HashUUIDTracker.js"
 import { UUID } from "../../common/UUID.js"
 import { Toast } from "../../common/Toast.js"
 import { Triplestore } from "../../common/Triplestore.js"
+
+let collageUUID
 
 function showError(error) {
     console.log("error", error)
@@ -76,7 +79,12 @@ function getCurrentCollageUUID() {
     return t.findLast("collage:root", "currentCollage")
 }
 
-let collageUUID
+const { uuidChangedByApp, getUUID } = HashUUIDTracker("collageUUID", (uuid) => {
+    // Called every time UUID changed from hash in the URL
+    collageUUID = uuid
+}, null, getCurrentCollageUUID() || undefined)
+
+collageUUID = getUUID()
 
 async function startup() {
     const filePathFromParams = decodeURI(window.location.pathname)
@@ -176,7 +184,10 @@ function viewMapLink(mapLink, origin, nodes) {
 }
 
 function changeCollageUUID(newUUID) {
-    console.log("changeCollageUUID", newUUID)
+    if (!newUUID) {
+        console.log("changeCollageUUID problem with empty uuid")
+    }
+    uuidChangedByApp(newUUID)
     collageUUID = newUUID
 }
 
@@ -205,7 +216,7 @@ function viewMapItem(mapItem, origin) {
             height: 32,
             alt: mapItem.type,
             ondblclick: () => {
-                changeCollageUUID(mapItem.id.collageUUID)
+                changeCollageUUID(mapItem.id)
             }
             // onmousedown: (event) => onmousedown(mapItem, event),
         }),
@@ -369,7 +380,7 @@ function viewList(uuid) {
         listItems.map(item => 
             m("div.ma2", 
                 {
-                    onclick: () => changeCollageUUID(item.id.collageUUID)
+                    onclick: () => changeCollageUUID(item.id)
                 }, 
                 m("img.mr2.v-mid", {
                     "src": CompendiumIcons[item.type + "_png"],
@@ -386,7 +397,6 @@ function viewList(uuid) {
 function viewNode(uuid) {
     if (!uuid) throw new Error("viewNode: uuid is not defined: " + uuid)
     let type = t.findLast(uuid, "type")
-    // console.log("viewNode", uuid, type)
     if (type === "List") return viewList(uuid)
     if (type === "Map") return viewMap(uuid)
     // if (type === "Map") return viewList(uuid)
@@ -448,8 +458,8 @@ function viewLists() {
     return expander("Lists", () => 
         m("div", getAllLists().sort(sortItems).map(item =>
             m("div",
-                { onclick: () => changeCollageUUID(item /* .collageUUID */) },
-                t.findLast(item, "label") || item /* .collageUUID */
+                { onclick: () => changeCollageUUID(item) },
+                t.findLast(item, "label") || item
             )
         ))
     )
@@ -459,8 +469,8 @@ function viewMaps() {
     return expander("Maps", () => 
         m("div", getAllMaps().sort(sortItems).map(item =>
             m("div", 
-                { onclick: () => changeCollageUUID(item /* .collageUUID */) }, 
-                t.findLast(item, "label") || item /* .collageUUID */
+                { onclick: () => changeCollageUUID(item) }, 
+                t.findLast(item, "label") || item
             )
         ))
     ) 
@@ -485,8 +495,8 @@ function viewLinks() {
             const toNode = t.findLast(link, "toNode") || "MISSING_TO"
             const toLabel = t.findLast({collageUUID: toNode}, "label") || ""
             return m("div", 
-                { onclick: () => changeCollageUUID(link.collageUUID) },
-                m("span", link.collageUUID),
+                { onclick: () => changeCollageUUID(link) },
+                m("span", link),
                 " :: ",
                 m("span", {title: fromLabel}, fromNode),
                 " --> ",

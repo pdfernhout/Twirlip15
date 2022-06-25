@@ -2,6 +2,8 @@
 
 "use strict"
 
+/* global m */
+
 import { UUID } from "./UUID.js"
 import { HashUtils } from "./HashUtils.js"
 
