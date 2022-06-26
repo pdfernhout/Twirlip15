@@ -91,7 +91,9 @@ async function startup() {
     t.setFileName(filePathFromParams)
     await t.loadFileContents()
 
-    collageUUID = getCurrentCollageUUID()
+    if (!collageUUID) {
+        collageUUID = getCurrentCollageUUID()
+    }
 
     m.redraw()
 }
