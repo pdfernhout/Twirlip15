@@ -290,13 +290,13 @@ function viewMap(uuid) {
             }}, "✎"),
             label || "unlabelled"
         ),
-        m("div.overflow-auto", 
-            {
-                style: {
-                    width: "" + Math.min(xSizeMap + scrollBarWidthAdjustment, document.body.clientWidth - 100) + "px",
-                    height: "" + Math.min(ySizeMap + scrollBarWidthAdjustment, document.body.clientHeight - 200) + "px"
-                }
-            }, 
+        m("div", // .overflow-auto", 
+            // {
+            //     style: {
+            //         width: "" + Math.min(xSizeMap + scrollBarWidthAdjustment, document.body.clientWidth - 100) + "px",
+            //         height: "" + Math.min(ySizeMap + scrollBarWidthAdjustment, document.body.clientHeight - 200) + "px"
+            //     }
+            // }, 
             m("svg.diagram.ba", 
                 {
                     width: xSizeMap,
