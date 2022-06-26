@@ -280,7 +280,7 @@ function viewMap(uuid) {
 
     return m("div", 
         m("div", "Map: ", uuid),
-        m("div.mt2", 
+        m("div.mt2.mb2", 
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
@@ -317,7 +317,7 @@ function viewNote(uuid) {
     const detail =  t.findLast(uuid, "detail") || ""
     return m("div", 
         m("div", "Note: ", uuid),
-        m("div.mt2", 
+        m("div.mt2.mb2", 
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
@@ -325,7 +325,7 @@ function viewNote(uuid) {
             }}, "✎"),
             label || "unlabelled"
         ),
-        m("div.mt2",
+        m("div.mt2.mb2",
             "Detail:",
             m("button.ml2", {onclick: () => editedNote ? editedNote = null : editedNote = uuid}, "✎"),
             m("div",
@@ -371,7 +371,7 @@ function viewList(uuid) {
     const label =  t.findLast(listId, "label")
     return m("div", 
         m("div", "List: ", uuid),
-        m("div.mt2", 
+        m("div.mt2.mb2", 
             "Label: ",
             m("button.ml2.mr2", {onclick: () => {
                 const newLabel = prompt("new label?", label)
@@ -442,7 +442,7 @@ function getAllLinks() {
 
 const expanded = {}
 function expander(name, callback) {
-    return m("div.ma1",
+    return m("div.ma2",
         m("span.ml2", {
             onclick: () => expanded[name] = !expanded[name]
         }, m("span.mr1", name), (expanded[name] ? "▾" : "▸" )),
@@ -538,7 +538,7 @@ const TwirlipCollageApp = {
         // m("b", "Twirlip Collage: ", collageUUID),
         (t.getLoadingState().isFileLoaded
             ? getCurrentCollageUUID()
-                ? m(".mb2.pa2.ba.br3", viewNode(collageUUID))
+                ? m(".mb2.pa2", viewNode(collageUUID))
                 : m("button.ma3", {onclick: promptToCreateCollage}, "No map here yet. Click to start an map.")
             : "Loading..."
         ),
