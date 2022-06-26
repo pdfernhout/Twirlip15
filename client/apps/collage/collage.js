@@ -444,11 +444,11 @@ function getAllLinks() {
 
 const expanded = {}
 function expander(name, callback) {
-    return m("div.ma2",
-        m("span.ml2", {
+    return m("div.mt2.mb2",
+        m("span.mb2", {
             onclick: () => expanded[name] = !expanded[name]
         }, m("span.mr1", name), (expanded[name] ? "▾" : "▸" )),
-        expanded[name] && m("div.ml3", callback())
+        expanded[name] && m("div.ml4.ma1", callback())
     )
 }
 
@@ -461,7 +461,7 @@ function sortItems(a, b) {
 function viewLists() {
     return expander("Lists", () => 
         m("div", getAllLists().sort(sortItems).map(item =>
-            m("div",
+            m("div.mt1",
                 { onclick: () => changeCollageUUID(item) },
                 t.findLast(item, "label") || item
             )
@@ -472,7 +472,7 @@ function viewLists() {
 function viewMaps() {
     return expander("Maps", () => 
         m("div", getAllMaps().sort(sortItems).map(item =>
-            m("div", 
+            m("div.mt1", 
                 { onclick: () => changeCollageUUID(item) }, 
                 t.findLast(item, "label") || item
             )
@@ -498,7 +498,7 @@ function viewLinks() {
             const fromLabel = t.findLast({collageUUID: fromNode}, "label") || ""
             const toNode = t.findLast(link, "toNode") || "MISSING_TO"
             const toLabel = t.findLast({collageUUID: toNode}, "label") || ""
-            return m("div", 
+            return m("div.mt1", 
                 { onclick: () => changeCollageUUID(link) },
                 m("span", link),
                 " :: ",
@@ -551,7 +551,7 @@ const TwirlipCollageApp = {
             viewCollageButtons(),
             expander("Compendium Feature Suggestions SQL Tables", () => {
                 SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
-                return m("div.ma3.ba.b--light-silver.pa2",
+                return m("div.ma3.pa2",
                     SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables() && SqlUtils.viewSqlTables(SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables())
                 )
             }),
