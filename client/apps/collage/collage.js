@@ -278,7 +278,7 @@ function viewMap(uuid) {
     const ySizeMap = ySizeMax - ySizeMin
     const origin = {x: xSizeMin, y: ySizeMin}
 
-    const scrollBarWidthAdjustment = 20
+    // const scrollBarWidthAdjustment = 20
 
     return m("div", 
         m("div", "Map: ", uuid),
