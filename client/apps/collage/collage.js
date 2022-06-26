@@ -111,7 +111,7 @@ function viewArrowhead() {
 }
 
 function myWrap(offset, itemText, maxWidth) {
-    const lineHeight_em = 0.9
+    const lineHeight_em = 1.1
     const words = itemText.split(/\s+/)
     const lines = []
     let line = ""
