@@ -15,6 +15,8 @@ INSERT INTO NodeCode (NodeID, CodeID) VALUES ('1270111357737538597','12701113574
 
 "use strict"
 
+/* global m */
+
 function parseSection(tokens, text) {
     if (!text) return tokens
     if (text[0] !== "'") {
@@ -92,10 +94,11 @@ function viewSqlTables(tables) {
         result.push(
             m("div",
                 m("h3", 
-                    tableName, 
-                    m("span.ml2", {
+                    {
                         onclick: () => expandTable[tableName] = !expandTable[tableName]
-                    }, expandTable[tableName] ? "▾" : "▸" )
+                    },
+                    tableName, 
+                    m("span.ml2", expandTable[tableName] ? "▾" : "▸" )
                 ),
                 expandTable[tableName] && m("table.ml3",
                     m("thead",
