@@ -4,11 +4,11 @@
 
 /* global m */
 
-import { UUID } from "./UUID.js"
 import { HashUtils } from "./HashUtils.js"
 
 export function HashUUIDTracker(uuidNameInHash = "uuid", onUUIDChangedCallback = null, updateTitleCallback = null, suggestedUUDIfNoneInHash = null) {
 
+    console.log("HashUUIDTracker", uuidNameInHash, suggestedUUDIfNoneInHash)
     let uuid
 
     function getUUID() {
@@ -19,8 +19,10 @@ export function HashUUIDTracker(uuidNameInHash = "uuid", onUUIDChangedCallback =
         const hashParams = HashUtils.getHashParams()
         let newUUID = hashParams[uuidNameInHash]
         if (!newUUID) {
-            newUUID = suggestedUUDIfNoneInHash || UUID.uuidv4()
-            uuidChangedByApp(newUUID, true)
+            if (suggestedUUDIfNoneInHash) {
+                newUUID = suggestedUUDIfNoneInHash
+                uuidChangedByApp(newUUID, true)
+            }
         } else {
             updateTitleForUUID()
         }
