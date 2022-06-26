@@ -511,8 +511,8 @@ function viewLinks() {
 }
 
 function viewCollageButtons() {
-    return m("div.ma1.pa1",
-        m("button.ml2", {onclick: () => makeNewMap()}, "New Map"),
+    return m("div",
+        m("button", {onclick: () => makeNewMap()}, "New Map"),
         m("button.ml2", {onclick: () => makeNewList()}, "New List"),
         m("button.ml2", {
             disabled: !!t.findLast("collageNode|1270111357180684932","author","compendiumng"),
@@ -539,6 +539,20 @@ const TwirlipCollageApp = {
                 ? m("i.fa.fa-spinner.fa-spin")
                 : ""
         ),
+        getCurrentCollageUUID() && [
+            viewCollageButtons(),
+
+            expander("Compendium Feature Suggestions SQL Tables", () => {
+                SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
+                return m("div.ma3.pa2",
+                    SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables() && SqlUtils.viewSqlTables(SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables())
+                )
+            }),
+            viewLists(),
+            viewLinks(),
+            viewMaps(),
+        ],
+        m("hr"),
         // m("b", "Twirlip Collage: ", collageUUID),
         (t.getLoadingState().isFileLoaded
             ? getCurrentCollageUUID()
@@ -546,18 +560,6 @@ const TwirlipCollageApp = {
                 : m("button.ma3", {onclick: promptToCreateCollage}, "No map here yet. Click to start an map.")
             : "Loading..."
         ),
-        getCurrentCollageUUID() && [
-            viewLists(),
-            viewMaps(),
-            viewLinks(),
-            viewCollageButtons(),
-            expander("Compendium Feature Suggestions SQL Tables", () => {
-                SqlLoaderForCompendium.loadCompendiumFeatureSuggestions()
-                return m("div.ma3.pa2",
-                    SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables() && SqlUtils.viewSqlTables(SqlLoaderForCompendium.getCompendiumFeatureSuggestionsTables())
-                )
-            }),
-        ]
     )
 }
 
