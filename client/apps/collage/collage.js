@@ -514,8 +514,10 @@ function viewCollageButtons() {
     return m("div.ma1.pa1",
         m("button.ml2", {onclick: () => makeNewMap()}, "New Map"),
         m("button.ml2", {onclick: () => makeNewList()}, "New List"),
-        m("button.ml2", {onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(t).then(imported => { if (imported) alert("Done with import") })}, "Import Compendium Feature Suggestions"),
-        m("button.ml2", {onclick: () => console.log(t)}, "Debug T"),
+        m("button.ml2", {
+            disabled: !!t.findLast("collageNode|1270111357180684932","author","compendiumng"),
+            onclick: () => SqlLoaderForCompendium.importFeatureSuggestions(t).then(imported => { if (imported) alert("Done with import") })
+        }, "Import Compendium Feature Suggestions"),
     )
 }
 
