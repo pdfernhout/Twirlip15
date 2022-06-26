@@ -278,6 +278,8 @@ function viewMap(uuid) {
     const ySizeMap = ySizeMax - ySizeMin
     const origin = {x: xSizeMin, y: ySizeMin}
 
+    const scrollBarWidthAdjustment = 20
+
     return m("div", 
         m("div", "Map: ", uuid),
         m("div.mt2.mb2", 
@@ -291,8 +293,8 @@ function viewMap(uuid) {
         m("div.overflow-auto", 
             {
                 style: {
-                    width: "" + Math.min(xSizeMap, document.body.clientWidth - 100) + "px",
-                    height: "" + Math.min(ySizeMap, document.body.clientHeight - 200) + "px"
+                    width: "" + Math.min(xSizeMap + scrollBarWidthAdjustment, document.body.clientWidth - 100) + "px",
+                    height: "" + Math.min(ySizeMap + scrollBarWidthAdjustment, document.body.clientHeight - 200) + "px"
                 }
             }, 
             m("svg.diagram.ba", 
