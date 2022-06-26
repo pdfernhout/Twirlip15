@@ -122,7 +122,7 @@ function myWrap(offset, itemText, maxWidth) {
         // }
         if (line === "") {
             line = word
-        } else if ((line + " " + word).length < maxWidth + 7) {
+        } else if ((line + " " + word).length < maxWidth) {
             line += " " + word
         } else {
             lines.push(line)
