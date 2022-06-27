@@ -529,7 +529,6 @@ function promptToCreateCollage() {
     t.addTripleABC("collage:root", "currentCollage", uuid)
 }
 
-
 const TwirlipCollageApp = {
     view: () => m("div.pa3.h-100.overflow-auto",
         Toast.viewToast(),
