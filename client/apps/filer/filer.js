@@ -567,7 +567,7 @@ function formatSize(size) {
 
 function formatTime(time) {
     // note: the T is replaced by a special non-breaking thin space
-    return time.replace("Z", " ").replace("T", " ")
+    return time.replace("Z", " ").replace("T", " ").split(".")[0]
 }
 
 function viewerForURL(url) {
