@@ -566,6 +566,8 @@ function formatSize(size) {
 }
 
 function formatTime(time) {
+    // Convert to local timestamp but using ISO format (used by Sweden)
+    time = new Date(time).toLocaleString("sv")
     // note: the T is replaced by a special non-breaking thin space
     return time.replace("Z", " ").replace("T", " ").split(".")[0]
 }
