@@ -4,15 +4,27 @@
 
 "use strict"
 
-import { StoreUsingServer } from "./StoreUsingServer.js"
-import { HashUtils } from "./HashUtils.js"
-import { FileUtils } from "./FileUtils.js"
+import { FileUtils } from "../../common/FileUtils.js"
+import { Toast } from "../../common/Toast.js"
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
+import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
 
 // defines m
-import "./vendor/mithril.js"
+import "../../vendor/mithril.js"
 
-let streamName = "{\"chatRoom\": \"test\"}"
-let userID = localStorage.getItem("userID") || "anonymous"
+let chosenFileName = ""
+let chosenFileNameShort = ""
+
+function showError(error) {
+    Toast.toast(error)
+}
+
+const TwirlipServer = new Twirlip15ServerAPI(showError)
+const preferences = new Twirlip15Preferences()
+
+let userID = preferences.get("userID", "anonymous")
+
 let newMessageJSONText = ""
 const messages = []
 
@@ -26,52 +38,22 @@ let messagesDiv = null
 
 let showEntryArea = false
 
+let backend
+
+const filePathFromParams = decodeURI(window.location.pathname)
+
+if (filePathFromParams) {
+    chosenFileName = filePathFromParams
+    chosenFileNameShort = filePathFromParams.split("/").pop()
+}
+
+function updateTitleForFileName() {
+    document.title = chosenFileNameShort + " -- Twirlip7 Monitor"
+}
+
 function startup() {
-    streamName = HashUtils.getHashParams()["stream"] || streamName
-    window.onhashchange = () => updateStreamNameFromHash()
-    updateHashForStreamName()
-}
-
-function updateTitleForStreamName() {
-    document.title = streamName.replace(/[{}":]/g, "") + " -- Twirlip7 Monitor"
-}
-
-function updateStreamNameFromHash() {
-    const hashParams = HashUtils.getHashParams()
-    console.log("updateStreamNameFromHash", hashParams)
-    const newStreamName = hashParams["stream"]
-    if (newStreamName !== streamName) {
-        streamName = newStreamName
-        resetMessagesForStreamNameChange()
-        updateTitleForStreamName()
-        if (!isTextValidJSON(newStreamName)) {
-            console.log("invalid JSON stream name in hash", newStreamName)
-            return
-        }
-        backend.configure(JSON.parse(streamName))
-    }
-}
-
-function updateHashForStreamName() {
-    const hashParams = HashUtils.getHashParams()
-    hashParams["stream"] = streamName
-    HashUtils.setHashParams(hashParams)
-    updateTitleForStreamName()
-}
-
-function streamNameChange(event) {
-    resetMessagesForStreamNameChange()
-    streamName = event.target.value
-    updateHashForStreamName()
-    if (!isTextValidJSON(streamName)) {
-        console.log("invalid JSON stream name in hash", streamName)
-        return
-    }
-    backend.configure(JSON.parse(streamName))
-}
-
-function resetMessagesForStreamNameChange() {
-    messages.splice(0)
+    updateTitleForFileName()
+    backend = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, monitorResponder, chosenFileName, () => Toast.toast("loading file failed"))
 }
 
 function userIDChange(event) {
@@ -170,7 +152,7 @@ function exportStreamAsJSONClicked() {
         messagesToExport.push(message)
     })
 
-    FileUtils.saveToFile(streamName + " " + new Date().toISOString(), JSON.stringify(messagesToExport, null, 4), ".json")
+    FileUtils.saveToFile(chosenFileNameShort + " " + new Date().toISOString(), JSON.stringify(messagesToExport, null, 4), ".jsonl")
 }
 
 function importStreamFromJSONClicked() {
@@ -185,10 +167,10 @@ function importStreamFromJSONClicked() {
 const TwirlipMonitor = {
     view: function () {
         return m("div.pa2.overflow-hidden.flex.flex-column.h-100.w-100", [
+            Toast.viewToast(),
             // m("h4.tc", "Twirlip Monitor"),
             m("div.mb3",
                 m("span.dib.tr", "Stream:"),
-                m("input.ml2" + (!isTextValidJSON(streamName) ? ".orange" : ""), {style: "width: 30rem", value: streamName, onchange: streamNameChange}),
                 m("span.dib.tr.ml2", "User:"),
                 m("input.w4.ml2", {value: userID, onchange: userIDChange, title: "Your user id or handle"}),
                 m("div.dib",
@@ -241,7 +223,7 @@ function scrollToBottomLater() {
     }, 0)
 }
 
-const streamNameResponder = {
+const monitorResponder = {
     onLoaded: () => {
         isLoaded = true
         console.log("onLoaded")
@@ -263,21 +245,6 @@ const streamNameResponder = {
     }
 }
 
-startup()
-
-let initialObject = {}
-try {
-    initialObject = JSON.parse(streamName)
-} catch (e) {
-    console.log("not valid JSON for hash", streamName)
-}
-const backend = StoreUsingServer(m.redraw, initialObject, userID)
-
-backend.connect(streamNameResponder)
-try {
-    backend.setup()
-} catch(e) {
-    alert("This Monitor app requires a backend server supporting socket.io (i.e. won't work correctly on rawgit)")
-}
-
 m.mount(document.body, TwirlipMonitor)
+
+startup()
