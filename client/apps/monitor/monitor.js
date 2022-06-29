@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 
+/* global m */
+
 "use strict"
 
 import { StoreUsingServer } from "./StoreUsingServer.js"
@@ -163,7 +165,7 @@ function isTextValidJSONObject(text) {
 function exportStreamAsJSONClicked() {
     const messagesToExport = []
 
-    messages.forEach(function (message, index) {
+    messages.forEach(function (message) {
         if (!hasFilterText(message)) return
         messagesToExport.push(message)
     })
