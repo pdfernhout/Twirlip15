@@ -1,5 +1,4 @@
 import { Twirlip15ServerAPI } from "./twirlip15-api.js"
-import { base64decode } from "../vendor/base64.js"
 
 // Triple fields:
 // a: subject, typically a UUID of the form "type|uuidv4"
@@ -24,8 +23,14 @@ function isString(value) {
 export function Triplestore(showError, fileName) {
 
     let triples = []
-    let isFileLoaded = false
-    let isFileLoading = false
+
+    let progressObject = {
+        isFileLoaded: false,
+        isFileLoading: false,
+        status: "",
+        error: null
+    }
+    
     let isFileSaveInProgress = 0
 
     // triplesByA is to optimize lookup in common case
@@ -54,57 +59,12 @@ export function Triplestore(showError, fileName) {
         return apiResult
     }
 
-    async function loadPartialFile(fileName, start, length) {
-        const apiResult = await TwirlipServer.fileReadBytes(fileName, start, length, "base64")
-        if (apiResult) {
-            return apiResult.data
-        }
-        return false
-    }
-
-    function showStatus(text) {
-        console.log("showStatus", text)
-    }
-
     async function loadFileContents() {
         if (!fileName) return showError(new Error("fileName not set yet"))
-        isFileLoaded = false
 
-        const apiResult = await TwirlipServer.fileStats(fileName)
-        if (!apiResult) return
+        const chosenFileContents = await TwirlipServer.loadLargeFileContents(fileName, progressObject)
 
-        const fileSize = apiResult.stats.size
-        if (!fileSize) {
-            isFileLoaded = true
-            return
-        }
-
-        isFileLoading = true
-    
-        const segments = []
-        const chunkSize = 1200000
-        let start = 0
-        while (start < fileSize) {
-            showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
-            const countToRead = Math.min(chunkSize, fileSize - start)
-            const data = await loadPartialFile(fileName, start, countToRead)
-            if (data === false) {
-                console.log("Unexpected: got false")
-                showStatus("")
-                showStatus("reading failed at end")
-                isFileLoading = false
-                return
-            }
-            // new TextDecoder("utf-8").decode(uint8array)
-            // iso8859-1
-            segments.push(base64decode(data, new TextDecoder("ascii")))
-            start += chunkSize
-        }
-    
-        showStatus("done loading data; processing")
-    
-        if (apiResult) {
-            const chosenFileContents = segments.join("")
+        if (chosenFileContents) {
             const lines = chosenFileContents.split("\n")
             triples = []
             triplesByA = {}
@@ -126,9 +86,7 @@ export function Triplestore(showError, fileName) {
                     addTriple(triple, false)
                 }
             }
-            isFileLoaded = true
         }
-        isFileLoading = false
     }
     
     async function appendFile(stringToAppend, successCallback) {
@@ -297,8 +255,8 @@ export function Triplestore(showError, fileName) {
     function getLoadingState() {
         return {
             fileName,
-            isFileLoaded,
-            isFileLoading,
+            isFileLoaded: progressObject.isFileLoaded,
+            isFileLoading: progressObject.isFileLoading,
             isFileSaveInProgress,
         }
     }
