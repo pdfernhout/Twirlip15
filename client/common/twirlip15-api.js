@@ -103,74 +103,152 @@ export class Twirlip15ServerAPI {
     async filePreview(fileName, resizeOptions, onError=null) {
         return await twirlip15ApiCall({request: "file-preview", fileName, resizeOptions}, onError || this.onError)
     }
+}
 
-    // Helper function to load larger file than 2,000,000 byte limit in API
-    async loadLargeFileContents(fileName, progressObject={}) {
-        progressObject.fileName = fileName
-        progressObject.isFileLoaded = false
-        progressObject.isFileLoading = false
-        progressObject.status = ""
-        progressObject.error = null
+// Helper function to load larger file than 2,000,000 byte limit in API
+export async function loadLargeFileContents(twirlipServer, fileName, progressObject={}) {
+    progressObject.fileName = fileName
+    progressObject.isFileLoaded = false
+    progressObject.isFileLoading = false
+    progressObject.status = ""
+    progressObject.error = null
 
-        if (!fileName) {
-            const error = "fileName not defined"
-            progressObject.error = error
-            this.onError(error)
-            return ""
-        }
-
-        const apiResultStats = await this.fileStats(fileName)
-        if (!apiResultStats) {
-            const error = "file does not exist: " + fileName
-            progressObject.error = error
-            this.onError(error)
-            return ""
-        }
-
-        const fileSize = apiResultStats.stats.size
-        progressObject.fileSize = fileSize
-        if (!fileSize) {
-            // empty file
-            progressObject.isFileLoaded = true
-            return ""
-        }
-
-        progressObject.isFileLoading = true
-    
-        const segments = []
-        const chunkSize = 1200000
-        let start = 0
-        while (start < fileSize) {
-            progressObject.status = "reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)"
-            if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
-            const countToRead = Math.min(chunkSize, fileSize - start)
-
-            const apiResultReadBytes = await this.fileReadBytes(fileName, start, countToRead, "base64")
-
-            if (!apiResultReadBytes || !apiResultReadBytes.data) {
-                console.log("Unexpected: could not readBytes")
-                progressObject.status = "reading failed"
-                progressObject.error = "reading failed"
-                progressObject.isFileLoading = false
-                return
-            }
-            // new TextDecoder("utf-8").decode(uint8array)
-            // iso8859-1
-            segments.push(base64decode(apiResultReadBytes.data, new TextDecoder("ascii")))
-            start += chunkSize
-        }
-    
-        progressObject.status = "done loading data; joining segments"
-        if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
-    
-        const chosenFileContents = segments.join("")
-
-        progressObject.status = "finished"
-        if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
-
-        progressObject.isFileLoaded = true
-        progressObject.isFileLoading = false
-
-        return chosenFileContents
+    if (!fileName) {
+        const error = "fileName not defined"
+        progressObject.error = error
+        twirlipServer.onError(error)
+        return ""
     }
+
+    const apiResultStats = await twirlipServer.fileStats(fileName)
+    if (!apiResultStats) {
+        const error = "file does not exist: " + fileName
+        progressObject.error = error
+        twirlipServer.onError(error)
+        return ""
+    }
+
+    const fileSize = apiResultStats.stats.size
+    progressObject.fileSize = fileSize
+    if (!fileSize) {
+        // empty file
+        progressObject.isFileLoaded = true
+        return ""
+    }
+
+    progressObject.isFileLoading = true
+
+    const segments = []
+    const chunkSize = 1200000
+    let start = 0
+    while (start < fileSize) {
+        progressObject.status = "reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)"
+        if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
+        const countToRead = Math.min(chunkSize, fileSize - start)
+
+        const apiResultReadBytes = await twirlipServer.fileReadBytes(fileName, start, countToRead, "base64")
+
+        if (!apiResultReadBytes || !apiResultReadBytes.data) {
+            console.log("Unexpected: could not readBytes")
+            progressObject.status = "reading failed"
+            progressObject.error = "reading failed"
+            progressObject.isFileLoading = false
+            return
+        }
+        // new TextDecoder("utf-8").decode(uint8array)
+        // iso8859-1
+        segments.push(base64decode(apiResultReadBytes.data, new TextDecoder("ascii")))
+        start += chunkSize
+    }
+
+    progressObject.status = "done loading data; joining segments"
+    if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
+
+    const chosenFileContents = segments.join("")
+
+    progressObject.status = "finished"
+    if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
+
+    progressObject.isFileLoaded = true
+    progressObject.isFileLoading = false
+
+    return chosenFileContents
+}
+
+const LineBuffering_MaxDelay_ms = 2000
+const LineBuffering_MaxQueuedLines = 1000
+
+// Helper function for asynchronous writing of JSON objects or lines
+export function fileAppendLater(twirlipServer, fileName, stringToAppend, callback) {
+    if (!twirlipServer.writeCache) twirlipServer.writeCache = {
+        unwrittenLines: [],
+        unwrittenLinesIsWriting: false,
+        unwrittenLinesTimer: null
+    }
+    const writeCache = twirlipServer.writeCache
+
+    writeCache.unwrittenLines.push({fileName, stringToAppend, callback})
+    scheduleWriteLines(twirlipServer)
+}
+
+function scheduleWriteLines(twirlipServer, delay_ms=LineBuffering_MaxDelay_ms) {
+    const writeCache = twirlipServer.writeCache
+    if (!writeCache.unwrittenLines.length) return
+
+    if (writeCache.unwrittenLinesTimer) {
+        if (writeCache.unwrittenLines.length < LineBuffering_MaxQueuedLines) return
+        if (writeCache.unwrittenLinesIsWriting) return
+        // Could also check if max write data size will be exceeded for API
+        clearTimeout(writeCache.unwrittenLinesTimer)
+        writeLines(twirlipServer)
+    } else {
+        writeCache.unwrittenLinesTimer = setTimeout(() => writeLines(twirlipServer), delay_ms)
+    }
+}
+
+// Data consistency safety not guaranteed if failure during this routine
+async function writeLines(twirlipServer) {
+    const writeCache = twirlipServer.writeCache
+
+    writeCache.unwrittenLinesTimer = null
+    if (!writeCache.unwrittenLines || writeCache.unwrittenLines.length === 0) return
+    if (writeCache.unwrittenLinesIsWriting) {
+        // if timer fires and still writing from last timer firing, reschedule next writing for later
+        scheduleWriteLines(twirlipServer)
+    }
+    writeCache.unwrittenLinesIsWriting = true
+
+    const unwrittenLines = writeCache.unwrittenLines.splice(0, LineBuffering_MaxQueuedLines)
+
+    // Separate lines to write by destination file
+    const linesByFile = new Map()
+    for (const line of unwrittenLines) {
+        const fileName = line.fileName
+        if (!linesByFile.get(fileName)) linesByFile.set(fileName, [])
+        linesByFile.get(fileName).push(line)
+    }
+
+    try {
+        for (const [fileName, lines] of linesByFile) { 
+            const triplesTextToWrite = lines.map(line => line.stringToAppend).join("\n") + "\n"
+            let writeResultError = null
+            try {
+                await twirlipServer.fileAppend(fileName, triplesTextToWrite)
+            } catch(e) {
+                twirlipServer.onError(e)
+                writeResultError = e
+            }
+            for (const line of lines) {
+                line.writeResultError = writeResultError
+            }
+        }
+    } finally {
+        writeCache.unwrittenLinesIsWriting = false
+    }
+
+    for (const line of unwrittenLines) {
+        if (line.callback) line.callback(line.writeResultError, line)
+    }
+
+    if (writeCache.unwrittenLines.length) scheduleWriteLines(twirlipServer, 10)
 }

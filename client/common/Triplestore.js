@@ -1,4 +1,4 @@
-import { Twirlip15ServerAPI } from "./twirlip15-api.js"
+import { Twirlip15ServerAPI, loadLargeFileContents, fileAppendLater } from "./twirlip15-api.js"
 
 // Triple fields:
 // a: subject, typically a UUID of the form "type|uuidv4"
@@ -13,9 +13,6 @@ import { Twirlip15ServerAPI } from "./twirlip15-api.js"
 // triples[id]["+"]["some data"].store()
 // triples.o100000676.plus.102323232.store()
 
-const TripleBuffering_MaxDelay_ms = 2000
-const TripleBuffering_MaxQueuedTriples = 1000
-
 function isString(value) {
     return typeof value === "string"
 }
@@ -24,20 +21,16 @@ export function Triplestore(showError, fileName) {
 
     let triples = []
 
-    let progressObject = {
+    const progressObject = {
+        fileName,
         isFileLoaded: false,
         isFileLoading: false,
         status: "",
         error: null
     }
     
-    let isFileSaveInProgress = 0
-
     // triplesByA is to optimize lookup in common case
     let triplesByA = {}
-
-    let unwrittenTriples = []
-    let unwrittenTriplesTimer = null
 
     const TwirlipServer = new Twirlip15ServerAPI(showError)
 
@@ -46,13 +39,7 @@ export function Triplestore(showError, fileName) {
     }
 
     async function createNewFile(successCallback) {
-        isFileSaveInProgress++
-        let apiResult
-        try {
-            apiResult = await TwirlipServer.fileSave(fileName, "")
-        } finally {
-            isFileSaveInProgress--
-        }
+        const apiResult = await TwirlipServer.fileSave(fileName, "")
         if (apiResult && successCallback) {
             successCallback()
         }
@@ -62,7 +49,7 @@ export function Triplestore(showError, fileName) {
     async function loadFileContents() {
         if (!fileName) return showError(new Error("fileName not set yet"))
 
-        const chosenFileContents = await TwirlipServer.loadLargeFileContents(fileName, progressObject)
+        const chosenFileContents = await loadLargeFileContents(TwirlipServer, fileName, progressObject)
 
         if (chosenFileContents) {
             const lines = chosenFileContents.split("\n")
@@ -86,21 +73,6 @@ export function Triplestore(showError, fileName) {
                     addTriple(triple, false)
                 }
             }
-        }
-    }
-    
-    async function appendFile(stringToAppend, successCallback) {
-        if (!fileName) return showError(new Error("fileName not set yet"))
-        // if (isFileSaveInProgress) return showError(new Error("Previous file save still in progress!"))
-        isFileSaveInProgress++
-        let apiResult
-        try {
-            apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend)
-        } finally {
-            isFileSaveInProgress--
-        }
-        if (apiResult && successCallback) {
-            successCallback()
         }
     }
 
@@ -165,40 +137,14 @@ export function Triplestore(showError, fileName) {
         triplesByA[triple.a].push(triple)
 
         if (write) {
-            unwrittenTriples.push(triple)
-            queueWriteTriples()
-        }
-    }
-
-    function queueWriteTriples() {
-        if (!unwrittenTriples.length) return
-
-        if (unwrittenTriplesTimer) {
-            if (unwrittenTriples.length < TripleBuffering_MaxQueuedTriples) return
-            // Could also check if max write data size will be exceeded for API
-            clearTimeout(unwrittenTriplesTimer)
-            unwrittenTriplesTimer = null
-            writeTriples()
-        } else {
-            unwrittenTriplesTimer = setTimeout(writeTriples, TripleBuffering_MaxDelay_ms)
+            const stringToAppend = JSON.stringify(triple, ignoreIndexField)
+            fileAppendLater(TwirlipServer, fileName, stringToAppend)
         }
     }
 
     function ignoreIndexField(key, value) {
         if (key === "index") return undefined
         return value
-    }
-
-    async function writeTriples() {
-        const triplesToWrite = unwrittenTriples
-        unwrittenTriplesTimer = null
-        unwrittenTriples = []
-        const triplesTextToWrite = triplesToWrite.map(triple => JSON.stringify(triple, ignoreIndexField)).join("\n") + "\n"
-        try {
-            await appendFile(triplesTextToWrite)
-        } catch(e) {
-            showError(e)
-        }
     }
 
     function filterTriples(filterTriple, showIgnored=false) {
@@ -253,12 +199,7 @@ export function Triplestore(showError, fileName) {
     }
 
     function getLoadingState() {
-        return {
-            fileName,
-            isFileLoaded: progressObject.isFileLoaded,
-            isFileLoading: progressObject.isFileLoading,
-            isFileSaveInProgress,
-        }
+        return progressObject
     }
 
     return {
