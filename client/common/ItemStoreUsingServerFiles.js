@@ -1,11 +1,13 @@
-// defines io
+import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { io } from "/socket.io/socket.io.esm.min.js"
 
 // call connect after creation to set up connection
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-export function ItemStoreUsingServerFiles(twirlipServer, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback) {
+export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback) {
+
+    const twirlipServer = new Twirlip15ServerAPI(showError)
 
     let responder = defaultResponder
     const deferredFileChanges = []

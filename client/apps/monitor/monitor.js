@@ -6,7 +6,6 @@
 
 import { FileUtils } from "../../common/FileUtils.js"
 import { Toast } from "../../common/Toast.js"
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
 
@@ -20,7 +19,6 @@ function showError(error) {
     Toast.toast(error)
 }
 
-const TwirlipServer = new Twirlip15ServerAPI(showError)
 const preferences = new Twirlip15Preferences()
 
 let userID = preferences.get("userID", "anonymous")
@@ -53,7 +51,7 @@ function updateTitleForFileName() {
 
 function startup() {
     updateTitleForFileName()
-    backend = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, monitorResponder, chosenFileName, () => Toast.toast("loading file failed"))
+    backend = ItemStoreUsingServerFiles(showError, m.redraw, monitorResponder, chosenFileName, () => Toast.toast("loading file failed"))
 }
 
 function userIDChange(event) {

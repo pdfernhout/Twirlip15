@@ -3,7 +3,6 @@
 
 "use strict"
 
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import { FileUtils } from "../../common/FileUtils.js"
 import { FileUploader } from "../../common/FileUploader.js"
@@ -26,7 +25,6 @@ function showError(error) {
     Toast.toast(error)
 }
 
-const TwirlipServer = new Twirlip15ServerAPI(showError)
 const preferences = new Twirlip15Preferences()
 
 let sendNotifications = preferences.get("chat-sendNotifications", "false")
@@ -509,6 +507,6 @@ if (filePathFromParams) {
     chosenFileNameShort = filePathFromParams.split("/").pop()
 }
 
-const backend = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, chatRoomResponder, chosenFileName, () => Toast.toast("loading chat file failed"))
+const backend = ItemStoreUsingServerFiles(showError, m.redraw, chatRoomResponder, chosenFileName, () => Toast.toast("loading chat file failed"))
 
 m.mount(document.body, TwirlipChat)

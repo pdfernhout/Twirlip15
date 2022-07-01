@@ -27,7 +27,6 @@ import "../../vendor/mithril.js"
 // sha256 only needs to be imported once in the application as it sets a global sha256
 import "../../vendor/sha256.js"
 
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import { Toast } from "../../common/Toast.js"
 import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
 
@@ -51,9 +50,8 @@ function showError(error) {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-const TwirlipServer = new Twirlip15ServerAPI(showError)
 console.log("about to setup link to server", new Date().toISOString())
-const itemStore = ItemStoreUsingServerFiles(TwirlipServer, m.redraw, null, filePathFromParams, () => Toast.toast("loading chat file failed"))
+const itemStore = ItemStoreUsingServerFiles(showError, m.redraw, null, filePathFromParams, () => Toast.toast("loading chat file failed"))
 const NotebookUsingServer = NotebookBackend(itemStore, function () {
     // assuming callback will always be done before get here to go to initialKeyToGoTo
     if (launchItem) {
