@@ -204,7 +204,7 @@ async function scheduleNextFileOperation() {
     if (currentFileOperationPromise) return
     const fileOperation = fileOperationQueue.shift()
     try {
-        currentFileOperationPromise = await fileOperation.fileOperationPromiseCreationFunction()
+        currentFileOperationPromise = fileOperation.fileOperationPromiseCreationFunction()
         const result = await currentFileOperationPromise
         fileOperation.resolve(result)
     } catch (error) {
