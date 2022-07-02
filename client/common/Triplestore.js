@@ -7,12 +7,6 @@ import { Twirlip15ServerAPI, loadLargeFileContents, fileAppendLater } from "./tw
 // ct: optional hint about the content type of c; usually text or uuid of unspecified; "number" or "json" may be common uses
 // o: operation, may be replace, insert, clear, or undefined (which is the same as replace)
 
-// Future design ideas for API:
-// triples[id]["+"].map(...)
-// triples[id]["+"].last()
-// triples[id]["+"]["some data"].store()
-// triples.o100000676.plus.102323232.store()
-
 function isString(value) {
     return typeof value === "string"
 }
