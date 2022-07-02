@@ -131,11 +131,13 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
     }
 
     async function defaultSetup() {
-        if (defaultResponder) await connect(responder)
-        if (defaultFileName) await loadFile(defaultFileName, defaultLoadFailureCallback)
+        await connect(responder)
+        await loadFile(defaultFileName, defaultLoadFailureCallback)
     }
 
-    defaultSetup()
+    if (defaultFileName && defaultResponder) {
+        defaultSetup()
+    }
 
     return {
         connect,

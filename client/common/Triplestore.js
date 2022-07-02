@@ -40,7 +40,7 @@ export function Triplestore(showError) {
     const backend = ItemStoreUsingServerFiles(
         showError, 
         () => m.redraw(), 
-        triplestoreResponder, 
+        null, 
         null, 
         () => showError("loading triples file failed")
     )
@@ -65,6 +65,9 @@ export function Triplestore(showError) {
 
         isFileLoading = true
 
+        if (!backend.isSetup()) {
+            await backend.connect(triplestoreResponder)
+        }
         await backend.loadFile(fileName)
     }
 
