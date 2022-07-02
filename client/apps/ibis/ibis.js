@@ -326,9 +326,9 @@ function viewHelp() {
 async function createNewFile() {
     const ok = await modalConfirm("Create new file?\n\nThe file will be called:\n" + filePathFromParams.split("/").pop())
     if (!ok) return
-    await t.createNewFile(async () => {
+    await t.createNewFile(filePathFromParams, async () => {
         await modalAlert("File created OK")
-        await t.loadFileContents()
+        await t.loadFileContents(filePathFromParams)
         m.redraw()
     })
 }
@@ -377,8 +377,7 @@ const IBISApp = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-t.setFileName(filePathFromParams)
-t.loadFileContents()
+t.loadFileContents(filePathFromParams)
 
 m.mount(document.body, IBISApp)
 

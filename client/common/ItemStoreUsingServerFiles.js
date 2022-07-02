@@ -16,6 +16,16 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
     let isLoaded = false
     let isSetup = false
 
+    function parseLine(line) {
+        if (!line.trim()) return undefined
+        try {
+            return JSON.parse(line)
+        } catch (error) {
+            console.log("problem parsing line:", "\"" + line + "\"", "error:", error)
+            return undefined
+        }
+    }
+
     async function connect(aResponder) {
         if (aResponder) responder = aResponder
 
@@ -24,14 +34,7 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         socket.on("fileChanged", async function(message) {
             if (message.stringToAppend) {
                 // may be a batch of new items
-                const newItems = message.stringToAppend.split("\n").map(text => { 
-                    if (!text) return undefined
-                    try { 
-                        return JSON.parse(text) 
-                    } catch {
-                        return undefined 
-                    }
-                })
+                const newItems = message.stringToAppend.split("\n").map(text => parseLine(text)) 
                 if (isLoaded) {
                     for (const newItem of newItems) {
                         if (newItem !== undefined) responder.onAddItem(newItem, message.filePath)
@@ -119,19 +122,26 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         })
     }
 
-    async function defaultSetup() {
-        await connect(responder)
-        await loadFile(defaultFileName, defaultLoadFailureCallback)
+    async function createNewFile(newFileName, successCallback) {
+        const apiResult = await twirlipServer.fileSave(newFileName, "")
+        if (apiResult && successCallback) {
+            successCallback()
+        }
+        return apiResult
     }
 
-    if (defaultFileName && defaultResponder) {
-        defaultSetup()
+    async function defaultSetup() {
+        if (defaultResponder) await connect(responder)
+        if (defaultFileName) await loadFile(defaultFileName, defaultLoadFailureCallback)
     }
+
+    defaultSetup()
 
     return {
         connect,
         loadFile,
         addItem,
+        createNewFile,
         isSetup: () => isSetup
     }
 }

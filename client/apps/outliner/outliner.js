@@ -33,8 +33,7 @@ async function startup() {
     cutNode = null
 
     const filePathFromParams = decodeURI(window.location.pathname)
-    t.setFileName(filePathFromParams)
-    await t.loadFileContents()
+    await t.loadFileContents(filePathFromParams)
 
     const currentOutline = getCurrentOutlineUUID()
 
@@ -293,7 +292,8 @@ function displayNode(node) {
         return aNodeName.localeCompare(bNodeName)
     }
 
-    if (node === null) return "NULL"
+    if (node === null) return m("div", { key: "null" }, "NULL")
+
     const children = node.getChildrenAsNodes()
 
     const isMultiLine = node.isContentsMultiLine()
@@ -387,7 +387,7 @@ function displayOutliner() {
             "Filter:",
             m("input.w6.ml1.mr1", { value: filterText, onchange: (event) => filterText = event.target.value } ),
             "(regex)",
-            m("button.ml1", { onclick: () => expandAllChildren(root) }, "Expand All")
+            m("button.ml1", { onclick: () => expandAllChildren(root), disabled: !root }, "Expand All")
         ]),
         displayNode(root)
     ])

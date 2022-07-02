@@ -88,8 +88,7 @@ collageUUID = getUUID()
 
 async function startup() {
     const filePathFromParams = decodeURI(window.location.pathname)
-    t.setFileName(filePathFromParams)
-    await t.loadFileContents()
+    await t.loadFileContents(filePathFromParams)
 
     if (!collageUUID) {
         collageUUID = getCurrentCollageUUID()

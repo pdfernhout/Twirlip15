@@ -132,7 +132,6 @@ const TriplesApp = {
 }
 
 const filePathFromParams = decodeURI(window.location.pathname)
-t.setFileName(filePathFromParams)
-t.loadFileContents()
+t.loadFileContents(filePathFromParams)
 
 m.mount(document.body, TriplesApp)

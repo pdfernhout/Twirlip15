@@ -390,8 +390,7 @@ const TablesViewer = {
 
 async function startup() {
     const filePathFromParams = decodeURI(window.location.pathname)
-    t.setFileName(filePathFromParams)
-    await t.loadFileContents()
+    await t.loadFileContents(filePathFromParams)
 }
 
 m.mount(document.body, TablesViewer)

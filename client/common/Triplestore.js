@@ -1,4 +1,6 @@
-import { Twirlip15ServerAPI, loadLargeFileContents, fileAppendLater } from "./twirlip15-api.js"
+import { ItemStoreUsingServerFiles } from "./ItemStoreUsingServerFiles.js"
+
+/* global m */
 
 // Triple fields:
 // a: subject, typically a UUID of the form "type|uuidv4"
@@ -11,63 +13,59 @@ function isString(value) {
     return typeof value === "string"
 }
 
-export function Triplestore(showError, fileName) {
+// Use ItemStore somehow -- maybe supporting multiple types (memory, server, localStorage, IndexedDB)
+
+export function Triplestore(showError) {
+    let fileNameForWriting
+
+    let isFileLoaded = false
+    let isFileLoading = false
 
     let triples = []
-
-    const progressObject = {
-        fileName,
-        isFileLoaded: false,
-        isFileLoading: false,
-        status: "",
-        error: null
-    }
     
     // triplesByA is to optimize lookup in common case
     let triplesByA = {}
 
-    const TwirlipServer = new Twirlip15ServerAPI(showError)
+    const triplestoreResponder = {
+        onLoaded: () => {
+            isFileLoading = false
+            isFileLoaded = true
+        },
 
-    function setFileName(newFileName) {
-        fileName = newFileName
+        onAddItem: triple => {
+            if (isTriple(triple)) addTriple(triple, false)
+        }
     }
 
-    async function createNewFile(successCallback) {
-        const apiResult = await TwirlipServer.fileSave(fileName, "")
-        if (apiResult && successCallback) {
-            successCallback()
+    const backend = ItemStoreUsingServerFiles(
+        showError, 
+        () => m.redraw(), 
+        triplestoreResponder, 
+        null, 
+        () => showError("loading triples file failed")
+    )
+
+    function isTriple(triple) {
+        if (triple.a === undefined || triple.b === undefined || triple.c === undefined) {
+            console.log("item is not triple as a, b, or c is undefined: "+ JSON.stringify(triple))
+            return false
         }
-        return apiResult
+        return true
     }
 
-    async function loadFileContents() {
-        if (!fileName) return showError(new Error("fileName not set yet"))
+    async function createNewFile(newFileName, successCallback) {
+        return backend.createNewFile(newFileName, successCallback)
+    }
 
-        const chosenFileContents = await loadLargeFileContents(TwirlipServer, fileName, progressObject)
+    async function loadFileContents(fileName) {
+        if (!fileName) return showError(new Error("fileName needs to be defined"))
 
-        if (chosenFileContents) {
-            const lines = chosenFileContents.split("\n")
-            triples = []
-            triplesByA = {}
-            let index = 1
-            for (const line of lines) {
-                if (line.trim()) {
-                    let triple
-                    try {
-                        triple = JSON.parse(line)
-                    } catch (error) {
-                        console.log("problem parsing line:", "\"" + line + "\"", "error:", error)
-                        continue
-                    }
-                    if (triple.a === undefined|| triple.b === undefined || triple.c === undefined) {
-                        console.log("problem parsing line:", "\"" + line + "\"", "error:", "a, b, or c is undefined")
-                        continue  
-                    }
-                    triple.index = index++
-                    addTriple(triple, false)
-                }
-            }
-        }
+        // TODO: Maybe revisit when fileNameForWriting gets set
+        fileNameForWriting = fileName
+
+        isFileLoading = true
+
+        await backend.loadFile(fileName)
     }
 
     function _removeTriple(triple) {
@@ -131,14 +129,11 @@ export function Triplestore(showError, fileName) {
         triplesByA[triple.a].push(triple)
 
         if (write) {
-            const stringToAppend = JSON.stringify(triple, ignoreIndexField)
-            fileAppendLater(TwirlipServer, fileName, stringToAppend)
+            if (!fileNameForWriting) throw new Error("fileNameForWriting is not set")
+            const itemToAppend = Object.assign({}, triple)
+            delete itemToAppend.index
+            backend.addItem(itemToAppend, fileNameForWriting)
         }
-    }
-
-    function ignoreIndexField(key, value) {
-        if (key === "index") return undefined
-        return value
     }
 
     function filterTriples(filterTriple, showIgnored=false) {
@@ -193,11 +188,13 @@ export function Triplestore(showError, fileName) {
     }
 
     function getLoadingState() {
-        return progressObject
+        return {
+            isFileLoaded,
+            isFileLoading
+        }
     }
 
     return {
-        setFileName,
         createNewFile,
         loadFileContents,
         addTriple,

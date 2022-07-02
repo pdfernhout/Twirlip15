@@ -610,8 +610,7 @@ const SketchViewer = {
 
 async function startup() {
     const filePathFromParams = decodeURI(window.location.pathname)
-    t.setFileName(filePathFromParams)
-    await t.loadFileContents()
+    await t.loadFileContents(filePathFromParams)
     let currentSketch = getCurrentSketchUUID()
     if (currentSketch) {
         sketch = new Sketch(currentSketch)
