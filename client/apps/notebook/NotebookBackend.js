@@ -27,9 +27,10 @@ export function NotebookBackend(store, defaultOLoadedCallback=null) {
     async function addItem(item) {
         const storedItem = addItemToMemory(item)
         if (store && !storedItem.existed) {
+            // TODO: Double check and fix this for store as needed
             const storeResult = store.addItemAsync
                 ? await store.addItemAsync(item)
-                : await store.addItem(item)
+                : store.addItem(item)
             if (storeResult && storeResult.error) {
                 storedItem.error = storeResult.error 
             }

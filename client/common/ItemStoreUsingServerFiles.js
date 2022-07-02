@@ -1,4 +1,4 @@
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI, loadLargeFileContents, fileAppendLater } from "./twirlip15-api.js"
 import { io } from "/socket.io/socket.io.esm.min.js"
 
 // call connect after creation to set up connection
@@ -11,6 +11,8 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
 
     let responder = defaultResponder
     const deferredFileChanges = []
+
+    // Separate isLoaded flag from progressObject as it includes processing all items
     let isLoaded = false
     let isSetup = false
 
@@ -54,15 +56,19 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
 
         if (!defaultFileName) defaultFileName = fileName
 
+        const progressObject = {
+            fileName,
+            isFileLoaded: false,
+            isFileLoading: false,
+            status: "",
+            error: null
+        }
+
         isLoaded = false
 
-        let chosenFileContents = null
-
         // Requesting fileContents after socket connected will automatically get fileChanged messages from server
-        const apiResult = await twirlipServer.fileContents(fileName)
-        if (apiResult) {
-            chosenFileContents = apiResult.contents
-        } else {
+        const chosenFileContents = await loadLargeFileContents(twirlipServer, fileName, progressObject)
+        if (progressObject.error || !progressObject.isFileLoaded) {
             if (failureCallback) {
                 failureCallback()
             } else if (defaultLoadFailureCallback) {
@@ -88,12 +94,16 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         if (redrawCallback) redrawCallback()
     }
 
-    async function addItem(item, fileName) {
-        const apiResult = await twirlipServer.fileAppend(fileName || defaultFileName, JSON.stringify(item) + "\n")
-        if (apiResult) {
-            responder.onAddItem(item, fileName || defaultFileName)
-        }
-        if (redrawCallback) redrawCallback()
+    function addItem(item, fileName=defaultFileName) {
+        const stringToAppend = JSON.stringify(item)
+        fileAppendLater(twirlipServer, fileName, stringToAppend, error => {
+            if (!error) {
+                responder.onAddItem(item, fileName)
+            } else {
+                console.log("addItem error", error)
+            }
+            if (redrawCallback) redrawCallback()
+        })
     }
 
     async function defaultSetup() {
