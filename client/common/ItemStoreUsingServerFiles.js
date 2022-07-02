@@ -23,13 +23,26 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
 
         socket.on("fileChanged", async function(message) {
             if (message.stringToAppend) {
-                const newItem = JSON.parse(message.stringToAppend)
+                // may be a batch of new items
+                const newItems = message.stringToAppend.split("\n").map(text => { 
+                    if (!text) return undefined
+                    try { 
+                        return JSON.parse(text) 
+                    } catch {
+                        return undefined 
+                    }
+                })
                 if (isLoaded) {
-                    responder.onAddItem(newItem, message.filePath)
+                    for (const newItem of newItems) {
+                        if (newItem !== undefined) responder.onAddItem(newItem, message.filePath)
+                    }
                     if (redrawCallback) redrawCallback()
                 } else {
                     // Defer processing new items if they come in while initially loading file
-                    deferredFileChanges.push({newItem, filePath: message.filePath})
+                    // TODO: Only need to defer items for filePath being currently loaded
+                    for (const newItem of newItems) {
+                        if (newItem !== undefined)  deferredFileChanges.push({newItem, filePath: message.filePath})
+                    }
                 }
             } else {
                 // TODO: May need to reload entire file
