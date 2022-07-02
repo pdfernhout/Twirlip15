@@ -175,7 +175,7 @@ export async function loadLargeFileContents(twirlipServer, fileName, progressObj
     return chosenFileContents
 }
 
-const LineBuffering_MaxDelay_ms = 2000
+const LineBuffering_MaxDelay_ms = 1000
 const LineBuffering_MaxQueuedLines = 1000
 
 // Helper function for asynchronous writing of JSON objects or lines
