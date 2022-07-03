@@ -1,6 +1,7 @@
 /* global m, md5 */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import * as FileUploader from "../../common/FileUploader.js"
 import { menuTopBar, menuHoverColor, menuButton, menuCheckbox, viewSelect } from "../../common/menu.js"
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import Dexie from "../../vendor/dexie.mjs"
@@ -237,53 +238,29 @@ async function newFile() {
     }
 }
 
-
-async function appendFile(fileName, stringToAppend, encoding) {
-    const apiResult = await TwirlipServer.fileAppend(fileName, stringToAppend, encoding)
-    if (apiResult) {
-        return true
-    }
-    return false
-}
-
 let isUploading = false
 
 async function uploadFile() {
     // Could improve so does not read file into memory first so could handle larger files
     showStatus("Reading file from local disk... Please wait...")
-    FileUtils.loadFromFile(true, async (filename, contents) => {
+    FileUtils.loadFromFile(true, async (fileName, base64Contents) => {
         m.redraw()
         // console.log("loadFromFile result", filename, contents, bytes)
 
-        if (checkIfFileAlreadyExists(filename)) {
-            showError("A file with that name already exists: " + filename)
+        if (checkIfFileAlreadyExists(fileName)) {
+            showError("A file with that name already exists: " + fileName)
             return
         }
 
         isUploading = true
 
-        const tempFileName = directoryPath + ("Upload-" + new Date().toISOString() + ".temp")
-        const finalFileName = directoryPath + filename
-        let success = false
-        // Chunk size needs to be a multiple of 4 so that base64 data is not corrupted
-        const chunkSize = 400000
-        for (let i = 0; i < contents.length; i = i + chunkSize) {
-            console.log("i", i, i + chunkSize, contents.length, chunkSize, Math.round((i / (contents.length + 1)) * 100) + "%" )
-            showStatus("Upload progress: " + Math.round((i / (contents.length + 1)) * 100) + "%" )
-            success = await appendFile(tempFileName, contents.substring(i, i + chunkSize), "base64")
-            console.log("success in loop", success)
-            if (!success) break
-        }
+        const uploadResult = await FileUploader.uploadFileFromBase64Contents(TwirlipServer, base64Contents, directoryPath, fileName, showStatus)
 
-        if (success) {
-            showStatus("File uploaded almost done; finishing up")
-            const apiResult = await TwirlipServer.fileRenameOne(tempFileName, finalFileName)
-            if (apiResult) {
-                loadDirectory(directoryPath, false)
-                if (!errorMessage) showStatus("Upload finished OK")
-            } else {
-                if (!errorMessage) showError("Upload failed; problem renaming file")
-            } 
+        if (uploadResult) {
+            loadDirectory(directoryPath, false)
+            if (!errorMessage) showStatus("Upload finished OK")
+        } else if (uploadResult === false) {
+            if (!errorMessage) showError("Upload failed; problem renaming file")
         } else {
             showStatus("")
         }

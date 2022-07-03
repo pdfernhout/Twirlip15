@@ -18,7 +18,7 @@ function chunkSubstr(str, size) {
     return chunks
 }
 
-function base64ToArrayBuffer(base64) {
+export function base64ToArrayBuffer(base64) {
     // from: https://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
     const binary_string =  window.atob(base64)
     const len = binary_string.length
@@ -29,7 +29,7 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer
 }
 
-const imageFileExtensions = {
+export const imageFileExtensions = {
     ai: true,
     bmp: true,
     gif: true,
@@ -43,7 +43,12 @@ const imageFileExtensions = {
     tiff: true
 }
 
-async function upload(store, userID, filename, base64Contents, bytes) {
+export function hasImageFileExtension(fileName) {
+    const extension = (fileName.substr(fileName.lastIndexOf(".") + 1) || "").toLowerCase()
+    return imageFileExtensions[extension] || false
+}
+
+export async function uploadAsTriples(store, userID, filename, base64Contents, bytes) {
 
     // console.log("upload", filename, base64Contents, bytes)
 
@@ -127,6 +132,59 @@ async function upload(store, userID, filename, base64Contents, bytes) {
     }
 }
 
-export const FileUploader = {
-    upload
+export async function doesFileExist(twirlipServer, fileName) {
+    try {
+        const apiStatsResult = await twirlipServer.fileStats(fileName)
+        return apiStatsResult && apiStatsResult.ok
+    } catch {
+        return false
+    }
+}
+
+export async function uploadFileFromBase64Contents(twirlipServer, base64Contents, directoryPath, fileName, showStatus=null) {
+    // Could improve so does not read file into memory first so could handle larger files
+    const tempFileName = directoryPath + ("Upload-" + new Date().toISOString() + ".temp")
+    const finalFileName = directoryPath + fileName
+    const extension = (fileName.substr(fileName.lastIndexOf(".") + 1) || "").toLowerCase()
+    const isImageFile = imageFileExtensions[extension] || false
+
+    if (await doesFileExist(twirlipServer, finalFileName)) {
+        return {
+            filename: fileName,
+            extension,
+            isImageFile,
+            url: finalFileName,
+            existed: true
+        }
+    }
+
+    let success = false
+    // Chunk size needs to be a multiple of 4 so that base64 data is not corrupted
+    const chunkSize = 400000
+    for (let i = 0; i < base64Contents.length; i = i + chunkSize) {
+        // console.log("i", i, i + chunkSize, base64Contents.length, chunkSize, Math.round((i / (base64Contents.length + 1)) * 100) + "%" )
+        if (showStatus) showStatus("Upload progress: " + Math.round((i / (base64Contents.length + 1)) * 100) + "%" )
+        const apiResultAppend = await await twirlipServer.fileAppend(tempFileName, base64Contents.substring(i, i + chunkSize), "base64")
+        success = !!apiResultAppend
+        if (!success) break
+    }
+
+    if (success) {
+        if (showStatus) showStatus("File uploaded almost done; finishing up")
+        const apiResultRename = await twirlipServer.fileRenameOne(tempFileName, finalFileName)
+        if (!apiResultRename) {
+            return false
+        }
+    } else {
+        // null indicates earlier error saving data, not a rename failure
+        return null
+    }
+
+    return {
+        filename: fileName,
+        extension,
+        isImageFile,
+        url: finalFileName,
+        existed: false
+    }
 }

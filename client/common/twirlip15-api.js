@@ -20,7 +20,9 @@ export async function twirlip15ApiCall(request, onerror) {
             if (json.ok) {
                 result = json
             } else {
-                onerror(json.errorMessage)
+                if (request.request !== "file-stats") {
+                    onerror(json.errorMessage)
+                }
             }   
         } else {
             console.log("HTTP-Error: " + response.status, response)

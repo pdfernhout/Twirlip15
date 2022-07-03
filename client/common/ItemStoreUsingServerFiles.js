@@ -140,6 +140,7 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
     }
 
     return {
+        twirlipServer,
         connect,
         loadFile,
         addItem,

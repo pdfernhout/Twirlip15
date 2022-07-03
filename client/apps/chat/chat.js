@@ -5,7 +5,7 @@
 
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
 import { FileUtils } from "../../common/FileUtils.js"
-import { FileUploader } from "../../common/FileUploader.js"
+import * as FileUploader from "../../common/FileUploader.js"
 import { UUID } from "../../common/UUID.js"
 import { Toast } from "../../common/Toast.js"
 import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
@@ -216,29 +216,55 @@ function importChatFromJSONClicked() {
 
 let isUploading = false
 
+function getPathForFileName(filePath) {
+    let lastSeparatorIndex = filePath.lastIndexOf("/")
+    if (lastSeparatorIndex === -1) {
+        lastSeparatorIndex =  filePath.lastIndexOf("\\")
+    }
+    if (lastSeparatorIndex === -1) {
+        return "/"
+    }
+    return filePath.substring(0, lastSeparatorIndex + 1)
+}
+
 function uploadDocumentClicked() {
-    FileUtils.loadFromFile(true, async (filename, contents, bytes) => {
+    FileUtils.loadFromFile(true, async (fileName, base64Contents) => {
         // console.log("loadFromFile result", filename, contents, bytes)
         isUploading = true
         m.redraw()
 
+        const uploadDirectoryPath = getPathForFileName(chosenFileName) + "uploads/"
+
+        if (!await FileUploader.doesFileExist(backend.twirlipServer, uploadDirectoryPath)) {
+            // Make upload directory if needed
+            const apiResult = await backend.twirlipServer.fileNewDirectory(uploadDirectoryPath)
+            if (!apiResult) {
+                Toast.toast("Could not create upload directory")
+                return
+            }
+        }
+    
+
         let uploadResult
         try {
-            uploadResult = await FileUploader.upload(backend, userID, filename, contents, bytes)
+            uploadResult = await FileUploader.uploadFileFromBase64Contents(backend.twirlipServer, base64Contents, uploadDirectoryPath, fileName)
+            if (!uploadResult) {
+                Toast.toast("Upload failed")
+                return
+            }
         } catch (error) {
             console.log("upload error", error)
             isUploading = false
             Toast.toast("Upload failed")
             return
+        } finally {
+            isUploading = false
         }
-
-        // console.log("uploadResult", uploadResult)
-
-        isUploading = false
         
-        let textToAdd = `[${filename}](${uploadResult.url})`
+        const url = "uploads/" + fileName.replaceAll(" ", "&#32;")
+        let textToAdd = `[${fileName}](${url})`
         // Format as markdown image if it might be an image
-        if (uploadResult.isImageFile) textToAdd = `![${filename}](${uploadResult.url} "${filename}")`
+        if (uploadResult.isImageFile) textToAdd = `![${fileName}](${url} "${fileName}")`
 
         if (chatText) chatText += ""
         chatText += textToAdd
