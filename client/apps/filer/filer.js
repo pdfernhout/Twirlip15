@@ -549,6 +549,12 @@ function formatTime(time) {
     return time.replace("Z", " ").replace("T", " ").split(".")[0]
 }
 
+function isInLocalDownloadsDirectory(urlFilePath) {
+    if (!window.location.host.toLowerCase().includes("localhost")) return false
+    if (!urlFilePath.toLowerCase().includes("/download")) return false
+    return true
+}
+
 function viewerForURL(url) {
     const lowercaseURL = String(url.toLowerCase())
     for (let appName of applicationList) {
@@ -560,7 +566,8 @@ function viewerForURL(url) {
         return url + "?twirlip=view-md"
     } else {
         let subdomain = ""
-        if (url.toLowerCase().includes("/download")) subdomain = md5(url) + ".download."
+        // Add subdomain for extra origin security if locally download file
+        if (isInLocalDownloadsDirectory(url)) subdomain = md5(url) + ".download."
         return window.location.protocol + "//" + subdomain + window.location.host + url
     }
 }
