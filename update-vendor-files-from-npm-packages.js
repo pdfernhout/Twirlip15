@@ -29,5 +29,6 @@ copyFile("node_modules/font-awesome/fonts/FontAwesome.otf", "client/vendor/font-
 copyFile("node_modules/marked/lib/marked.esm.js", "client/vendor/marked.js")
 
 copyFile("node_modules/push.js/bin/push.js", "client/vendor/push.js")
+copyFile("node_modules/push.js/bin/push.js.map", "client/vendor/push.js.map")
 
 fs.copy("node_modules/ace-builds/src-noconflict", "client/vendor/ace-src-noconflict")
