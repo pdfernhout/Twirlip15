@@ -23,7 +23,6 @@ let errorMessage = ""
 let statusMessage = ""
 let showMenu = preferences.get("showMenu", false)
 let selectedFiles = {}
-let lastSort = "name"
 let showHiddenFiles = preferences.get("showHiddenFiles", false)
 let showPreview = false
 let previews = {}
@@ -56,6 +55,15 @@ function showStatus(messageText) {
     statusMessage = messageText
 }
 
+function getSortForDirectory() {
+    return preferences.get("sortForDirectory:" + directoryPath, "name") 
+}
+
+function setSortForDirectory(sort) {
+    // TODO: only keep sort settings for last ten or twenty directories
+    return preferences.set("sortForDirectory:" + directoryPath, sort) 
+}
+
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
 async function loadDirectory(newPath, saveState) {
@@ -84,8 +92,7 @@ async function loadDirectory(newPath, saveState) {
     if (apiResult) {
         directoryFiles = apiResult.files
         if (directoryPath !== "/") directoryFiles.unshift({name: "..", isDirectory: true})
-        lastSort = null
-        sortByFileName()
+        sortFiles()
         queuePreviewsIfNeeded()
     }
 }
@@ -245,7 +252,6 @@ async function uploadFile() {
     showStatus("Reading file from local disk... Please wait...")
     FileUtils.loadFromFile(true, async (fileName, base64Contents) => {
         m.redraw()
-        // console.log("loadFromFile result", filename, contents, bytes)
 
         if (checkIfFileAlreadyExists(fileName)) {
             showError("A file with that name already exists: " + fileName)
@@ -420,52 +426,65 @@ function viewSelectedFiles() {
     )
 }
 
-function sortByFileName() {
-    lastSort === "name"
-        ? lastSort = "name-reversed"
-        : lastSort = "name"
-    directoryFiles.sort((a, b) => {
-        if (a.name.toLowerCase() === b.name.toLowerCase()) return 0
-        if (a.name === ".." && b.name !== "..") return -1
-        if (a.name !== ".." && b.name === "..") return 1
-        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
-        throw new Error("sortByFileName: unexpected sort case")
-    })
-    if (lastSort === "name-reversed") directoryFiles.reverse()
+function sortFiles() {
+    const sortBy = getSortForDirectory()
+    if (sortBy.startsWith("name")) directoryFiles.sort(sortByFileName)
+    else if (sortBy.startsWith("size")) directoryFiles.sort(sortBySize)
+    else if (sortBy.startsWith("time")) directoryFiles.sort(sortByTime)
+    else throw new Error("Unexpected sort: " + sortBy)
+
+    if (sortBy.endsWith("-reversed")) directoryFiles.reverse()
 }
 
-function sortBySize() {
-    directoryFiles.sort((a, b) => {
-        if (!a.stats && !b.stats) return 0
-        if (!a.stats) return -1
-        if (!b.stats) return 1
-        return a.stats.size - b.stats.size
-    })
-    lastSort === "size"
-        ? lastSort = "size-reversed"
-        : lastSort = "size"
-    if (lastSort === "size-reversed") directoryFiles.reverse()
+function sortByFileName(a, b) {
+    if (a.name.toLowerCase() === b.name.toLowerCase()) return 0
+    if (a.name === ".." && b.name !== "..") return -1
+    if (a.name !== ".." && b.name === "..") return 1
+    if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+    if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+    throw new Error("sortByFileName: unexpected sort case")
 }
 
-function sortByTime() {
-    directoryFiles.sort((a, b) => {
-        if (!a.stats && !b.stats) return 0
-        if (!a.stats) return -1
-        if (!b.stats) return 1
-        if (a.stats.mtime < b.stats.mtime) return -1
-        if (a.stats.mtime > b.stats.mtime) return 1
-        return 0
-    })
-    lastSort === "time"
-        ? lastSort = "time-reversed"
-        : lastSort = "time"
-    if (lastSort === "time-reversed") directoryFiles.reverse()
+function sortBySize(a, b) {
+    if (!a.stats && !b.stats) return 0
+    if (!a.stats) return -1
+    if (!b.stats) return 1
+    return a.stats.size - b.stats.size
+}
+
+function sortByTime(a, b) {
+    if (!a.stats && !b.stats) return 0
+    if (!a.stats) return -1
+    if (!b.stats) return 1
+    if (a.stats.mtime < b.stats.mtime) return -1
+    if (a.stats.mtime > b.stats.mtime) return 1
+    return 0
+}
+
+function sortByFileNameClicked() {
+    getSortForDirectory() === "name"
+        ? setSortForDirectory("name-reversed")
+        : setSortForDirectory("name")
+    sortFiles()
+}
+
+function sortBySizeClicked() {
+    getSortForDirectory() === "size"
+        ? setSortForDirectory("size-reversed")
+        : setSortForDirectory("size")
+    sortFiles()
+}
+
+function sortByTimeClicked() {
+    getSortForDirectory() === "time"
+        ? setSortForDirectory("time-reversed")
+        : setSortForDirectory("time")
+    sortFiles()
 }
 
 function sortArrow(field) {
-    if (field === lastSort) return "↓"
-    if (field + "-reversed" === lastSort) return "↑"
+    if (field === getSortForDirectory()) return "↓"
+    if (field + "-reversed" === getSortForDirectory()) return "↑"
     return ""
 }
 
@@ -495,9 +514,9 @@ function viewDirectoryFiles() {
                 m("thead",
                     showPreview && m("th.sticky-header.bg-silver"),
                     m("th.sticky-header.bg-silver"),
-                    m("th.sticky-header.bg-silver", {onclick: sortByFileName}, "File Name" + sortArrow("name")),
-                    m("th.sticky-header.bg-silver", {onclick: sortBySize}, "Size" + sortArrow("size")),
-                    m("th.sticky-header.bg-silver", {onclick: sortByTime}, "Modified" + sortArrow("time")),
+                    m("th.sticky-header.bg-silver", {onclick: sortByFileNameClicked}, "File Name" + sortArrow("name")),
+                    m("th.sticky-header.bg-silver", {onclick: sortBySizeClicked}, "Size" + sortArrow("size")),
+                    m("th.sticky-header.bg-silver", {onclick: sortByTimeClicked}, "Modified" + sortArrow("time")),
                     // m("th.sticky-header.bg-silver", "Owner"),
                     // m("th.sticky-header.bg-silver", "Menu")
                 ),
