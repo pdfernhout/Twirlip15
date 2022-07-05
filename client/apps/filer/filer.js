@@ -55,13 +55,37 @@ function showStatus(messageText) {
     statusMessage = messageText
 }
 
+
+const MaxRecentDirectories = 20
+const RecentFilePreferenceString = "filer-recentFiles"
+
 function getSortForDirectory() {
-    return preferences.get("sortForDirectory:" + directoryPath, "name") 
+    const recent = preferences.get(RecentFilePreferenceString, {})
+    return (recent[directoryPath] && recent[directoryPath].sort) || "name" 
 }
 
 function setSortForDirectory(sort) {
-    // TODO: only keep sort settings for last ten or twenty directories
-    return preferences.set("sortForDirectory:" + directoryPath, sort) 
+    const recent = preferences.get(RecentFilePreferenceString, {})
+
+    // Limit amount of past history
+    const match = recent[directoryPath] ? 0 : 1
+    while (Object.keys(recent).length > MaxRecentDirectories - match) {
+        let oldestDir = null
+        let oldestTimestamp = new Date().toISOString() 
+        for (const dir of Object.keys(recent)) {
+            if (recent[dir].timestamp <= oldestTimestamp) {
+                oldestTimestamp = recent[dir].timestamp
+                oldestDir = dir
+            }
+        }
+        if (oldestDir) {
+            delete recent[oldestDir]
+        } else {
+            break
+        }
+    }
+    recent[directoryPath] = { sort, timestamp: new Date().toISOString() }
+    return preferences.set(RecentFilePreferenceString, recent)
 }
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
