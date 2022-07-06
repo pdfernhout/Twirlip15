@@ -396,7 +396,7 @@ async function showSelectedFiles() {
 }
 
 function selectAll() {
-    directoryFiles.forEach(fileInfo => {
+    visibleFiles().forEach(fileInfo => {
         if (fileInfo.name !== "..") selectedFiles[directoryPath + fileInfo.name] = true
     })
 }
@@ -538,10 +538,15 @@ function setFilterForCurrentDirectory(filter) {
     }
 }
 
-function viewFileEntries() {
+function visibleFiles() {
     const filter = getFilterForCurrentDirectory()
     return directoryFiles
+        .filter(fileInfo => showHiddenFiles || !fileInfo.name.startsWith("."))
         .filter(fileInfo => !filter || fileInfo.name.toLowerCase().includes(filter.toLowerCase()))
+}
+
+function viewFileEntries() {
+    return visibleFiles()
         .map(fileInfo => viewFileEntry(fileInfo))
 }
 
@@ -630,8 +635,6 @@ function viewerForURL(url) {
 }
 
 function viewFileEntry(fileInfo) { // selectedFiles
-    if (!showHiddenFiles && fileInfo.name !== ".." && fileInfo.name.startsWith(".")) return []
-
     const previewData = previews[directoryPath + fileInfo.name]
 
     if (showMenu) {
