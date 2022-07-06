@@ -56,13 +56,19 @@ function showStatus(messageText) {
 }
 
 
+const FavoriteDirectoriesPreferenceString = "filer-favoriteDirectories"
+
+function getFavoriteDirectories() {
+    const favorites = preferences.get(FavoriteDirectoriesPreferenceString, {})
+    return favorites
+}
+
+function setFavoriteDirectories(favorites) {
+    preferences.set(FavoriteDirectoriesPreferenceString, favorites)
+}
+
 const MaxRecentDirectories = 20
 const RecentFilePreferenceString = "filer-recentFiles"
-
-function getRecentDirectories() {
-    const recent = preferences.get(RecentFilePreferenceString, {})
-    return Object.keys(recent).sort()
-}
 
 function getSortForDirectory() {
     const recent = preferences.get(RecentFilePreferenceString, {})
@@ -675,11 +681,23 @@ function viewPath(path) {
     return m("span", links)
 }
 
+function toggleFavorite() {
+    const favorites = getFavoriteDirectories()
+    if (favorites[directoryPath]) {
+        delete favorites[directoryPath]
+    } else {
+        favorites[directoryPath] = new Date().toISOString()
+    }
+    setFavoriteDirectories(favorites)
+}
+
 function viewFavorites() {
-    const recentDirectories = getRecentDirectories()
-    return m("span", 
-        !recentDirectories.length && { title: "to add a directory to favorites, click in the file table header to sort the files" }, 
-        dropdownMenu("Favorites", recentDirectories, recentDirectory => (recentDirectory !== directoryPath) && loadDirectory(recentDirectory, true), recentDirectories.length < 1)
+    const favorites = getFavoriteDirectories()
+    const isFavorite = favorites[directoryPath]
+    const favoritesArray = Object.keys(favorites).sort()
+    return m("span",  
+        dropdownMenu("Favorites", favoritesArray, recentDirectory => (recentDirectory !== directoryPath) && loadDirectory(recentDirectory, true), favoritesArray.length < 1),
+        m("span.mr3", {onclick: toggleFavorite }, isFavorite ? "★" : "☆")
     )
 }
 
