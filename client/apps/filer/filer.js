@@ -713,7 +713,6 @@ const Filer = {
                         preferences.set("showMenu", showMenu)
                     }}, "☰"),
                 showMenu && viewFavorites(),
-                "Files in: ",
                 viewPath(directoryPath),
             ),
             m("div.flex-none", viewMenu()),
