@@ -59,6 +59,11 @@ function showStatus(messageText) {
 const MaxRecentDirectories = 20
 const RecentFilePreferenceString = "filer-recentFiles"
 
+function getRecentDirectories() {
+    const recent = preferences.get(RecentFilePreferenceString, {})
+    return Object.keys(recent).sort()
+}
+
 function getSortForDirectory() {
     const recent = preferences.get(RecentFilePreferenceString, {})
     return (recent[directoryPath] && recent[directoryPath].sort) || "name" 
@@ -392,7 +397,7 @@ function selectAll() {
 
 function dropdownMenu(label, options, callback, disabled) {
     return [
-        m("select.ma2", { value: "", disabled, onchange: event => {
+        m("select.ml2.mr2.mw4", { value: "", disabled, onchange: event => {
             callback(event.target.value) 
         }},
         m("option", { value: ""}, label),
@@ -427,15 +432,18 @@ function viewMenu() {
             queuePreviewsIfNeeded()
             // preferences.set("showPreview", showPreview)
         }),
-        m("label.ml3", "Filter:", m("input", { 
-            value: getFilterForCurrentDirectory(), 
-            oninput: event => {
-                setFilterForCurrentDirectory(event.target.value)
-            }
-        }), m("span.ml1" + (getFilterForCurrentDirectory() ? ".pointer" : ""), {
-            onclick: () => setFilterForCurrentDirectory("")
-        }, "X")
-        )
+        m("label.ml3",
+            "Filter:", 
+            m("input", { 
+                value: getFilterForCurrentDirectory(), 
+                oninput: event => {
+                    setFilterForCurrentDirectory(event.target.value)
+                }
+            }), 
+            m("span.ml1" + (getFilterForCurrentDirectory() ? ".pointer" : ""), {
+                onclick: () => setFilterForCurrentDirectory("")
+            }, "X")
+        ),
     ])
 }
 
@@ -667,16 +675,28 @@ function viewPath(path) {
     return m("span", links)
 }
 
+function viewFavorites() {
+    const recentDirectories = getRecentDirectories()
+    return m("span", 
+        !recentDirectories.length && { title: "to add a directory to favorites, click in the file table header to sort the files" }, 
+        dropdownMenu("Favorites", recentDirectories, recentDirectory => (recentDirectory !== directoryPath) && loadDirectory(recentDirectory, true), recentDirectories.length < 1)
+    )
+}
+
 const Filer = {
     view: () => {
         return m("div.h-100.flex.flex-column",
             errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
             statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
-            m("div.flex-none.pt1.pb1.bg-light-green", m("span.ma2", {
-                onclick: () => {
-                    showMenu = !showMenu
-                    preferences.set("showMenu", showMenu)
-                }}, "☰"), "Files in: ", viewPath(directoryPath)
+            m("div.flex-none.pt1.pb1.bg-light-green", 
+                m("span.ma2", {
+                    onclick: () => {
+                        showMenu = !showMenu
+                        preferences.set("showMenu", showMenu)
+                    }}, "☰"),
+                showMenu && viewFavorites(),
+                "Files in: ",
+                viewPath(directoryPath),
             ),
             m("div.flex-none", viewMenu()),
             m(ModalInputView),
