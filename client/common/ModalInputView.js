@@ -120,7 +120,7 @@ export function customModal(drawFunction, style) {
 export class ModalInputView {
     view() {
         if (modalCallback) {
-            return m("div.ModalInputView.overlay.pt6",
+            return m("div.ModalInputView.overlay.pt6.overflow-auto",
                 modalCallback()
             )
         } else {
