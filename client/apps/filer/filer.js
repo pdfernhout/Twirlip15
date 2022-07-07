@@ -39,11 +39,13 @@ window.onpopstate = async function(event) {
     if (event.state) {
         await loadDirectory(event.state.directoryPath, false)
     } else {
-        await loadDirectory("/", false)
+        // Probably unexpected hash change from # in url
+        await loadDirectory(directoryPath, false)
     }
 }
 
 function navigateToURL(url) {
+    console.log("navigateToURL", url)
     window.location = url
 }
 
