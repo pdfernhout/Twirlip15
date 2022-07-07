@@ -634,6 +634,10 @@ function viewerForURL(url) {
     }
 }
 
+function encodeHashes(path) {
+    return path.replaceAll("#", "%23")
+}
+
 function viewFileEntry(fileInfo) { // selectedFiles
     const previewData = previews[directoryPath + fileInfo.name]
 
@@ -645,7 +649,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
                 ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
                 : m("span", 
                     m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
-                    m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name)
+                    m("a.link", {href: viewerForURL(encodeHashes(directoryPath + fileInfo.name))}, fileInfo.name)
                 )
             ),
             m("td.pl2.tr", fileInfo.stats && formatSize(fileInfo.stats.size)),
