@@ -588,10 +588,12 @@ function viewCheckBox(fileName) {
     })
 }
 
-function statsTitle(stats) {
+function statsTitle(fileInfo) {
+    const stats = fileInfo.stats
     if (!stats) return undefined
     // return JSON.stringify(fileInfo.stats, null, 4)
     return JSON.stringify({
+        name: fileInfo.name,
         size: stats.size,
         creationTime: stats.ctime,
         modifiedTime: stats.mtime,
@@ -647,10 +649,10 @@ function viewFileEntry(fileInfo) { // selectedFiles
         return m("tr" + (showPreview ? ".h-100px" : ""),
             showPreview && m("td", previewData && m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
             m("td", viewCheckBox(fileInfo.name)),
-            m("td", fileInfo.isDirectory
-                ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
+            m("td.mw6", fileInfo.isDirectory
+                ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
                 : m("span", 
-                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo.stats)}, "📄 "), 
+                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "), 
                     m("a.link", {href: viewerForURL(encodeHashes(directoryPath + fileInfo.name))}, fileInfo.name)
                 )
             ),
@@ -664,11 +666,11 @@ function viewFileEntry(fileInfo) { // selectedFiles
     return fileInfo.isDirectory
         ? m("div",
             viewCheckBox(fileInfo.name),
-            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo.stats)}, "📂 " + fileInfo.name)
+            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
         )
         : m("div",
             viewCheckBox(fileInfo.name), 
-            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo.stats)}, "📄 "),
+            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "),
             m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
         )
 }
