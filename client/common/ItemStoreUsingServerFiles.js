@@ -77,7 +77,8 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
             isFileLoaded: false,
             isFileLoading: false,
             status: "",
-            error: null
+            error: null,
+            statusCallback: () => redrawCallback && redrawCallback()
         }
 
         isLoaded = false

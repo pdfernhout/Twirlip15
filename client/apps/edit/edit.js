@@ -1,6 +1,6 @@
 /* global m, md5 */
 import "../../vendor/mithril.js"
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI, loadLargeFileContents } from "../../common/twirlip15-api.js"
 import { interceptSaveKey } from "../../common/menu.js"
 import "../../vendor/md5.js"
 
@@ -11,8 +11,16 @@ let chosenFileContents = null
 let chosenFileLoaded = false
 let editing = false
 let editedContents = ""
-let partialFileTest = ""
+let isBigFile = false
 let fileSaveInProgress = false
+
+const progressObject = {
+    isFileLoaded: false,
+    isFileLoading: false,
+    status: "",
+    error: null,
+    statusCallback: () => m.redraw()
+}
 
 function showError(error) {
     errorMessage = error
@@ -20,18 +28,11 @@ function showError(error) {
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
-async function loadPartialFileTest(fileName) {
-    const apiResult = await TwirlipServer.fileReadBytes(fileName, 4096)
-    if (apiResult) {
-        partialFileTest = apiResult.data
-    }
-}
-
-async function loadFileContents(newFileName) {
+async function loadSmallFile(newFileName) {
+    errorMessage = ""
     chosenFileName = newFileName
     chosenFileContents = null
     chosenFileLoaded = false
-    partialFileTest = ""
     const apiResult = await TwirlipServer.fileContents(chosenFileName)
     if (apiResult) {
         chosenFileContents = apiResult.contents
@@ -39,6 +40,24 @@ async function loadFileContents(newFileName) {
     } else {
         chosenFileContents = ""
     }
+    m.redraw()
+}
+
+async function loadBigFile(newFileName) {
+    isBigFile = true
+    errorMessage = ""
+    chosenFileName = newFileName
+    chosenFileContents = null
+    chosenFileLoaded = false
+    const contents = await loadLargeFileContents(TwirlipServer, chosenFileName, progressObject)
+    if (contents || progressObject.isFileLoaded) {
+        chosenFileContents = contents
+        chosenFileLoaded = true
+    } else {
+        chosenFileContents = ""
+        if (progressObject.error && !errorMessage) errorMessage = progressObject.error
+    }
+    m.redraw()
 }
 
 async function saveFile(fileName, contents, successCallback) {
@@ -82,7 +101,6 @@ function isInLocalDownloadsDirectory(urlFilePath) {
 
 // Duplicated from filer.js
 function viewerForURL(url) {
-    console.log("viewerForURL", url)
     if (url.endsWith(".md")) {
         return url + "?twirlip=view-md"
     } else {
@@ -105,14 +123,15 @@ function editFileContents() {
             }, disabled:  editing}, "Edit"),
             m("button.ml1", {
                 onclick: onSaveFileClick,
-                disabled: !editing || fileSaveInProgress || editedContents === contentsSaved
+                disabled: !editing || fileSaveInProgress || editedContents === contentsSaved || isBigFile
             }, "Save"),
             m("button.ml1", {onclick: () => {
                 history.back()
             }, disabled: fileSaveInProgress || (editing && editedContents !== contentsSaved)}, "Close"),
             m("span.yellow", { style: { 
                 visibility: (fileSaveInProgress ? "visible" : "hidden") 
-            }}, "Saving...")
+            }}, "Saving..."),
+            isBigFile && m("span", "Editor is read-only due to file size")
         ),
         m("div.ma2s", m("a.link", {href: viewerForURL(chosenFileName)}, chosenFileName)),
         m("div.flex-grow-1.pt2",
@@ -120,7 +139,8 @@ function editFileContents() {
                 ? m("textarea.w-100.h-100", { 
                     value: editedContents, 
                     oninput: event => editedContents = event.target.value,
-                    onkeydown: interceptSaveKey(onSaveFileClick)
+                    onkeydown: interceptSaveKey(onSaveFileClick),
+                    readOnly: isBigFile
                 })
                 : m("pre.pre-wrap.measure-wide", chosenFileContents)
         )
@@ -132,11 +152,13 @@ const ViewEdit = {
         return m("div.w-100.h-100",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileLoaded && chosenFileContents === null && m("div",
-                "Loading..."
+                "Loading...",
+                m("div", progressObject.status)
             ),
             (!chosenFileLoaded && chosenFileContents === "") && m("div", 
-                m("button", {onclick: () => loadPartialFileTest(chosenFileName)}, "Load partial file test"),
-                partialFileTest && m("div.break-word", partialFileTest)
+                m("button", {onclick: () => loadBigFile(filePathFromParams).then(() => {
+                    setMode(urlParams.get("mode") || "edit")
+                })}, "The file is large. Load it anyway?"),
             ),
             chosenFileLoaded && editFileContents()
         )
@@ -147,7 +169,7 @@ const filePathFromParams = decodeURI(window.location.pathname)
 const urlParams = new URLSearchParams(window.location.search)
 
 if (filePathFromParams) {
-    loadFileContents(filePathFromParams).then(() => {
+    loadSmallFile(filePathFromParams).then(() => {
         setMode(urlParams.get("mode") || "edit")
     })
 }

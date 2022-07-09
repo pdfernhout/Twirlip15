@@ -164,7 +164,11 @@ export async function loadLargeFileContents(twirlipServer, fileName, progressObj
     }
 
     progressObject.status = "done loading data; joining segments"
+    if (fileSize > chunkSize * 10) progressObject.status += "; this may take a while"
     if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
+
+    // Provide an opportunity to redraw before possibly long-running file join
+    await new Promise(resolve => setTimeout(resolve, 10))
 
     const chosenFileContents = segments.join("")
 
