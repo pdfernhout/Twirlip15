@@ -12,6 +12,7 @@ let mboxContents = null
 let chosenFileLoaded = false
 
 let emails = []
+let matchingEmails = []
 
 let searchString = ""
 let searchIgnoreCase = true
@@ -42,6 +43,7 @@ async function loadFileContents(newFileName) {
     } else {
         await processEmails()
     }
+    matchingEmails = emails
     showStatus("")
     chosenFileLoaded = true
     m.redraw()
@@ -343,14 +345,21 @@ function doesEmailContainSearchString(email) {
     return true
 }
 
+function filterEmails() {
+    matchingEmails = emails.filter(email => doesEmailContainSearchString(email))
+}
+
 function viewEmails() {
-    return m("div", emails.map(email => {
-        if (!doesEmailContainSearchString(email)) return []
-        return [
-            viewEmail(email),
-            m("hr")
-        ]
-    }))
+    return m("div", matchingEmails.map(email => [
+        viewEmail(email),
+        m("hr")
+    ]))
+}
+
+let debounceTimer
+const debounce = (callback, time) => {
+    if (debounceTimer) window.clearTimeout(debounceTimer)
+    debounceTimer = window.setTimeout(callback, time)
 }
 
 function viewFileSearch() {
@@ -358,7 +367,11 @@ function viewFileSearch() {
         m("span.mr2", "Search:"),
         m("input", {
             value: searchString, 
-            oninput: event => { searchString = event.target.value}
+            oninput: event => {
+                searchString = event.target.value
+                debounce(() => { filterEmails(); m.redraw() }, 500)
+                event.redraw = false
+            }
         }),
         m("label.ml2", 
             m("input[type=checkbox].mr1", {
