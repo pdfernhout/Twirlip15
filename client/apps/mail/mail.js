@@ -330,6 +330,7 @@ function viewEmail(message) {
 }
 
 function doesEmailContainSearchString(email) {
+    if (!searchString) return true
     let searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
     // Might need recursive search to do this completely
     if (searchResult === -1 && email.contentType.value === "text/plain"
@@ -343,7 +344,6 @@ function doesEmailContainSearchString(email) {
 }
 
 function viewEmails() {
-    if (!searchString && !searchInvert) return []
     return m("div", emails.map(email => {
         if (!doesEmailContainSearchString(email)) return []
         return [
@@ -358,7 +358,7 @@ function viewFileSearch() {
         m("span.mr2", "Search:"),
         m("input", {
             value: searchString, 
-            onchange: event => { searchString = event.target.value}
+            oninput: event => { searchString = event.target.value}
         }),
         m("label.ml2", 
             m("input[type=checkbox].mr1", {
