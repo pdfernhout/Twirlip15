@@ -1,8 +1,7 @@
 /* global m */
 import "../../vendor/mithril.js"
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
+import { Twirlip15ServerAPI, loadLargeFileContents } from "../../common/twirlip15-api.js"
 import parse from "../../vendor/emailjs/mimeparser.js"
-import { base64decode } from "../../vendor/base64.js"
 import base64encode from "../../vendor/emailjs/base64-encode.js"
 import { FileUtils } from "../../common/FileUtils.js"
 
@@ -28,58 +27,24 @@ function showStatus(messageText) {
 
 const TwirlipServer = new Twirlip15ServerAPI(showError)
 
-async function loadPartialFile(fileName, start, length) {
-    const apiResult = await TwirlipServer.fileReadBytes(fileName, start, length, "base64")
-    if (apiResult) {
-        return apiResult.data
-    }
-    return false
-}
-
 async function loadFileContents(newFileName) {
     chosenFileName = newFileName
     mboxContents = null
     chosenFileLoaded = false
 
-    const apiResult = await TwirlipServer.fileStats(chosenFileName)
-    if (!apiResult) return
+    const contents = await loadLargeFileContents(TwirlipServer, chosenFileName, {statusCallback: showStatus})
 
-    const fileSize = apiResult.stats.size
-    if (!fileSize) return
+    if (!contents) return
 
-    const segments = []
-    const chunkSize = 1200000
-    let start = 0
-    while (start < fileSize) {
-        showStatus("reading: " + start + " of: " + fileSize + " (" + Math.round(100 * start / fileSize) + "%)")
-        const countToRead = Math.min(chunkSize, fileSize - start)
-        const data = await loadPartialFile(chosenFileName, start, countToRead)
-        if (data === false) {
-            console.log("Unexpected: got false")
-            showStatus("")
-            showStatus("reading failed at end")
-            return
-        }
-        // new TextDecoder("utf-8").decode(uint8array)
-        // iso8859-1
-        segments.push(base64decode(data, new TextDecoder("ascii")))
-        start += chunkSize
+    mboxContents = contents
+    if (chosenFileName.endsWith(".msf")) {
+        await processMailSummaryFile()
+    } else {
+        await processEmails()
     }
-
-    showStatus("done loading data; processing")
-
-    // Give the UI a chance to update through using a timeout
-    setTimeout(async () => {
-        mboxContents = segments.join("")
-        if (chosenFileName.endsWith(".msf")) {
-            await processMailSummaryFile()
-        } else {
-            await processEmails()
-        }
-        showStatus("")
-        chosenFileLoaded = true
-        m.redraw()
-    }, 10)
+    showStatus("")
+    chosenFileLoaded = true
+    m.redraw()
 }
 
 async function processMailSummaryFile() {
