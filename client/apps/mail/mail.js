@@ -395,20 +395,21 @@ function viewFileSearch() {
             value: searchString, 
             onchange: event => { searchString = event.target.value}
         }),
-        m("label.ml1", 
+        m("label.ml2", 
             m("input[type=checkbox].mr1", {
                 checked: searchIgnoreCase,
                 onclick: () => searchIgnoreCase = !searchIgnoreCase
             }),
             "Ignore case"
         ),
-        m("label.ml1", 
+        m("label.ml2", 
             m("input[type=checkbox].mr1", {
                 checked: searchInvert,
                 onclick: () => searchInvert = !searchInvert
             }),
             "Invert"
-        )
+        ),
+        emails && m("span.ml3", "#Items:", emails.length)
     )
 }
 
