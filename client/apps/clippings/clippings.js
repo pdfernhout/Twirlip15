@@ -8,6 +8,9 @@ let chosenFileContents = null
 let chosenFileLoaded = false
 let loadingStatus = ""
 
+const clippingSeparator = "==========\r\n"
+let clippings = []
+
 function showError(error) {
     errorMessage = error
 }
@@ -25,11 +28,13 @@ async function loadFileContents(newFileName) {
     } else {
         chosenFileContents = ""
     }
+    clippings = chosenFileContents.split(clippingSeparator)
+    // clippings.pop()
     m.redraw()
 }
 
 function viewFileContents() {
-    return m("pre", chosenFileContents)
+    return clippings.map(clipping => m("div.mb3", clipping))
 }
 
 const ViewClippings = {
