@@ -23,18 +23,37 @@ async function loadFileContents(newFileName) {
     chosenFileLoaded = false
     const contents = await loadLargeFileContents(TwirlipServer, chosenFileName, {statusCallback: message => loadingStatus = message})
     if (contents) {
-        chosenFileContents = contents
+        chosenFileContents = contents.replace(/"™/g, "'").replace(/â€œ/g, "\"").replace(/â€/g, "\"")
         chosenFileLoaded = true
     } else {
         chosenFileContents = ""
     }
-    clippings = chosenFileContents.split(clippingSeparator)
+    const clippingTexts = chosenFileContents.split(clippingSeparator)
+    for (const clippingText of clippingTexts) {
+        if (!clippingText.trim()) continue
+        const lines = clippingText.split("\r\n")
+        const parts = lines[1].split("|")
+        const clipping = {
+            whole: clippingText,
+            title: lines[0],
+            location: parts[0].trim(),
+            timestamp: parts[1].trim(),
+            body: lines.slice(3).join("\n\n")
+        }
+        clippings.push(clipping)
+    }
+
     // clippings.pop()
     m.redraw()
 }
 
 function viewFileContents() {
-    return clippings.map(clipping => m("div.mb3", clipping))
+    return clippings.map(clipping => m("div.mb3",
+        m("div", clipping.title),
+        m("div", clipping.location),
+        m("div", clipping.timestamp),
+        m("pre", clipping.body)
+    ))
 }
 
 const ViewClippings = {
