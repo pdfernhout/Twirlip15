@@ -37,7 +37,7 @@ async function loadFileContents(newFileName) {
             whole: clippingText,
             title: lines[0],
             location: parts[0].trim(),
-            timestamp: parts[1].trim(),
+            timestamp: parts[1].trim().substring("Added on ".length),
             body: lines.slice(3).join("\n\n")
         }
         clippings.push(clipping)
@@ -48,12 +48,14 @@ async function loadFileContents(newFileName) {
 }
 
 function viewFileContents() {
-    return clippings.map(clipping => m("div.mb3",
-        m("div", clipping.title),
-        m("div", clipping.location),
-        m("div", clipping.timestamp),
-        m("pre", clipping.body)
-    ))
+    return m("table",
+        clippings.map(clipping => m("tr",
+            m("td", clipping.title),
+            m("td", clipping.location),
+            m("td", clipping.timestamp),
+            m("td", clipping.body)
+        ))
+    )
 }
 
 const ViewClippings = {
