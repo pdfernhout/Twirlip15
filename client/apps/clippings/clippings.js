@@ -26,7 +26,7 @@ async function loadFileContents(newFileName) {
     chosenFileLoaded = false
     const contents = await loadLargeFileContents(TwirlipServer, chosenFileName, {statusCallback: message => loadingStatus = message})
     if (contents) {
-        chosenFileContents = contents.replace(/"™/g, "'").replace(/â€œ/g, "\"").replace(/â€/g, "\"")
+        chosenFileContents = contents
         chosenFileLoaded = true
     } else {
         chosenFileContents = ""

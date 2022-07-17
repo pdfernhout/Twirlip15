@@ -108,7 +108,7 @@ export class Twirlip15ServerAPI {
 }
 
 // Helper function to load larger file than 2,000,000 byte limit in API
-export async function loadLargeFileContents(twirlipServer, fileName, progressObject={}) {
+export async function loadLargeFileContents(twirlipServer, fileName, progressObject={}, fileEncoding="utf8") {
     progressObject.fileName = fileName
     progressObject.isFileLoaded = false
     progressObject.isFileLoading = false
@@ -157,9 +157,7 @@ export async function loadLargeFileContents(twirlipServer, fileName, progressObj
             progressObject.isFileLoading = false
             return
         }
-        // new TextDecoder("utf-8").decode(uint8array)
-        // iso8859-1
-        segments.push(base64decode(apiResultReadBytes.data, new TextDecoder("ascii")))
+        segments.push(apiResultReadBytes.data)
         start += chunkSize
     }
 
@@ -170,7 +168,7 @@ export async function loadLargeFileContents(twirlipServer, fileName, progressObj
     // Provide an opportunity to redraw before possibly long-running file join
     await new Promise(resolve => setTimeout(resolve, 10))
 
-    const chosenFileContents = segments.join("")
+    const chosenFileContents = base64decode(segments.join(""), new TextDecoder(fileEncoding))
 
     progressObject.status = "finished"
     if (progressObject.statusCallback) progressObject.statusCallback(progressObject.status)
