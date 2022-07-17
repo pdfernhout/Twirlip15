@@ -54,13 +54,13 @@ async function loadFileContents(newFileName) {
 
 // Occlusion culling inspired by Leo Horie's essay: http://lhorie.github.io/mithril-blog/an-exercise-in-awesomeness.html
 // And Leo's example linked there: http://jsfiddle.net/7JNUy/1/
+// This could probably be cleaned up more now that it is used locally to a div and not for the entire page
 let pageY = 0 
 let pageHeight = window.innerHeight
-window.addEventListener("scroll", function(e) {
-	pageY = Math.max(e.pageY || window.pageYOffset, 0)
+function onScroll(event) {
+    pageY = event.target.scrollTop
 	pageHeight = window.innerHeight
-	m.redraw()
-})
+}
 
 const rowHeight = 100
 
@@ -101,18 +101,17 @@ function filterChanged(newValue) {
 
 const ViewClippings = {
     view: () => {
-        return m("div.ma2",
-            { style: { width: "98%"} },
-            errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
-            !chosenFileName && m("div",
+        return m("div.h-100.flex.flex-column",
+            errorMessage && m("div.red.flex-none", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
+            !chosenFileName && m("div.flex-none",
                 "file not specified in URL querystring"
             ),
-            chosenFileName && !chosenFileLoaded && chosenFileContents === null && m("div",
+            chosenFileName && !chosenFileLoaded && chosenFileContents === null && m("div.flex-none",
                 "Loading...",
                 m("div", loadingStatus)
             ),
-            chosenFileName && chosenFileLoaded && m("div",
-                m("div", 
+            chosenFileName && chosenFileLoaded &&
+                m("div.flex-none.ma1", 
                     "Filter: ",
                     m("input.w-70", { value: filter, oninput: event => filterChanged(event.target.value)}),
                     m("span",
@@ -125,8 +124,11 @@ const ViewClippings = {
                     ),
                     m("span.ml2", "#" + filteredClippings.length)
                 ),
-                viewFileContents()
-            )
+            chosenFileName && chosenFileLoaded &&
+                m("div.flex-auto.overflow-y-scroll", 
+                    { onscroll: onScroll },
+                    viewFileContents()
+                )
         )
     }
 }
