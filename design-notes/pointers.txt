@@ -1,0 +1,48 @@
+Thoughts from around 2022-07-16 
+
+Seeing reference to first web page URL at CERN -- in science of supervillians book called 
+"How to Take Over the World: Practical Schemes and Scientific Solutions for the Aspiring Supervillain"
+by Ryan North.
+
+The first web page's URL:
+http://info.cern.ch/hypertext/WWW/TheProject.html
+
+Thinking on pointers to content and the meaning of URLs/URIs.
+
+Can have pointer as a location (or path to a location, as steps of retrieval).
+
+Can have pointer that is a hash of the content.
+
+Can have a pointer that is a subset of the content like title or author or year or an embedded UUID.
+Or can have a pointer to a hash of a subset of the content.
+
+Can have a pointer to a metadata object with title, author, year, UUID, and so on
+-- which then points to the actual content somehow like by location or hash.
+
+Any other ways of pointing? Perhaps algorithms or such..
+
+Can also just embed the content directly.
+
+Key issue is that content can still have utility if it is slightly different
+than what originally pointed to.
+
+That is why hashes are brittle, because a long document with a typo fix
+will have a totally different hash -- but for all practical purposes
+for most people it is a substantially equivalent document od the same utility.
+
+This referring to a document by a title or author or UUID or a URL (handle)
+may be more useful than referring by hash if the contents can slightly change.
+But for big changes, then things get confusing if the title or URL or UUID stays the same.
+
+May be useful to have both references and hashes.
+
+In general, may be best to go beyond simple location-like URLs for pointers
+to use some sort of footnote-like object with more metadata about the resource.
+Just like scientific papers have a reference list that includes a bunch of information
+about a paper like title, author, year, publisher, and maybe other information.
+
+Examples for book citation including publisher (which is like a URL location in a way):
+https://apaformat.org/apa-book-citation/
+
+But one line of text for a URL is convenient and easy to cut and paste.
+But maybe it is limiting?
