@@ -64,6 +64,17 @@ function onScroll(event) {
 
 const rowHeight = 100
 
+// const OcclusionCullingScrollingDiv = {
+//     pageY: 0,
+//     pageHeight: window.innerHeight,
+//     rowHeight: 100,
+
+//     onScroll(event) {
+//         pageY = event.target.scrollTop
+//         pageHeight = window.innerHeight
+//     }
+// }
+
 function viewFileContents() {
     const begin = pageY / rowHeight | 0
 	const end = begin + (pageHeight / rowHeight | 0 + 2) + 1
