@@ -1,4 +1,4 @@
-/* global m, showdown */
+/* global m */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI, loadLargeFileContents } from "../../common/twirlip15-api.js"
 
@@ -36,10 +36,12 @@ async function loadFileContents(newFileName) {
         if (!clippingText.trim()) continue
         const lines = clippingText.split("\r\n")
         const parts = lines[1].split("|")
+        const itemNumber = clippings.length + 1
         const clipping = {
+            itemNumber,
             whole: clippingText,
             wholeLowerCase: clippingText.toLowerCase(),
-            title: String(clippings.length + 1) + ": " + lines[0],
+            title: lines[0],
             location: parts[0].trim(),
             timestamp: parts[1].trim().substring("Added on ".length),
             body: lines.slice(3).join("\n\n")
@@ -54,46 +56,63 @@ async function loadFileContents(newFileName) {
 
 // Occlusion culling inspired by Leo Horie's essay: http://lhorie.github.io/mithril-blog/an-exercise-in-awesomeness.html
 // And Leo's example linked there: http://jsfiddle.net/7JNUy/1/
-// This could probably be cleaned up more now that it is used locally to a div and not for the entire page
-let pageY = 0 
-let pageHeight = window.innerHeight
-function onScroll(event) {
-    pageY = event.target.scrollTop
-	pageHeight = window.innerHeight
+function ScrolledItemsView(/* initialVNode */) {
+    let scrollTop = 0
+    // Use the window height to generate enough item divs the first time view is called
+    let containerHeight = window.innerHeight
+
+    // Attributes:
+    // rowHeight: number of px for height of each item (fixed for now, defaults to 100)
+    // items: the items to display (required)
+    // viewItems: the function to display each item (required)
+
+    function onScroll(event) {
+        scrollTop = event.target.scrollTop
+        containerHeight = event.target.clientHeight
+    }
+
+    return {
+        view: function(vnode) {
+            const rowHeight = vnode.attrs.rowHeight || "100"
+            const items = vnode.attrs.items
+            if (!items) throw new Error("items must be specified")
+            const viewItem = vnode.attrs.viewItem
+            if (!viewItem) throw new Error("viewItem must be specified")
+            const rowHeightPx = rowHeight + "px"
+
+            const begin = (scrollTop / rowHeight) || 0
+            const end = begin + ((containerHeight / rowHeight) || 0) + 2
+            const offset = scrollTop % rowHeight
+
+            return m("div.flex-auto.overflow-y-scroll", 
+                { onscroll: onScroll },
+                m("div.relative",
+                    {style: { height: items.length * rowHeight + "px", top: -offset + "px" } },
+                    m("div.relative",
+                        { style: {top: scrollTop + "px"} },
+                        items.slice(begin, end).map(item => m("div.overflow-hidden",
+                            { style: { height: rowHeightPx, maxHeight: rowHeightPx, minHeight: rowHeightPx }},
+                            viewItem(item)
+                        )),
+                        // /* For debugging */ m(".fixed.bg-orange", {style: {top: 0, left: 0 }}, "pageY:", pageY, " pageHeight:", pageHeight, " begin:", begin, " end:", end, " offset:", offset)
+                    )
+                )
+            )
+        }
+    }
 }
 
-const rowHeight = 100
-
-// const OcclusionCullingScrollingDiv = {
-//     pageY: 0,
-//     pageHeight: window.innerHeight,
-//     rowHeight: 100,
-
-//     onScroll(event) {
-//         pageY = event.target.scrollTop
-//         pageHeight = window.innerHeight
-//     }
-// }
-
 function viewFileContents() {
-    const begin = pageY / rowHeight | 0
-	const end = begin + (pageHeight / rowHeight | 0 + 2) + 1
-    const offset = pageY % rowHeight
-
-    return m("div.relative",
-        {style: { height: filteredClippings.length * rowHeight + "px", top: -offset + "px" } },
-        m("div.relative",
-            { style: {top: pageY + "px"} },
-            filteredClippings.slice(begin, end).map(clipping => m("div.ba.overflow-hidden",
-                { style: { height: "100px", maxHeight: "100px", minHeight: "100px" }}, 
-                m("div", clipping.title),
-                m("div", clipping.location),
-                m("div", clipping.timestamp),
-                m("div", { title: clipping.body }, clipping.body)
-            )),
-            // m(".fixed.bg-orange", {style: {top: 0, left: 0 }}, "pageY:", pageY, " pageHeight:", pageHeight, " begin:", begin, " end:", end, " offset:", offset)
+    return m(ScrolledItemsView, {
+        rowHeight: 100,
+        items: filteredClippings,
+        viewItem: clipping => m("div.ba.h-100",
+            {key: clipping.itemNumber},
+            m("div.nowrap", {title: clipping.title}, clipping.itemNumber + ": " + clipping.title),
+            m("div", clipping.timestamp + " " + clipping.location),
+            m("div.f3", { title: clipping.body }, clipping.body)
         )
-    )
+    })
 }
 
 function filterChanged(newValue) {
@@ -112,7 +131,7 @@ function filterChanged(newValue) {
 
 const ViewClippings = {
     view: () => {
-        return m("div.h-100.flex.flex-column",
+        return m("div.h-100.flex.flex-column.ml1",
             errorMessage && m("div.red.flex-none", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileName && m("div.flex-none",
                 "file not specified in URL querystring"
@@ -136,10 +155,7 @@ const ViewClippings = {
                     m("span.ml2", "#" + filteredClippings.length)
                 ),
             chosenFileName && chosenFileLoaded &&
-                m("div.flex-auto.overflow-y-scroll", 
-                    { onscroll: onScroll },
-                    viewFileContents()
-                )
+                viewFileContents()
         )
     }
 }
