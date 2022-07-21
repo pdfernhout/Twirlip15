@@ -4,6 +4,7 @@ import { Twirlip15ServerAPI, loadLargeFileContents } from "../../common/twirlip1
 import parse from "../../vendor/emailjs/mimeparser.js"
 import base64encode from "../../vendor/emailjs/base64-encode.js"
 import { FileUtils } from "../../common/FileUtils.js"
+import { ScrolledItemsView } from "../../common/ScrolledItemsView.js"
 
 let errorMessage = ""
 let statusMessage = ""
@@ -17,6 +18,8 @@ let matchingEmails = []
 let searchString = ""
 let searchIgnoreCase = true
 let searchInvert = false
+
+let lastSelectedEmail = null
 
 function showError(error) {
     errorMessage = error
@@ -296,37 +299,36 @@ function viewEmail(message) {
     const messageId = rawMessageId[0].initial
     // const body = getTextPlain(message)
     const body = viewEmailPart(message)
-    return m("div", 
-        m("div",
-            m("div.ml4", date),
-            m("div.ml4", "From: ", from),
-            to && m("div.ml4", "To: ", to),
-            m("div.ml4", { onclick: () => {
-                expandedMessage[messageId] = !expandedMessage[messageId]
-                if (expandedMessage[messageId]) {
-                    console.log("message", message)
-                    // logMimeParts(message)
-                }
-            } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
-            expandedMessage[messageId] && m("div",
-                m("div.dib.ml5", m("label", 
-                    m("input[type=checkbox].mr1", {
-                        checked: showRaw,
-                        onclick: () => showRaw = !showRaw
-                    }),
-                    "Show Raw"
-                )),
-                m("div.dib.ml3", m("label", 
-                    m("input[type=checkbox].mr1", {
-                        checked: showImages,
-                        onclick: () => showImages = !showImages
-                    }),
-                    "Show Attached Images"
-                )),
-                // !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
-                !showRaw && body,
-                showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
-            )
+    return m("div.relative",
+        m("div.ml4", date),
+        m("div.ml4", "From: ", from),
+        to && m("div.ml4", "To: ", to),
+        m("div.ml4", { onclick: () => {
+            expandedMessage[messageId] = !expandedMessage[messageId]
+            lastSelectedEmail = message
+            if (expandedMessage[messageId]) {
+                console.log("message", message)
+                // logMimeParts(message)
+            }
+        } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
+        expandedMessage[messageId] && m("div.fixed.bg-yellow.overflow-visible.z-999",
+            m("div.dib.ml5", m("label", 
+                m("input[type=checkbox].mr1", {
+                    checked: showRaw,
+                    onclick: () => showRaw = !showRaw
+                }),
+                "Show Raw"
+            )),
+            m("div.dib.ml3", m("label", 
+                m("input[type=checkbox].mr1", {
+                    checked: showImages,
+                    onclick: () => showImages = !showImages
+                }),
+                "Show Attached Images"
+            )),
+            // !showRaw && m("pre.ml5.measure-wide.pre-wrap", body),
+            !showRaw && m("div", body),
+            showRaw && m("pre.ml5.measure-wide.pre-wrap", message.raw),
         )
     )
 }
@@ -350,10 +352,11 @@ function filterEmails() {
 }
 
 function viewEmails() {
-    return m("div", matchingEmails.map(email => [
-        viewEmail(email),
-        m("hr")
-    ]))
+    return m(ScrolledItemsView, {
+        rowHeight: 100,
+        items: matchingEmails,
+        viewItem: email => m("div", viewEmail(email), m("hr"))
+    })
 }
 
 let debounceTimer
@@ -363,7 +366,7 @@ const debounce = (callback, time) => {
 }
 
 function viewFileSearch() {
-    return m("div",
+    return m("div.flex-none",
         m("span.mr2", "Search:"),
         m("input", {
             value: searchString, 
@@ -393,18 +396,23 @@ function viewFileSearch() {
 
 const ViewMail = {
     view: () => {
-        return m("div.ma2",
-            errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
-            statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
-            !chosenFileName && m("div",
-                "file not specified in URL querystring"
+        return m("div.h-100.flex.flex-row",
+            m("div.ml2.h-100.flex.flex-column.flex-auto",
+                { style: { flex: "50%" }},
+                errorMessage && m("div.flex-none.red", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+                statusMessage && m("div.flex-none.green", m("span", {onclick: () => statusMessage =""}, "✖ "), statusMessage),
+                !chosenFileName && m("div.flex-none",
+                    "file not specified in URL querystring"
+                ),
+                chosenFileName && !chosenFileLoaded && mboxContents === null && m("div.flex-none",
+                    "Loading..."
+                ),
+                chosenFileName && chosenFileLoaded && viewFileSearch(),
+                chosenFileName && chosenFileLoaded && viewEmails()
             ),
-            chosenFileName && !chosenFileLoaded && mboxContents === null && m("div",
-                "Loading..."
-            ),
-            chosenFileName && chosenFileLoaded && m("div",
-                viewFileSearch(),
-                viewEmails()
+            m("div.h-100.overflow-auto", 
+                { style: { flex: "50%" }}, 
+                lastSelectedEmail && m("div", viewEmailPart(lastSelectedEmail))
             )
         )
     }
