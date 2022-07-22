@@ -4,6 +4,7 @@ import { Twirlip15ServerAPI, loadLargeFileContents } from "../../common/twirlip1
 import base64encode from "../../vendor/emailjs/base64-encode.js"
 import { FileUtils } from "../../common/FileUtils.js"
 import { ScrolledItemsView } from "../../common/ScrolledItemsView.js"
+import { makeTimeoutPromise, debounce } from "../../common/timeout.js"
 import { processEmail, getFromField, getToField } from "./emailParsing.js"
 
 let errorMessage = ""
@@ -58,10 +59,6 @@ async function processMailSummaryFile() {
     const lines = mboxContents.split("\r")
     console.log("lines", lines)
     emails = []
-}
-
-function makeTimeoutPromise(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 async function processEmails() {
@@ -203,12 +200,6 @@ function viewEmails() {
         items: matchingEmails,
         viewItem: email => m("div", viewEmail(email), m("hr"))
     })
-}
-
-let debounceTimer
-const debounce = (callback, time) => {
-    if (debounceTimer) window.clearTimeout(debounceTimer)
-    debounceTimer = window.setTimeout(callback, time)
 }
 
 function viewEmailSearch() {
