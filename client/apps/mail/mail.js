@@ -154,7 +154,7 @@ function viewEmail(message) {
                 // logMimeParts(message)
             }
         } }, expandedMessage[messageId] ? "▼ " : "➤ ", subject),
-        expandedMessage[messageId] && m("div.fixed.bg-yellow.overflow-visible.z-999",
+        expandedMessage[messageId] && m("div.bg-yellow.overflow-visible.z-999",
             m("div.dib.ml5", m("label", 
                 m("input[type=checkbox].mr1", {
                     checked: showRaw,
