@@ -60,7 +60,7 @@ async function processMailSummaryFile() {
     emails = []
 }
 
-function timeout(ms) {
+function makeTimeoutPromise(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -81,7 +81,7 @@ async function processEmails() {
         if (i % 10 === 9) {
             showStatus("processing email " + (i + 1) + " of " + emailsRaw.length)
             m.redraw()
-            await timeout(1)
+            await makeTimeoutPromise(1)
         }
     }
     // console.log("mimeTypeCounts", JSON.stringify(mimeTypeCounts, null, 4))
