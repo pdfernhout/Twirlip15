@@ -16,10 +16,6 @@ let chosenFileLoaded = false
 let emails = []
 let matchingEmails = []
 
-let searchString = ""
-let searchIgnoreCase = true
-let searchInvert = false
-
 let lastSelectedEmail = null
 
 function showError(error) {
@@ -176,22 +172,22 @@ function viewEmail(message) {
     )
 }
 
-function doesEmailContainSearchString(email) {
-    if (!searchString) return true
-    let searchResult = email.raw.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+function doesEmailContainSearchString(email, searchOptions) {
+    if (!searchOptions.searchString) return true
+    let searchResult = email.raw.search(new RegExp(searchOptions.searchString, searchOptions.searchIgnoreCase ? "i" : ""))
     // Might need recursive search to do this completely
     if (searchResult === -1 && email.contentType.value === "text/plain"
         && email.contentTransferEncoding && email.contentTransferEncoding.value === "base64") {
         const content = new TextDecoder("utf-8").decode(email.content)
-        searchResult = content.search(new RegExp(searchString, searchIgnoreCase ? "i" : ""))
+        searchResult = content.search(new RegExp(searchOptions.searchString, searchOptions.searchIgnoreCase ? "i" : ""))
     }
-    if (!searchInvert && searchResult === -1) return false
-    if (searchInvert && searchString && searchResult !== -1) return false
+    if (!searchOptions.searchInvert && searchResult === -1) return false
+    if (searchOptions.searchInvert && searchOptions.searchString && searchResult !== -1) return false
     return true
 }
 
-function filterEmails() {
-    matchingEmails = emails.filter(email => doesEmailContainSearchString(email))
+function filterEmails(searchOptions) {
+    matchingEmails = emails.filter(email => doesEmailContainSearchString(email, searchOptions))
 }
 
 function viewEmails() {
@@ -202,28 +198,34 @@ function viewEmails() {
     })
 }
 
-function viewEmailSearch() {
+const searchOptions = {
+    searchString: "",
+    searchIgnoreCase: true,
+    searchInvert: false
+}
+
+function viewEmailSearch(searchOptions) {
     return m("div.flex-none",
         m("span.mr2", "Search:"),
         m("input", {
-            value: searchString, 
+            value: searchOptions.searchString, 
             oninput: event => {
-                searchString = event.target.value
-                debounce(() => { filterEmails(); m.redraw() }, 500)
+                searchOptions.searchString = event.target.value
+                debounce(() => { filterEmails(searchOptions); m.redraw() }, 500)
                 event.redraw = false
             }
         }),
         m("label.ml2", 
             m("input[type=checkbox].mr1", {
-                checked: searchIgnoreCase,
-                onclick: () => searchIgnoreCase = !searchIgnoreCase
+                checked: searchOptions.searchIgnoreCase,
+                onclick: () => searchOptions.searchIgnoreCase = !searchOptions.searchIgnoreCase
             }),
             "Ignore case"
         ),
         m("label.ml2", 
             m("input[type=checkbox].mr1", {
-                checked: searchInvert,
-                onclick: () => searchInvert = !searchInvert
+                checked: searchOptions.searchInvert,
+                onclick: () => searchOptions.searchInvert = !searchOptions.searchInvert
             }),
             "Invert"
         ),
@@ -244,7 +246,7 @@ const ViewMail = {
                 chosenFileName && !chosenFileLoaded && mboxContents === null && m("div.flex-none",
                     "Loading..."
                 ),
-                chosenFileName && chosenFileLoaded && viewEmailSearch(),
+                chosenFileName && chosenFileLoaded && viewEmailSearch(searchOptions),
                 chosenFileName && chosenFileLoaded && viewEmails()
             ),
             m("div.h-100.overflow-auto", 
