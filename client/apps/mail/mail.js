@@ -365,7 +365,7 @@ const debounce = (callback, time) => {
     debounceTimer = window.setTimeout(callback, time)
 }
 
-function viewFileSearch() {
+function viewEmailSearch() {
     return m("div.flex-none",
         m("span.mr2", "Search:"),
         m("input", {
@@ -407,7 +407,7 @@ const ViewMail = {
                 chosenFileName && !chosenFileLoaded && mboxContents === null && m("div.flex-none",
                     "Loading..."
                 ),
-                chosenFileName && chosenFileLoaded && viewFileSearch(),
+                chosenFileName && chosenFileLoaded && viewEmailSearch(),
                 chosenFileName && chosenFileLoaded && viewEmails()
             ),
             m("div.h-100.overflow-auto", 
