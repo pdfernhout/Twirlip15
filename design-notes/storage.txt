@@ -288,3 +288,25 @@ Ideas on splitting:
 https://stackoverflow.com/questions/34045019/split-string-by-comma-but-not-escaped-in-javascript
 
 But anything coded by hand unlikely to be as fast as built-in JSON parsing.
+
+====
+
+2022-07-21
+
+Ways to name files when you have a lot of things
+and where manually naming a file for each item is impractical or undesired:
+
+* Hash of content
+* Sequence numbers as add each file
+* Timestamp when adding file
+* UUID from content (but may not be unique)
+* Random number
+* A mix of the above
+
+Assuming probably using with nested directories with parts of name.
+
+Can also add some extra sharding unique info 
+like author or archive uuid or machine/process uuid.
+
+Examples: emails, chat messages, downloaded web pages or parsed parts, JSON objects,
+pictures, screenshots, recordings, imported files for an archiver, file versions.
