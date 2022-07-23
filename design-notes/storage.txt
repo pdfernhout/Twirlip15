@@ -310,3 +310,22 @@ like author or archive uuid or machine/process uuid.
 
 Examples: emails, chat messages, downloaded web pages or parsed parts, JSON objects,
 pictures, screenshots, recordings, imported files for an archiver, file versions.
+
+====
+
+2022-07-23
+
+Most important is idea of shared standards, not implementation (which can be replaced).
+Emphasizing standards -- such as they were in 1991 -- is what the web got right.
+
+Dojo notion of a "Store" from original Dojo and dgrid.
+Reflected in idea of "Notebook" from Twirlip7.
+
+----
+
+Idea of successive refinement of data through multiple versions 
+and additions and deletions and connections.
+Supporting organic growth of data but also pruning and reshaping.
+And also "time travel" to revisit past data organization.
+When the past is secure and revisitable, can move forward with confidence.
+Idea of "undo" or "history" so people can explore and create with confidence.
