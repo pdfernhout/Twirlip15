@@ -329,3 +329,114 @@ Supporting organic growth of data but also pruning and reshaping.
 And also "time travel" to revisit past data organization.
 When the past is secure and revisitable, can move forward with confidence.
 Idea of "undo" or "history" so people can explore and create with confidence.
+
+====
+
+2022-07-24
+
+Thinking on Indexing... Interwoven with storage.
+Pointrel hit a sweet spot for early personal computers (in my opinion)
+where you could find stuff with a little effort
+but the implementation was relatively simple
+and there was a reasonable tradeoff in storage cost versus lookup time
+for many common applications.
+Essentially, you could quickly find all triples that had the same A, B, or C field.
+And those triples would tend to define an "object" for common A fields,
+a use of a type or value for C fields,
+and objects that had a certain type of field for C fields.
+Not perfect, but a good tradeoff?
+That was done by maintaining linked lists of triples with the same A, B, or C field.
+
+With Twirlip7, I realized that -- using the file system too lookup a hash of a value --
+that you could maintain files that had all the triples using the same A, B, or C relations.
+I was trying to filter out some of these by just doing "interesting" relations.
+
+But the most critical was probably the A field.
+Files that had all the triples with the same A field essentially defined an object.
+It was a way of easily loading all the data for an object from one file.
+
+Maybe doing B and C fields are less interesting? B is maybe least?
+C is maybe of use when you want to look up all objects of some type.
+Alternative there is to have a "class" object that tracks all instances somehow.
+
+Trying to decide whether to take that approach with implementing a message
+storing system -- like if parse mbox files into individual emails.
+
+Maybe give up on B and C lists as too "noisy" for the value,
+and as with Smalltalk, maintain objects explicitly that track things you want
+to lookup again later?
+
+----
+
+Not sure if still need to store triples in spaces if store them in object files?
+
+Using the file system in this way to store one object per file (and also maybe
+B and C files) is somewhat like maildir and storing one email per file.
+More general as any object not just emails...
+
+But what about indexing?
+
+You need to maintain index objects. Unless go with B and C files and use
+them as indexes in some way (like adding a triple for each use of a word).
+
+----
+
+Limitations of previous Pointrel triplestore approaches:
+
+If you change a C field, you will still find the previous C-value triple.
+So, you would always need to check if it has been deleted, which is more work.
+That confusion could be reduced a little perhaps by having insert/ add/replace/deleted
+messages used when adding a triple -- to tell whether it replaces another triple
+or if it is used alongside other triples as a list. Or whether it deletes another triple.
+But still need to so extra lookup work across the B field to see if alternative?
+Only an issue when looking up by C? Looking up by B would give you the latest C.
+Assuming essentially that A field have object permanence or delete marker.
+
+General issue where you might sometimes want to have only one value for a B field
+and others where multiple values or B are OK. Example: has-height vs has-child.
+Also, if you support multiple values like has-child how do you delete one?
+Could store an array, but that breaks model of C field being just on item.
+Can do "has-parent" from child, but that requires B-C or C-B index --
+and also if you change the parent then you have previous issue with false positive
+on old triple that was overridden.
+
+Can't find things by range. If you want something that has a timestamp between
+X and Y dates, you would need to search everything or alternatively search on every
+possible timestamp. Or maybe (thinking now) use a b-tree or oct-tree like approach
+where hae previously added relationships for larger ranges of time and you narrow those down.
+Thought about this a bunch when seeing what Apache Accumulo could do.
+
+Issue when want to find a match with two fields, like "has-type email" and "from X".
+The system can qive you a list of one or the other but you then need to filter them further
+yourself. Or you need to look for the overlap of two sets of results.
+Previously had thought of tracking number of matches for triples so could pick
+the one of two or more with the least matches to get fewest results to further filter.
+
+Deleting stuff in general becomes an ad-hoc implementation specific thing usually --
+where the data is not deleted, just ignored.
+
+Might be more issues too. But concisely, the Pointrel system has had issues with:
+* false positive matches of old data
+* supporting one-to-many relationships
+* finding matches by ranges
+* finding matches involving multiple fields
+* deleting stuff
+
+Can see the benefits of a regular SQL database for good indexing.
+And also benefits of storing and updating JSON objects over triples for coherent objects.
+
+Time to abandon triples finally for PostgreSQL? Or some way triples are good enough?
+But issue with RDBMS where can have only one common database layout,
+which makes it harder for applications to be independent modules.
+
+Possibilities: PostegreSQL, SQLite, Accumulo, Craigslist's clblob engine.
+Others like IndexedDB, CouchDB, Neo4j, etc?  https://db-engines.com/en/ranking
+
+But I really like the idea of data stored in the filesystem in wway it can
+be easily and efficiently incrementally backed up by TimeMachine or rsync...
+
+But adding so many triples for matches for text would create some huge files.
+Maybe put in place sharding/splitting or such from the start?
+So that have ObjectID.1 file which when it gets too big 
+then a ObjectID.2 file is created and so on?
+And the Twirlip code knows to return results from them all for an object?
