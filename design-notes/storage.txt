@@ -440,3 +440,90 @@ Maybe put in place sharding/splitting or such from the start?
 So that have ObjectID.1 file which when it gets too big 
 then a ObjectID.2 file is created and so on?
 And the Twirlip code knows to return results from them all for an object?
+
+----
+
+But this is a bit of competition with idea of linked lists of hashed content files?
+Which link to previous transactions? 
+
+Issue with object database in across files (one for each object) is that 
+essentially there is just one "current" state for the system.
+The idea of chains of transactions means there can be an endless number of "states"
+of the system -- with a "current" state depending on what transaction
+something is pointing to as the "current" one.
+
+Can also not have transactions but instead just have triples pointing to previous ones,
+either by hashes or UUIDs ot both.
+
+But the further one gets away from one file with lots of triples defining multiple objects,
+or one file per object (as a sort of index), then the harder it gets to have current indexes.
+Since what are you indexing when the system can have multiple states?
+You need essentially one index per triple (where indexes for previous triples usually ignored,
+unless you can come up with a maybe CouchDB-like way to incrementally build on older indexes).
+
+Also, for the hashed-content linked-list approach, need to update something which has current pointers.
+And also need to traipse across lots of files to load the current state of a spaces
+as you need to load all of the triples/transactions back to the beginning.
+If always index in memory, not so bad -- except then you can't find anything
+without loading an entire space into memory first.
+Although could have index of entire thing and do first pass to find stuff
+and then second pass to verify it is in the space of interest.
+Maybe make it easier by labelling triples with a space name / uuid?
+But what happens when the spaces essentially split? Dot notation for splits? X.Y.Z?
+But not even clear when splits happen... Or how many you have.
+
+----
+
+Big issue is I have been thinking on this for years -- even decades --
+and still not getting good traction...
+
+And also getting somewhat bored by whole triple / Pointrel thing -- same old issues...
+
+But Concord fallacy of being loathe to give up after so much sunk time cost?
+
+Yet still hope for some breakthrough in simplicity...
+
+The one-file-per-object idea of all triples with same A field seemed neat.
+And worked well with websockets and getting updates from server when that file changed.
+Made Twirlip into a neat kind of object database very elegantly and simply.
+
+But tradeoff there is only one "space" of objects.
+Or at most one space per top level directory for an object space.
+
+But for my emails, how many object spaces do I really want?
+
+Even as the "many worlds" idea of linked data storage remains intriguing.
+Though of seventeen years ago or so when at Inn at Hope, NJ with family.
+And that parallels git ideas...
+
+---- 
+
+Options:
+* One big file with all triples
+* One file per project or space with triples for multiple objects
+* One file per object with triples (and maybe B and C files too)
+* Linked chains (trees, really) of transactions or triples defining a space 
+(with maybe an index updated when you store a "current" pointer to some triple/transaction).
+* Others? RDBMS? CouchDB? And so on?
+
+Liking that idea of updating an index when you store a "current" pointer.
+So, every pointer file has an associated index of triples.
+Which actually could then be the one-file-per-object approach potentially.
+
+But is there in practice much real value to the chains of transactions approach
+even though conceptually it is elegant?
+
+Kind of arbitrary how an application (or user) decides how to split up things
+into files or objects. Like these design noted are in one file.
+But there could be one file per day. Or one file per paragraph. Or per version of a paragraph.
+Or one file for all the design note files all together.
+Or one file for the entire project.
+Or one file for entire user account.
+
+Decisions on module boundaries made based on: (?)
+* keeping file sizes small but not too small (10k-100k sweet spot right now?)
+* conceptual boundaries
+* keeping data likely to change along with other similar data
+(so not potentially modifying unrelated data)
+
+
