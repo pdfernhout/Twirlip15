@@ -118,7 +118,7 @@ function viewFileContents() {
 
 const Appender = {
     view: () => {
-        return m("div.ma2.measure-wide",
+        return m("div.ma2.mw7",
             errorMessage && m("div.red", m("span", {onclick: () => errorMessage =""}, "X "), errorMessage),
             !chosenFileLoaded && chosenFileContents === null && m("div",
                 "Loading..."
