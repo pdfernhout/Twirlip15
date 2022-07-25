@@ -43,6 +43,11 @@ export function interceptSaveKey(onSaveHandler) {
         // Check for Alt+Gr (http://en.wikipedia.org/wiki/AltGr_key)
         if (ctrlDown && evt.altKey) return true
 
+        if (ctrlDown && evt.key === "Enter") {
+            onSaveHandler()
+            return false
+        }
+
         // Check for ctrl+s
         if (ctrlDown && c == 83) {
             onSaveHandler()
