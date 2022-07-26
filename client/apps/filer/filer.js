@@ -142,9 +142,9 @@ function queuePreviewsIfNeeded() {
     if (showPreview) {
         const selectedFileNames = Object.keys(selectedFiles)
         for (const fileInfo of directoryFiles) {
-            if (selectedFileNames.length && !selectedFiles[directoryPath + fileInfo.name]) continue
+            if (selectedFileNames.length && !selectedFiles[filePathForFileInfo(fileInfo)]) continue
             if (!fileInfo.name.startsWith(".") && !fileInfo.isDirectory && isFilePreviewable(fileInfo.name)) {
-                previewsToFetch.push(directoryPath + fileInfo.name)
+                previewsToFetch.push(filePathForFileInfo(fileInfo))
             }
         }
         setTimeout(fetchNextPreview)
@@ -399,7 +399,7 @@ async function showSelectedFiles() {
 
 function selectAll() {
     visibleFiles().forEach(fileInfo => {
-        if (fileInfo.name !== "..") selectedFiles[directoryPath + fileInfo.name] = true
+        if (fileInfo.name !== "..") selectedFiles[filePathForFileInfo(fileInfo)] = true
     })
 }
 
@@ -573,16 +573,17 @@ function viewDirectoryFiles() {
         : m("div", "Loading file data...")
 }
 
-function viewCheckBox(fileName) {
-    const hidden = fileName === ".."
+function viewCheckBox(fileInfo) {
+    const hidden = fileInfo.name === ".."
+    const filePath = filePathForFileInfo(fileInfo)
     return showMenu && m("input[type=checkbox].mr1" + (hidden ? ".o-0" : ""), {
-        checked: selectedFiles[directoryPath + fileName],
+        checked: selectedFiles[filePath],
         disabled: hidden,
         onclick: () => {
-            if (selectedFiles[directoryPath + fileName]) {
-                delete selectedFiles[directoryPath + fileName]
+            if (selectedFiles[filePath]) {
+                delete selectedFiles[filePath]
             } else {
-                selectedFiles[directoryPath + fileName] = true
+                selectedFiles[filePath] = true
             }
         }
     })
@@ -642,18 +643,23 @@ function encodeHashes(path) {
     return path.replaceAll("#", "%23")
 }
 
+function filePathForFileInfo(fileInfo) {
+    return directoryPath + fileInfo.name + (fileInfo.isDirectory ? "/" : "")
+}
+
+
 function viewFileEntry(fileInfo) { // selectedFiles
-    const previewData = previews[directoryPath + fileInfo.name]
+    const previewData = previews[filePathForFileInfo(fileInfo)]
 
     if (showMenu) {
         return m("tr" + (showPreview ? ".h-100px" : ""),
-            showPreview && m("td", previewData && m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
-            m("td", viewCheckBox(fileInfo.name)),
+            showPreview && m("td", previewData && m("a.link", {href: viewerForURL(filePathForFileInfo(fileInfo))}, m("img", { src: "data:image/jpeg;base64," + previewData }))),
+            m("td", viewCheckBox(fileInfo)),
             m("td.mw6", fileInfo.isDirectory
-                ? m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
+                ? m("span", {onclick: () => loadDirectory(filePathForFileInfo(fileInfo), true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
                 : m("span", 
-                    m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "), 
-                    m("a.link", {href: viewerForURL(encodeHashes(directoryPath + fileInfo.name))}, fileInfo.name)
+                    m("a.link", {href: filePathForFileInfo(fileInfo) + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "), 
+                    m("a.link", {href: viewerForURL(encodeHashes(filePathForFileInfo(fileInfo)))}, fileInfo.name)
                 )
             ),
             m("td.pl2.tr", fileInfo.stats && formatSize(fileInfo.stats.size)),
@@ -665,13 +671,13 @@ function viewFileEntry(fileInfo) { // selectedFiles
 
     return fileInfo.isDirectory
         ? m("div",
-            viewCheckBox(fileInfo.name),
-            m("span", {onclick: () => loadDirectory(directoryPath + fileInfo.name + "/", true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
+            viewCheckBox(fileInfo),
+            m("span", {onclick: () => loadDirectory(filePathForFileInfo(fileInfo), true), title: statsTitle(fileInfo)}, "📂 " + fileInfo.name)
         )
         : m("div",
-            viewCheckBox(fileInfo.name), 
-            m("a.link", {href: directoryPath + fileInfo.name + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "),
-            m("a.link", {href: viewerForURL(directoryPath + fileInfo.name)}, fileInfo.name),
+            viewCheckBox(fileInfo), 
+            m("a.link", {href: filePathForFileInfo(fileInfo) + "?twirlip=edit", title: statsTitle(fileInfo)}, "📄 "),
+            m("a.link", {href: viewerForURL(filePathForFileInfo(fileInfo))}, fileInfo.name),
         )
 }
 
