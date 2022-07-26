@@ -341,14 +341,18 @@ function viewGraph() {
     )
 }
 
+function selectedClass(isSelected) {
+    return isSelected ? ".bg-light-blue" : ""
+}
+
 const Ideas = {
     view: () => {
         return m("div.flex.flex-row.h-100.w-100",
             m("div.flex-auto.overflow-y-auto",
                 m("div.ma1", 
-                    m("button", {onclick: () => navigate = "links"}, "Links"),
-                    m("button.ml2", {onclick: () => navigate = "graph"}, "Graph"),
-                    m("button.ml2", {onclick: () => navigate = "triples"}, "Triples"),
+                    m("button" + selectedClass( navigate === "links"), {onclick: () => navigate = "links"}, "Links"),
+                    m("button.ml2" + selectedClass( navigate === "graph"), {onclick: () => navigate = "graph"}, "Graph"),
+                    m("button.ml2" + selectedClass( navigate === "triples"), {onclick: () => navigate = "triples"}, "Triples"),
                     m("button.ml4", {onclick: () => window.location = directoryPath + "?twirlip=filer"}, "Open Filer"),
                     m("button.ml2", {onclick: () => addFile()}, "+ New File")
                 ),
