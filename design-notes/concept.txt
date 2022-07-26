@@ -1,0 +1,274 @@
+---- 2022-07-25 10:30:51 GMT−4 ----
+
+Using "Appender" app for this note...
+
+Reading "Building a Second Brain: A Proven Method to Organize Your Digital Life and Unlock Your Creative Potential" by Tiago Forte. Skipping around some.
+
+Previously had read "Digital Zettelkasten: Principles, Methods, & Examples" by David Kadavy about a year earlier (with some similar ideas).
+
+Tiago Forte outlines a "CODE" method standing for:
+* Capture (what resonates with you)
+* Organize
+* Distill
+* Express (Execute?) -- create output to effect others
+
+https://fortelabs.co/blog/the-4-levels-of-personal-knowledge-management/  
+https://www.buildingasecondbrain.com/
+
+Lots of good ideas from practice in the book, and I have just toe-dipped a bit in it.
+
+Better summary of CODE:
+"The 4 Levels of Personal Knowledge Management"
+https://fortelabs.co/blog/the-4-levels-of-personal-knowledge-management/
+========
+CODE:
+* Capture: Saving valuable information from the internet and the world around you
+* Organize: Breaking that information into small chunks and preparing them for later use
+* Distill: Extracting the pieces of knowledge most relevant to your current goals
+* Express: Turning your knowledge into creative output that has an impact on others
+========
+
+How can Twirlip/Pointrel support Tiago Forte's CODE process? And Kadavy's/Zettelelkasten's similar one? 
+
+----
+
+The general topic of Personal Knowledge Management (PKM) which Tiago Forte talks about:  
+https://en.wikipedia.org/wiki/Personal_knowledge_management
+
+----
+
+One point made early in Tiago Forte's book as part of its sales pitch is that the end result is a person achieving various goals -- in the sense that organizing data is not an end to itself, but a means to that end of effective action.
+
+[Just updated appender application to support ctrl-enter for saving. Testing that now.]
+
+[Also just made appender have wider text.]
+
+----
+
+Seeing reference to "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking" by Sönke Ahrens. Mentioned in a comment on Digital Zettelkasten book.
+
+While Tiago Forte does not use the word "fractal" in the part I read, he mentions that there is an abundance of knowledge everywhere now, and life (or human community) has a way of providing the information we need -- sometimes by repeating the same life lesson if needed. That is in his section that parallels my sig, where he talks about moving away from hoarding information from fear from a scarcity mindset, to moving to sharing and only keeping key information from an abundance mindset (assuming whatever we need later will come around again if we really need it). He says we just need a few "seeds of wisdom". Or from a fractal information perspective (not his words), the world is full of endless detail we can drill down into -- but we still can benefit some from ideas at the top level we can explore further as needed. 
+
+Mentioning that fractal idea here in the context of the other book in the sense that these ideas in "CODE" are probably in many places (including the Digital Zettelkasten book). Maybe they are called different things or presented differently or have different tweaks. But if the universe is a certain way, or certain processes ten to be efficient, core ideas are likely to be rediscovered and reinvented and bounce around from preson to person eventually.
+
+Same like CFK has list of 20+ different sensemaking techniques that go back to the Medicine Wheel and I-Ching. 
+
+IBIS (and Dialogue Mapping) is another technique for sensemaking and organizing.
+
+----
+
+I liked this summary found searching on the title of Sonke Ahrens' book:
+"How to Take Smart Notes: A Step-by-Step Guide" By Nat Eliason
+https://www.nateliason.com/blog/smart-notes
+========
+In Summary:
+    * Grab your own copy of How to Take Smart Notes
+    * Get a good notebook for taking notes as you read
+    * Handwrite ideas as you have them while reading, and reference where they came from
+    * Upload your highlights and ideas once you finish a book
+    * File those ideas in their most useful contexts
+    * Use those ideas to create new works! 
+=======
+
+Those ideas essentially parallel Tiago Forte's CODE concept (Capture, Organize, Distill, Express).
+
+----
+
+Ultimately though, while an important aspect of Twirlip can be "CODE", there is still a goal of organizing and so on all the millions of email messages (and other non-email messages) that I (and others) have. But hopefully ideas in those messages (and other files, including saved web pages and also personal writing and ebook clippings and saved posts to websites and pictures and voice recordings and so on) can then get processed in a "CODE" way.
+
+----
+
+Interesting how I have occasionally been using the "Edit" feature of the Appender app to extend a recent comment (like undoing a git commit) or fix other issues like changing "Tiago" references to "Tiago Forte" and correcting one case of a typo in his first name. So, that while file editing has proven useful -- even if it breaks the paradigm of atomic appends.
+
+But could do that with search and multiple edits, one to create a new version of each chunk, if each appended item was treated as an individual chunk. Tension there between chunks vs. quick global editing process.
+
+I am wondering if it would be best to have fine-grained more-than-Twirlip7-like approach of many individual files, one per idea or append.
+
+Realizing that having multiple items in a "file" or in a "list" in part of an outline is essentially a form of "tagging". You are tagging multiple items to say they somehow belong together in a file that represents a concept or concern or project somehow.
+
+Alternative though is to just tag smaller things so they cohere together when you search on that tag.
+
+And then you can also put tags in lists under other tags, as a sort of hierarchy.
+
+But advantage of tagging approach is that you can only have an item in one file (unless you copy it and it loses some chunky-identity). But you can have multiple tags on chunks with individual identities. Kind of the way Compendium went with making it possible for an idea to be displayed in multiple maps -- and you could then get a list of the maps it was in.
+
+----
+
+Interesting comparison of note taking systems and progressing between them here by Nat Eliason:  
+"Roam: Why I Love It and How I Use It"  
+https://www.nateliason.com/blog/roam
+========
+I’ve been deeply interested in personal knowledge management for almost 10 years now. 
+   V1 of my interest was a private wiki I created in college to help organize the notes I started taking from non-fiction books I was reading.
+   V2 was a sort of hacky combination of Evernote and Google Docs. It worked fine, but there was no structure, and it just got me out of the very janky wiki setup. 
+   V3 happened when I discovered Tiago Forte, and implemented his Second Brain ideas into my Evernote setup. 
+   V3 was special. It was the first time a digital architecture changed how I consumed information. When I look back on my kindle highlights pre-BASB, they’re dramatically different from my book highlights now. I now read with a mind towards synthesis and distillation, where the idea of reading something without taking notes from it seems absurd.
+    But there were still some frustrations with V3. Then Adam Keesling turned me on to Roam. Roam is V4. 
+=======
+
+Some of this reminds me of the "Ideas" app I implemented in Twirlip15 based on some notions from "Foam":
+https://github.com/foambubble/foam
+"Foam is a personal knowledge management and sharing system inspired by Roam Research, built on Visual Studio Code and GitHub. You can use Foam for organising your research, keeping re-discoverable notes, writing long-form content and, optionally, publishing it to the web."
+
+I had not really noticed that I recall Foam was based on Roam.
+
+Nat Eliason continues to explain "Siloed vs. Fluid Information Structure" and how other note-taking systems have notes nested hierarchically but Roam has each note as an independent thing that can be linked to (like a web page or wiki page?). You can then create "hierarchies" but they are imposed by you on the data and a note can be in multiple hierarchies. He also talks about he easy it is to create a note (sounds essentially like creating a wiki page...).
+
+He makes a big point about bi-drectional linking between pages (essentially, what Pointrel triples has at the start).
+
+He also talks about searching on a word and then creating links from those pages back to a page about the concept.
+
+But that makes me wonder if you really need the links at all? Maybe just need privileged or higher priority pages about words or concepts? But three reasons links help:
+* some concepts are multiple words (e.g. self-replicating space habitats)
+* some concepts can be described in multiple ways (e.g. space habitats, space colonies, space settlements)
+* a word or phrase can have multiple senses as in WordNet (e.g. "space" can mean outer space, white space on a page, the space bar on a typewriter, a building enclosing a volume, an area of computer storage, an activity of separating things like to "space out", a reference to people not being connected to their surroundings like "space out" or "space cadet", or a polticial or emotional circumstance like "an executive holding the space" for a Teal organization).
+
+But is there any way to help with multi-word concepts, multiple descriptions, and multiple senses other than links? 
+
+Maybe search is good enough if it was better or with just a bit of content hinting?
+
+Would be nice if people could just write plain text and a system could show you what were possible associated items when you hovered over text or asked for associations. Or if a summary of related topics could be provided on request.
+
+---- 2022-07-25 13:45:38 GMT−4 ----
+
+Reading more by Nat Eliason on Roam and he mentions adapting Tiago Forte's PARA approach:
+"I’ve adapted Tiago’s PARA system to Roam by removing the Resources and Archive sections (you really don’t need them in Roam), and adding a section for Short and Long Term goals. "
+
+He links to:
+"The PARA Method: A Universal System for Organizing Digital Information"
+https://fortelabs.co/blog/para/  
+"P.A.R.A. stands for Projects — Areas — Resources — Archives, the four top-level categories that encompass every type of information you might encounter in your work and life."
+
+Nat Eliason says: "Roam turns out to be phenomenal as a CRM, possibly the best solution I've found. First, every time you interact with someone you can tag them with a page link. Then on their page, create a standard Metadata format for People."
+
+I am reminded of "Communications Metrics" by Rod Welch -- which he has developer for something like 30 years:  
+http://www.welchco.com/
+" Faster, better, cheaper intelligence using the the science of Communication Metrics strengthens management under the locality principle and complementarity.
+..
+Timely, accurate intelligence enables precision access to critical details based on situational awareness. Eight (8) steps strengthen communication, command and control. A 3-layer architecture integrates management science (e.g., MBO, ISO, PMBOK) with discoveries in cognitive science, and computer science to connect the dots of cause and effect. Combining chronology, context, and connection transforms information from daily meetings, calls, and documents into the power of knowledge for saving lives, time, and money."
+
+More links: http://www.welchco.com/00601.HTM#4460
+
+One from there: 
+"Communication Metrics: Typical Day Scenario using the SDS Program"
+http://www.welchco.com/03/00050/01/09/01/15/00101.HTM#0001
+========
+"This scenario illustrates how Communication Metrics is accomplished using the SDS program by a typical office worker i.e., what is done differently that improves earnings. The first page or so is an overview of concepts followed by a typical day using SDS. ...
+..
+SDS does not replace existing software programs. It leverages human acuity to strengthen understanding and follow up on daily details, commonly called listening, by capturing organizational memory, and adding "intelligence" that aligns work performed with objectives, requirements and commitments. Understanding and follow up are the critical metrics of listening that make communication effective. Everybody knows listening is the weak link in management. People either don't understand, and take the wrong action; or, do understand, but forget to take action. Additionally, people can understand in the moment, but interceding events cause meaning to drift away before action can be taken, again causing follow up to fail. More devastating is understanding incorrectly, or correctly, but telling others in secondary and tertiary communications a different story, illustrated by the friendly "telephone game," that spreads error like a virus throughout an organization, causing incorrect actions to multiply, commonly called bumbling.
+..
+Information overload increases communication failure, because human biology is not designed for ordinary listening to succeed under stress of cascading problems and escalating complexity that eviscerate productivity and earnings. As a result, incessant calls for better listening fall on deaf ears, and communication has become the biggest risk in enterprise. This offers a significant opportunity to improve earnings by making technology that aids listening a powerful partner for leadership. SDS is a unique, powerful technology that enables proactive support for understanding and follow up that reduce mistakes, avoid delay, save time and improve earnings, by building and maintaining shared meaning, tracking action items, and linking daily work to original sources that gets work done correctly, on time and within budget.
+..
+Of course this linear mode of reading how SDS is used can seem tedious. The advantage of SDS is using technology to reduce the tedium and expense of performing routine tasks that improve results, by automatically linking details of daily work to strengthen the way the mind uses its experience to understand cause and effect, and then to plan and carry out follow up action to meet objectives, requirements and commitments that arise in daily life. SDS enables people to use good management practices, and good judgement, consistently, which is otherwise impossible in the New World Order of information overload. ..."
+========
+
+So another example of information being fractal and also being re-inventing or re-discovering or re-connecting with common ideas?
+
+----
+
+Interesting comment exchange on a video Nat Eliason made on Roam:
+"What's So Great About Roam Research?"
+https://www.youtube.com/watch?v=syKAar8ZD-U
+========
+AK 1 year ago
+Relying on a paid service to store your notes in a cloud seems completely bonkers to me.
+--
+Nat Eliason 1 year ago
+More than trusting a free one?
+--
+AK 1 year ago
+@Nat Eliason  my problem is not so much that it is paid but that it works as a online service. I wouldn't mind paying a (resonable) up front cost for it as software with a perpetual license where everything is stored locally and the cloud is only used for backups. Yes, the features look very promising but  my chief concern is what happens to my notes when the service no longer exists. Who is to say they'll be around 10 years from now, let alone 20 or 30 years? Let's say I use the service very intensely and produce a lot of notes. I'm going to want to be able to refer to them for the rest of my life. Even if I can export them as plain text I'd imagine the notes would be a jumbled mess without the RR structure. 
+========
+
+Which is all an argument for free and open *standards* for storing information. Then whether you use a local application (FOSS or propietary) or a paid remote service (FOSS or proprietary), your notes are (presumably) always interoperable and moveable.
+
+That leads back to the idea of documented data schemas (perhaps on top of JSON or something else) for storing networks of data. Or perhaps something like Pointrel with triples as an underlying standard... But you still need standards about shared concepts and what goes into an instance of a class (type).
+
+Also as I start to watch that video and he mentions Evernote and Notion, realizing he did not mention org-mode for emacs (basically an outliner):
+https://orgmode.org/
+========
+A GNU Emacs major mode for keeping notes, authoring documents, computational notebooks, literate programming, maintaining to-do lists, planning projects, and more — in a fast and effective plain text system. ...
+Org is a highly flexible structured plain text file format, composed of a few simple, yet versatile, structures — constructed to be both simple enough for the novice and powerful enough for the expert.
+Get a glimpse of the expressive power Org offers in the example below. Click the headings and links to discover how Org intelligently folds structural content. ...
+Nearly every Org user has a story to tell about how Org enables and empowers them — some have found it so useful that they have written (scientific) papers about the value of Org for conducting reproducible research. Some have produced third party tools to enjoy Org outside of Emacs, such as mobile applications.
+========
+
+Just like the original Augment by Doug Englebart and others was essentially a hierarchical outliner plus some other utilities like for video conferencing -- where the source code was also represented essentially as an outline.
+
+Maybe once again as with Slack these systems are examples of commercial forces moving into an area with free solutions and open standards, but with a lot of marketing and an emphasis on initial ease-of-use and proprietary lock-in?
+
+---- 2022-07-25 21:22:36 GMT−4 ----
+
+Looking at Roam video, seems essentially a wiki -- with the big innovation being that at the bottom of each wiki page, you see a list of pages that link to the page. No doubt other interesting or useful features, but that  seems the core of it (so far, three minute in of the eleven minute video).
+
+Advertising on video for shared spreadsheet / dashboard tool "monday.com".
+
+Realizing there is a big difference between reviewing a wiki you creates (which Tiago Forte. says is external hooks into your internal tacit knowledge) versus reviewing a wiki someone else built (for themselves) where things are mainly new and you don't have the larger implicit context.
+
+Also realizing the Roam (which has narrow pages, centerd) could benefit from the simplest federated wiki notion of having narrow pages the go from left to right as you open new ones, so you can see two or more side by side in your browser.
+
+Flat interlinked system (Roam) vs. filing cabinet (Evernote, Notion)
+
+"You never have to think about where a page goes, and everything is automatically linked in both directions.
+
+Roam can filter the references to other pages at the bottom of a wiki page.
+
+Notion of "TODO" items with a checkbox in Roam.
+
+Powerful notion of having a page for each day...
+
+The day page helps with having a "lifestream" of recording successive interactions with people or projects. The day page (or succession of day pages) serves as an index of sorts.
+
+Seen in passing in video, a reference to another video mentioned on this page (by a search result):
+"Interview with Conor White-Sullivan, Founder of Roam"
+https://fortelabs.co/blog/interview-with-conor-white-sullivan-founder-of-roam/
+"This is a one-hour interview, discussion, demonstration, and debate between Conor White-Sullivan, founder of “note-taking tool for networked thought” Roam, and myself. We’ve exchanged many messages on Twitter and other platforms about our differing approaches to knowledge management and note-taking. In this in-depth conversation, we talk about Conor’s background and what led him to dedicate himself to created Roam, the principles and insights that underlie the product’s design, and his opinions on privacy, security, networks, connecting ideas, and many other topics."
+
+Paywalled, but a funny title:
+"The Notetaking Cold War: Digging into the philosophical roots of the battle
+between Tiago Forte and Conor White-Sullivan"
+https://every.to/superorganizers/the-notetaking-cold-war-591898
+
+A difference between forcing everything into a hierarchical outline *versus* having flat pages some of which might have lists or outlines in them.
+
+Using Roam as a: 
+* Knowledge management tool
+* task manager
+* CRM (Customer/Communications/Constituent/Contact Relationship Manager)
+* Tool for writing 
+
+(Tool for Writing vs. say Scrivener with outliner and cork board?)
+
+Roam pops up matching search list menus when you put things in brackets or use hash (I think) or use "/" for macro...
+
+Roam does have a sidebar. Not quite like federated wiki though of multiple items marching to the right. Seems like only one at a time on the sidebar?
+
+Roam supports "references" where you essentially transclude (i.e. from Xanadu) some content from another wiki page (via an oddly-named string of characters that somehow refers to part of another wiki page).
+
+Roam will also show links to users of content next to the original of transcluded content.
+
+Video comments mention:
+
+https://workflowy.com/features/
+"Capture; Organize; Analyze; Share" (Proprietary)
+
+https://zim-wiki.org/
+Desktop free software (GPL v2)
+========
+Zim is a graphical text editor used to maintain a collection of wiki pages. Each page can contain links to other pages, simple formatting and images. Pages are stored in a folder structure, like in an outliner, and can have attachments. Creating a new page is as easy as linking to a nonexistent page. All data is stored in plain text files with wiki formatting. Various plugins provide additional functionality, like a task list manager, an equation editor, a tray icon, and support for version control.
+
+Zim can be used to:
+
+    Keep an archive of notes
+    Keep a daily or weekly journal
+    Take notes during meetings or lectures
+    Organize task lists
+    Draft blog entries and emails
+    Do brainstorming
+
+Zim handles several types of markup, like headings, bullet lists and of course bold, italic and highlighted. This markup is saved as wiki text so you can easily edit it with other editors. Because of the autosave feature, you can switch between pages and follow links while editing without worries.
+========
+
+---- 2022-07-25 22:40:13 GMT−4 ----
+
+Finished watching video and adding above comments.
