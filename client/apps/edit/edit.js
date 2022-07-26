@@ -13,6 +13,7 @@ let editing = false
 let editedContents = ""
 let isBigFile = false
 let fileSaveInProgress = false
+let fileDoesNotExist = false
 
 const progressObject = {
     isFileLoaded: false,
@@ -40,6 +41,7 @@ async function loadSmallFile(newFileName) {
     } else {
         chosenFileContents = ""
     }
+    fileDoesNotExist = errorMessage === "Problem stat-ing file"
     m.redraw()
 }
 
@@ -155,7 +157,7 @@ const ViewEdit = {
                 "Loading...",
                 m("div", progressObject.status)
             ),
-            (!chosenFileLoaded && chosenFileContents === "") && m("div", 
+            (!chosenFileLoaded && chosenFileContents === "" && !fileDoesNotExist) && m("div", 
                 m("button", {onclick: () => loadBigFile(filePathFromParams).then(() => {
                     setMode(urlParams.get("mode") || "edit")
                 })}, "The file is large. Load it anyway?"),
