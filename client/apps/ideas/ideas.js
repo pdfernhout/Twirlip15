@@ -1,3 +1,7 @@
+// Pointrel-like ideas inspired a bit by "Foam"
+// https://news.ycombinator.com/item?id=23666950
+// https://github.com/foambubble/foam
+
 /* global m, showdown, cytoscape */
 import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
@@ -14,7 +18,7 @@ let triples = []
 let allLinks = []
 let filterMode = "and"
 
-let navigate = "links" // "graph" "triples"
+let navigate = "files" // "links" "graph" "triples"
 
 let cy
 
@@ -67,8 +71,12 @@ function addLeadingZeros(n) {
 async function addFile() {
     const today = new Date()
     const suggestedFileName = today.getFullYear() + "-" + addLeadingZeros(today.getMonth() + 1) + "-" + addLeadingZeros(today.getDate()) + "-ideas"
-    let newFileName = prompt("New file name?", suggestedFileName)
+    let newFileName = prompt("New file name? (spaces not allowed)", suggestedFileName)
     if (newFileName) {
+        if (newFileName.includes(" ")) {
+            alert("Spaces are not allowed in file name")
+            return
+        }
         if (!newFileName.endsWith(".md")) {
             newFileName =  newFileName + ".md"
         }
@@ -83,6 +91,7 @@ async function addFile() {
         if (apiResult) {
             window.location = fileName + "?twirlip=edit"
         }
+        directoryFiles.push({name: newFileName})
     }
 }
 
@@ -164,6 +173,7 @@ function satisfiesFilter(name) {
         for (let tag of tags) {
             if (!hasTag(name, tag)) return false
         }
+        console.log("satisfiesFilter", true)
         return true
     } else if (filterMode === "or") {
         for (let tag of tags) {
@@ -194,11 +204,13 @@ function viewFileEntry(fileInfo) {
     if (!satisfiesFilter(removeExtension(fileInfo.name))) {
         return []
     }
+    console.log("viewFileEntry", fileInfo)
+    const baseURL = directoryPath + fileInfo.name
     return m("div.ba.ma2.pa2.br3",
             m("div.mb1",
-                m("a.link", {href: fileInfo.name + "?twirlip=edit"}, "✎"),
-                m("a.link", {href: fileInfo.name + "?twirlip=edit&mode=view"}, "📄 "),
-                m("a", {href: fileInfo.name + "?twirlip=view-md"}, removeExtension(fileInfo.name))
+                m("a.link", {href: baseURL + "?twirlip=edit"}, "✎"),
+                m("a.link", {href: baseURL + "?twirlip=edit&mode=view"}, "📄 "),
+                m("a", {href: baseURL + "?twirlip=view-md"}, removeExtension(fileInfo.name))
             ),
             fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo))
         )
@@ -234,7 +246,40 @@ function viewDirectoryFiles() {
         : m("div", "Loading file data...")
 }
 
+let lastSortFiles = "files"
+
+function sortArrowFiles(field) {
+    if (field === lastSortFiles) return "↓"
+    if (field + "-reversed" === lastSortFiles) return "↑"
+    return ""
+}
+
+function sortFiles(field) {
+    lastSortFiles === field
+        ? lastSortFiles = field + "-reversed"
+        : lastSortFiles = field
+}
+
+function getSortedFiles(field) {
+    if (!directoryFiles) return  []
+    const files = directoryFiles.slice()
+    files.sort((a, b) => {
+        if (a.name.toLowerCase() === b.name.toLowerCase()) return 0
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+        throw new Error("sortFiles: unexpected sort case")
+    })
+    if (lastSortTriples === field + "-reversed") files.reverse()
+    return files
+}
+
 let lastSortTriples = "a"
+
+function sortArrowTriples(field) {
+    if (field === lastSortTriples) return "↓"
+    if (field + "-reversed" === lastSortTriples) return "↑"
+    return ""
+}
 
 function sortTriples(field) {
     lastSortTriples === field
@@ -256,6 +301,12 @@ function sortTriples(field) {
 
 let lastSortLinks = "name"
 
+function sortArrowLinks(field) {
+    if (field === lastSortLinks) return "↓"
+    if (field + "-reversed" === lastSortLinks) return "↑"
+    return ""
+}
+
 function sortLinks(field) {
     lastSortLinks === field
         ? lastSortLinks = field + "-reversed"
@@ -269,16 +320,21 @@ function sortLinks(field) {
     if (lastSortLinks === field + "-reversed") allLinks.reverse()
 }
 
-function sortArrowTriples(field) {
-    if (field === lastSortTriples) return "↓"
-    if (field + "-reversed" === lastSortTriples) return "↑"
-    return ""
-}
-
-function sortArrowLinks(field) {
-    if (field === lastSortLinks) return "↓"
-    if (field + "-reversed" === lastSortLinks) return "↑"
-    return ""
+function viewFiles() {
+    return m("table", {
+            style: {
+                display: navigate === "files" ? "block" : "none"
+            }
+        },
+        m("tr",
+            m("th.bg-light-silver", {onclick: () => sortFiles("files")}, "File" + sortArrowFiles("files")),
+        ),
+        getSortedFiles().map(fileInfo => 
+            m("tr", 
+                m("td.pointer.w-10", { onclick: () => openOrFilter(removeExtension(fileInfo.name)) }, removeExtension(removeExtension(fileInfo.name), "-ideas")),
+            )
+        )
+    )
 }
 
 function viewLinks() {
@@ -350,12 +406,14 @@ const Ideas = {
         return m("div.flex.flex-row.h-100.w-100",
             m("div.flex-auto.overflow-y-auto",
                 m("div.ma1", 
-                    m("button" + selectedClass( navigate === "links"), {onclick: () => navigate = "links"}, "Links"),
-                    m("button.ml2" + selectedClass( navigate === "graph"), {onclick: () => navigate = "graph"}, "Graph"),
+                    m("button" + selectedClass( navigate === "files"), {onclick: () => navigate = "files"}, "Files"),
+                    m("button.ml2" + selectedClass( navigate === "links"), {onclick: () => navigate = "links"}, "Links"),
                     m("button.ml2" + selectedClass( navigate === "triples"), {onclick: () => navigate = "triples"}, "Triples"),
+                    m("button.ml2" + selectedClass( navigate === "graph"), {onclick: () => navigate = "graph"}, "Graph"),
                     m("button.ml4", {onclick: () => window.location = directoryPath + "?twirlip=filer"}, "Open Filer"),
                     m("button.ml2", {onclick: () => addFile()}, "+ New File")
                 ),
+                viewFiles(),
                 viewLinks(),
                 viewTriples(),
                 viewGraph()
