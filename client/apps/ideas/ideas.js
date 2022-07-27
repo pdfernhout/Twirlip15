@@ -141,12 +141,15 @@ function convertMarkdown(fileInfo) {
     const text = fileInfo.contents
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const convertedHTML = converter.makeHtml(text)
+    console.log("convertMarkdown", fileInfo.name)
+    console.log("convertedHTML", convertedHTML)
     const re1 = /<a href="([^?>]*)">/g
     fileInfo.links = Array.from(convertedHTML.matchAll(re1)).map(match => match[1])
     // Add ?twirlip=view-md as needed
     const re2 = /(<a href="[^?>]*)(">)/g
     const html2 = convertedHTML.replace(re2, "$1?twirlip=view-md$2")
     fileInfo.markdown = html2
+    console.log("convertedHTML", convertedHTML)
     return html2
 }
 
@@ -337,6 +340,14 @@ function viewFiles() {
     )
 }
 
+function displayLink(url) {
+    console.log("url", url)
+    if (!url.includes("/") && url.includes(".md") && !url.includes("?")) {
+        return url + "?twirlip=view-md"
+    }
+    return url
+}
+
 function viewLinks() {
     return m("table", {
             style: {
@@ -350,7 +361,7 @@ function viewLinks() {
         allLinks.map(link => 
             m("tr", 
                 m("td.pointer.w-10", { onclick: () => openOrFilter(removeExtension(link.name)) }, removeExtension(removeExtension(link.name), "-ideas")),
-                m("td.pl2.w-90", m("a", {href: link.url, target: "_blank", rel: "noopener noreferrer"}, link.url)),
+                m("td.pl2.w-90", m("a", {href: displayLink(link.url), target: "_blank", rel: "noopener noreferrer"}, link.url)),
             )
         )
     )
