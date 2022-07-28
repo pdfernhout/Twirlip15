@@ -467,7 +467,7 @@ function makeDirectoryFileNameDict() {
 
 function openOrFilter(id) {
     if (id.startsWith("http:") || id.startsWith("https:")) {
-        window.location = id
+        window.open(id, "_blank")
     } else {
         updateFilter(id)
     }
