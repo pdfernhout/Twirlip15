@@ -16,7 +16,7 @@ let errorMessage = ""
 let filter = ""
 let triples = []
 let allLinks = []
-let filterMode = "and"
+let filterMode = "or"
 
 let navigate = "files" // "links" "graph" "triples"
 
@@ -141,15 +141,12 @@ function convertMarkdown(fileInfo) {
     const text = fileInfo.contents
     const converter = new showdown.Converter({simplifiedAutoLink: true})
     const convertedHTML = converter.makeHtml(text)
-    console.log("convertMarkdown", fileInfo.name)
-    console.log("convertedHTML", convertedHTML)
     const re1 = /<a href="([^?>]*)">/g
     fileInfo.links = Array.from(convertedHTML.matchAll(re1)).map(match => match[1])
     // Add ?twirlip=view-md as needed
     const re2 = /(<a href="[^?>]*)(">)/g
     const html2 = convertedHTML.replace(re2, "$1?twirlip=view-md$2")
     fileInfo.markdown = html2
-    console.log("convertedHTML", convertedHTML)
     return html2
 }
 
@@ -176,7 +173,6 @@ function satisfiesFilter(name) {
         for (let tag of tags) {
             if (!hasTag(name, tag)) return false
         }
-        console.log("satisfiesFilter", true)
         return true
     } else if (filterMode === "or") {
         for (let tag of tags) {
@@ -203,11 +199,29 @@ function updateFilter(newFilter) {
     setTimeout(() => cy.resize(), 50)
 }
 
+function viewBacklinks(fileInfo) {
+    const backlinks = {}
+    const name = fileInfo.name
+    for (const linkInfo of allLinks) {
+        if (linkInfo.url === name) {
+            backlinks[linkInfo.name] = true
+        }
+
+    }
+    const backlinkNames = Object.keys(backlinks)
+    if (!backlinkNames.length) return []
+    return m("div",
+        m("div", "Backlinks:"), 
+        backlinkNames.map(backlink => m("div", 
+            m("a.mt2", { href: displayLink(backlink) }, backlink)
+        ))
+    )
+}
+
 function viewFileEntry(fileInfo) {
     if (!satisfiesFilter(removeExtension(fileInfo.name))) {
         return []
     }
-    console.log("viewFileEntry", fileInfo)
     const baseURL = directoryPath + fileInfo.name
     return m("div.ba.ma2.pa2.br3",
             m("div.mb1",
@@ -215,7 +229,8 @@ function viewFileEntry(fileInfo) {
                 m("a.link", {href: baseURL + "?twirlip=edit&mode=view"}, "📄 "),
                 m("a", {href: baseURL + "?twirlip=view-md"}, removeExtension(fileInfo.name))
             ),
-            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo))
+            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo)),
+            viewBacklinks(fileInfo)
         )
     )
 }
@@ -341,7 +356,6 @@ function viewFiles() {
 }
 
 function displayLink(url) {
-    console.log("url", url)
     if (!url.includes("/") && url.includes(".md") && !url.includes("?")) {
         return url + "?twirlip=view-md"
     }
