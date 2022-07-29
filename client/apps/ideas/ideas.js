@@ -7,6 +7,7 @@ import "../../vendor/mithril.js"
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 import "../../vendor/showdown.js"
 import "../../vendor/cytoscape.umd.js"
+import { expander } from "../../common/menu.js"
 
 const baseStorageKeyForNodes = "twirlip15-ideas--nodes"
 
@@ -251,12 +252,14 @@ function viewDirectoryFiles() {
                             onchange: event => updateFilter(event.target.value)
                         }),
                         m("span.ml1.pointer", {onclick: () => updateFilter(""), disabled: !filter}, "X"),
-                        m("div.mt2", "Tags: |", allTags().map(tag => m("span.ml1.pointer.i", {
-                            onclick: () => updateFilter((filter ? filter + " " : "") + tag)
-                        }, tag + " | "))),
-                        m("div.mt2", "Pages: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
-                            onclick: () => updateFilter((filter ? filter + " " : "") + removeExtension(fileInfo.name))
-                        }, m("span.dib", removeExtension(fileInfo.name) + " | "))))
+                        expander("Tags and Files", () => [
+                            m("div.mt2", "Tags: |", allTags().map(tag => m("span.ml1.pointer.i", {
+                                onclick: () => updateFilter((filter ? filter + " " : "") + tag)
+                            }, tag + " | "))),
+                            m("div.mt2", "Pages: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
+                                onclick: () => updateFilter((filter ? filter + " " : "") + removeExtension(fileInfo.name))
+                            }, m("span.dib", removeExtension(fileInfo.name) + " | "))))
+                        ])
                     ),
                     directoryFiles.map(fileInfo => viewFileEntry(fileInfo))
                 )
