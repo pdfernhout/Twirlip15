@@ -253,10 +253,10 @@ function viewDirectoryFiles() {
                         }),
                         m("span.ml1.pointer", {onclick: () => updateFilter(""), disabled: !filter}, "X"),
                         expander("Tags and Files", () => [
-                            m("div.mt2", "Tags: |", allTags().map(tag => m("span.ml1.pointer.i", {
+                            m("div.mt2", "Tags: ", allTags().map(tag => m("span.ml1.pointer.i", {
                                 onclick: () => updateFilter((filter ? filter + " " : "") + tag)
                             }, tag + " | "))),
-                            m("div.mt2", "Files: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
+                            m("div.mt2", "Files: ", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
                                 onclick: () => updateFilter((filter ? filter + " " : "") + removeExtension(fileInfo.name))
                             }, m("span.dib", removeExtension(fileInfo.name) + " | "))))
                         ])
