@@ -614,8 +614,8 @@ function startup() {
     loadDirectory(startDirectory, "replace")
     m.mount(document.body, Ideas)
 
-    window.addEventListener("storage", () => {
-        if (event.key !== storageKeyForNodes()) return
+    window.addEventListener("storage", e => {
+        if (e.key !== storageKeyForNodes()) return
         renderCytoscape()
     })
 }
