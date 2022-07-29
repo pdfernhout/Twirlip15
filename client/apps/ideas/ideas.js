@@ -256,7 +256,7 @@ function viewDirectoryFiles() {
                             m("div.mt2", "Tags: |", allTags().map(tag => m("span.ml1.pointer.i", {
                                 onclick: () => updateFilter((filter ? filter + " " : "") + tag)
                             }, tag + " | "))),
-                            m("div.mt2", "Pages: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
+                            m("div.mt2", "Files: |", directoryFiles.map(fileInfo => m("span.ml1.pointer", {
                                 onclick: () => updateFilter((filter ? filter + " " : "") + removeExtension(fileInfo.name))
                             }, m("span.dib", removeExtension(fileInfo.name) + " | "))))
                         ])
