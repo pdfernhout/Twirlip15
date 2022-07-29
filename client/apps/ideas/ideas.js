@@ -25,6 +25,10 @@ let cy
 
 let loadingAllFiles = true
 
+window.onpageshow = function() {
+    loadDirectory(directoryPath)
+}
+
 function showError(error) {
     errorMessage = error
 }
@@ -140,13 +144,20 @@ async function loadFileContents(fileInfo) {
 function convertMarkdown(fileInfo) {
     if (fileInfo.markdown) return fileInfo.markdown
     const text = fileInfo.contents
+
+    const re0 = /\[\[([^\]]*)\]\]/g
+    const preprocessedText = text.replace(re0, "[$1]($1.md)")
+
     const converter = new showdown.Converter({simplifiedAutoLink: true})
-    const convertedHTML = converter.makeHtml(text)
+    const convertedHTML = converter.makeHtml(preprocessedText)
+
     const re1 = /<a href="([^?>]*)">/g
     fileInfo.links = Array.from(convertedHTML.matchAll(re1)).map(match => match[1])
+    
     // Add ?twirlip=view-md as needed
     const re2 = /(<a href="[^?>]*)(">)/g
     const html2 = convertedHTML.replace(re2, "$1?twirlip=view-md$2")
+
     fileInfo.markdown = html2
     return html2
 }
