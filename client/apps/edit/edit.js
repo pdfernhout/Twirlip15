@@ -149,6 +149,14 @@ function editFileContents() {
     )
 }
 
+async function makeFile() {
+    errorMessage = ""
+    await TwirlipServer.fileAppend(chosenFileName, "")
+    fileDoesNotExist = false
+    chosenFileLoaded = true
+    m.redraw()
+}
+
 const ViewEdit = {
     view: () => {
         return m("div.w-100.h-100",
@@ -162,7 +170,11 @@ const ViewEdit = {
                     setMode(urlParams.get("mode") || "edit")
                 })}, "The file is large. Load it anyway?"),
             ),
-            chosenFileLoaded && editFileContents()
+            chosenFileLoaded && editFileContents(),
+            fileDoesNotExist && m("div",
+                "File does not exist",
+                m("button", { onclick: makeFile }, "Make file?")
+            )
         )
     }
 }
