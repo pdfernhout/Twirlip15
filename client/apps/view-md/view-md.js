@@ -7,6 +7,7 @@ let errorMessage = ""
 let chosenFileName = ""
 let chosenFileContents = null
 let chosenFileLoaded = false
+let fileDoesNotExist = false
 
 function showError(error) {
     errorMessage = error
@@ -24,6 +25,7 @@ async function loadFileContents(newFileName) {
         chosenFileLoaded = true
     } else {
         chosenFileContents = ""
+        fileDoesNotExist = errorMessage === "Problem stat-ing file"
     }
 }
 
@@ -40,6 +42,10 @@ function viewFileContents() {
     return m("div", m.trust(convertMarkdown(chosenFileContents)))
 }
 
+function editFile() {
+    window.location = ("" + window.location).replace("?twirlip=view-md", "?twirlip=edit")
+}
+
 const ViewMarkdown = {
     view: () => {
         return m("div.ma2.measure-wide",
@@ -52,6 +58,10 @@ const ViewMarkdown = {
             ),
             chosenFileName && chosenFileLoaded && m("div",
                 viewFileContents()
+            ),
+            fileDoesNotExist && m("div",
+                "File does not exist",
+                m("button", { onclick: editFile }, "Edit file?")
             )
         )
     }
