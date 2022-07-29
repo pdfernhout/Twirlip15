@@ -61,6 +61,7 @@ import { HashUUIDTracker } from "../../common/HashUUIDTracker.js"
 import { UUID } from "../../common/UUID.js"
 import { Toast } from "../../common/Toast.js"
 import { Triplestore } from "../../common/Triplestore.js"
+import { expander } from "../../common/menu.js"
 
 let collageUUID
 
@@ -439,16 +440,6 @@ function getAllLists() {
 
 function getAllLinks() {
     return t.find(null, "type", "Link")
-}
-
-const expanded = {}
-function expander(name, callback) {
-    return m("div.mt2.mb2",
-        m("span.mb2", {
-            onclick: () => expanded[name] = !expanded[name]
-        }, m("span.mr1", name), (expanded[name] ? "▾" : "▸" )),
-        expanded[name] && m("div.ml4.ma1", callback())
-    )
 }
 
 function sortItems(a, b) {

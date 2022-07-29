@@ -58,3 +58,13 @@ export function interceptSaveKey(onSaveHandler) {
         return true
     }
 }
+
+const expanded = {}
+export function expander(name, callback) {
+    return m("div.mt2.mb2",
+        m("span.mb2", {
+            onclick: () => expanded[name] = !expanded[name]
+        }, m("span.mr1", name), (expanded[name] ? "▾" : "▸" )),
+        expanded[name] && m("div.ml4.ma1", callback())
+    )
+}
