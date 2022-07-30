@@ -139,6 +139,7 @@ function clearPreviewFetchQueue() {
 }
 
 function queuePreviewsIfNeeded() {
+    clearPreviewFetchQueue()
     if (showPreview) {
         const selectedFileNames = Object.keys(selectedFiles)
         for (const fileInfo of directoryFiles) {
