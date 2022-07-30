@@ -241,7 +241,7 @@ function viewFileEntry(fileInfo) {
                 m("a.link", {href: baseURL + "?twirlip=edit&mode=view"}, "📄 "),
                 m("a", {href: baseURL + "?twirlip=view-md"}, removeExtension(fileInfo.name))
             ),
-            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(convertMarkdown(fileInfo)),
+            fileInfo.contents && m("div.ml2.overflow-auto.mh-15rem", m.trust(fileInfo.markdown),
             viewBacklinks(fileInfo)
         )
     )
@@ -624,8 +624,8 @@ function saveNodePositions() {
 }
 
 function startup() {
-    const startDirectory =  decodeURI(window.location.pathname)
-    loadDirectory(startDirectory, "replace")
+    directoryPath =  decodeURI(window.location.pathname)
+    // loadDirectory is called from onpageshow
     m.mount(document.body, Ideas)
 
     window.addEventListener("storage", e => {
