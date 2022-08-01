@@ -21,6 +21,12 @@ function test() {
     o("test", "children", "", "clear")
 
     console.log("test clear", o("test"))
+
+    o("test2", "height", 112)
+    o("test2", "width", 160)
+
+    console.log("test2", o("test2"))
+    console.log("test (again)", o("test"))
 }
 
 test()
