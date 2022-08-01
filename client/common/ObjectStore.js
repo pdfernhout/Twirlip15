@@ -5,7 +5,7 @@ export function ObjectStore(/* directoryPath */) {
 
     return function(a, b, c, mode="replace") {
 
-        if (a && b && c) {
+        if (a !== undefined && b  !== undefined && c !== undefined) {
             // Set value
             const aString = canonicalize(a)
             const bString = canonicalize(b)
@@ -15,16 +15,31 @@ export function ObjectStore(/* directoryPath */) {
             if (mode === "insert" || mode === "remove" || mode === "clear") {
                 isMulti = true
             }
+            console.log("mode multi", mode, isMulti)
             if (isMulti) {
-                if (!objects[aString][bString]) objects[aString][bString] = []
-                objects[aString][bString].push(cString)
+                if (mode === "insert") {
+                    if (!objects[aString][bString]) objects[aString][bString] = []
+                    objects[aString][bString].push(cString)
+                } else if (mode === "remove") {
+                    if (objects[aString][bString]) {
+                        const i = objects[aString][bString].indexOf(cString)
+                        if (i) objects[aString][bString].splice(i, 1)
+                    }
+                } else if (mode === "clear") {
+                    if (objects[aString][bString]) {
+                        console.log("clearing")
+                        delete objects[aString][bString]
+                    }
+                } else {
+                    throw new Error("unexpected array mode")
+                }
             } else {
                 objects[aString][bString] = cString
             }
             return objects[aString][bString]
         }
 
-        if (a && b) {
+        if (a !== undefined && b !== undefined) {
             // get value
             const aString = canonicalize(a)
             if (!objects[aString]) return undefined
@@ -34,7 +49,7 @@ export function ObjectStore(/* directoryPath */) {
             return cValue.map(v => JSON.parse(v))
         }
 
-        if (a) {
+        if (a !== undefined) {
             // get entire object
             const aString = canonicalize(a)
             const internalObject = objects[aString]
@@ -55,7 +70,7 @@ export function ObjectStore(/* directoryPath */) {
             }            
             return object
         }
-        
+
         throw new Error("function parameters needed")
     }
 }
