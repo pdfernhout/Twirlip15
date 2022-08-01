@@ -1,37 +1,52 @@
 import canonicalize from "../vendor/canonicalize.js"
 
-export function ObjectStore(/* directoryPath */) {
+/* global sha256 */
+import "../vendor/sha256.js"
+
+export function ObjectStore(twirlipServer, directoryPath) {
     const objects = {}
 
-    return function(a, b, c, mode="replace") {
+    async function writeTriple(triple) {
+        if (!twirlipServer || !directoryPath) return
+        const fileName = sha256(triple.a)
+        const contentsToAppend = JSON.stringify(triple)
+        // TODO: Make the path nested a few levels based on hash
+        // TODO: Ensure intermediate directory levels are created
+        const fullFilePath = directoryPath + fileName
+        const apiResult = await twirlipServer.fileAppend(fullFilePath, contentsToAppend)
+        return apiResult
+    }
+
+    return function(a, b, c, operation="replace", write=true) {
 
         if (a !== undefined && b  !== undefined && c !== undefined) {
             // Set value
             const aString = canonicalize(a)
             const bString = canonicalize(b)
             const cString = canonicalize(c)
+            if (write) writeTriple({a: aString, b: bString, c: cString, o: operation})
             if (!objects[aString]) objects[aString] = {}
             let isMulti = false
-            if (mode === "insert" || mode === "remove" || mode === "clear") {
+            if (operation === "insert" || operation === "remove" || operation === "clear") {
                 isMulti = true
             }
-            console.log("mode multi", mode, isMulti)
+            console.log("operation multi", operation, isMulti)
             if (isMulti) {
-                if (mode === "insert") {
+                if (operation === "insert") {
                     if (!objects[aString][bString]) objects[aString][bString] = []
                     objects[aString][bString].push(cString)
-                } else if (mode === "remove") {
+                } else if (operation === "remove") {
                     if (objects[aString][bString]) {
                         const i = objects[aString][bString].indexOf(cString)
                         if (i) objects[aString][bString].splice(i, 1)
                     }
-                } else if (mode === "clear") {
+                } else if (operation === "clear") {
                     if (objects[aString][bString]) {
                         console.log("clearing")
                         delete objects[aString][bString]
                     }
                 } else {
-                    throw new Error("unexpected array mode")
+                    throw new Error("unexpected array operation")
                 }
             } else {
                 objects[aString][bString] = cString
