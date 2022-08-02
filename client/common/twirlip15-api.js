@@ -32,7 +32,7 @@ export async function twirlip15ApiCall(request, onerror) {
         console.log("api call error", error)
         onerror("API call error; see console for details")
     }
-    setTimeout(() => m.redraw(), 0)
+    window.m && setTimeout(() => m.redraw(), 0)
     return result
 }
 

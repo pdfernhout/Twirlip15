@@ -5,9 +5,11 @@ import { io } from "/socket.io/socket.io.esm.min.js"
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback) {
+export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback, twirlipServer=null) {
 
-    const twirlipServer = new Twirlip15ServerAPI(showError)
+    if (!twirlipServer) {
+        twirlipServer = new Twirlip15ServerAPI(showError)
+    }
 
     let responder = defaultResponder
     const deferredFileChanges = []
@@ -95,6 +97,8 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         }
 
         const items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
+        console.log("file responder", responder)
+        console.log("file items", items)
         for (let item of items) {
             responder.onAddItem(item, fileName)
         }
