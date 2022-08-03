@@ -155,11 +155,15 @@ function convertMarkdown(fileInfo) {
     fileInfo.links = Array.from(convertedHTML.matchAll(re1)).map(match => match[1])
     
     // Add ?twirlip=view-md as needed
-    const re2 = /(<a href="[^?>]*)(">)/g
-    const html2 = convertedHTML.replace(re2, "$1?twirlip=view-md$2")
+    const re2 = /(<a href="[^?"]*)(\.md">)/g
+    const html2 = convertedHTML.replace(re2, "$1.md?twirlip=view-md\">")
 
-    fileInfo.markdown = html2
-    return html2
+    // Open in a new tab
+    const re3 = /(<a href="[^?"]*)(">)/g
+    const html3 = html2.replace(re3, "$1\" target=\"_blank$2")
+
+    fileInfo.markdown = html3
+    return html3
 }
 
 function allTags() {
