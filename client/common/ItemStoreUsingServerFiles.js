@@ -96,7 +96,17 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
             return
         }
 
-        const items = chosenFileContents.split("\n").slice(0, -1).map(JSON.parse)
+        const items = chosenFileContents
+            .split("\n")
+            .map(item => { 
+                try {
+                    return JSON.parse(item)
+                } catch {
+                    console.log("unable to parse item:", item)
+                    return undefined
+                }
+            })
+            .filter(item => item !== undefined)
         console.log("file responder", responder)
         console.log("file items", items)
         for (let item of items) {
