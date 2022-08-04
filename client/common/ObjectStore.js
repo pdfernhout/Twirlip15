@@ -68,7 +68,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
             const aString = canonicalize(a)
             const bString = canonicalize(b)
             const cString = canonicalize(c)
-            if (write) writeTriple({a: aString, b: bString, c: cString, o: operation})
+            if (write) writeTriple({a, b, c, o: operation})
             if (!objects[aString]) objects[aString] = {}
             let isMulti = false
             if (operation === "insert" || operation === "remove" || operation === "clear") {
@@ -114,6 +114,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
             const aString = canonicalize(a)
             readTriples(aString)
             const internalObject = objects[aString]
+            console.log("object for a", a, aString, objects[aString], JSON.parse(JSON.stringify(objects)))
             if (!internalObject) return undefined
             const object = {}
             for (const bString in internalObject) {
@@ -132,7 +133,8 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
             return object
         }
 
-        throw new Error("function parameters needed")
+        return objects
+        // throw new Error("function parameters needed")
     }
 
     return o
