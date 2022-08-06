@@ -11,6 +11,7 @@ export const applicationList = [
     "mail",
     "monitor",
     "notebook",
+    "notes",
     "outliner",
     "search",
     "sketcher",
