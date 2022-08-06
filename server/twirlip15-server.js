@@ -320,9 +320,9 @@ async function requestFileContents(request, response) {
             return
         }
         try {
+            fileRead(request.body.clientId, request.body.fileName)
             const contents = await fs.promises.readFile(filePath, encoding)
             response.json({ok: true, contents: contents})
-            fileRead(request.body.clientId, request.body.fileName)
         } catch(err) {
             logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
@@ -350,10 +350,10 @@ async function requestFileReadBytes(request, response) {
     try {
         const fileHandle = await fs.promises.open(filePath)
         try {
+            fileRead(request.body.clientId, request.body.fileName)
             const buffer = Buffer.alloc(length)
             const readResult = await fsRead(fileHandle.fd, buffer, 0, length, start)
             response.json({ok: true, data: buffer.toString(encoding), bytesRead: readResult.bytesRead})
-            fileRead(request.body.clientId, request.body.fileName)
         } catch(err) {
             logger.info(err)
             response.json({ok: false, errorMessage: "Problem reading file"})
