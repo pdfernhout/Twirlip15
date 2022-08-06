@@ -399,7 +399,7 @@ async function requestFileAppend(request, response) {
     const stringToAppend = request.body.stringToAppend
     const encoding = request.body.encoding || "utf8"
     try {
-        await addFileOperationToQueue(() => fs.promises.appendFile(filePath, stringToAppend, encoding))
+        await addFileOperationToQueue(() => fs.promises.appendFile(filePath, stringToAppend, {encoding}))
         response.json({ok: true})
         fileChanged(request.body.clientId, request.body.fileName, stringToAppend)
     } catch(err) {
