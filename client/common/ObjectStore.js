@@ -5,22 +5,38 @@ import { debounce } from "./timeout.js"
 /* global sha256 */
 import "../vendor/sha256.js"
 
-export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
+// Perhaps could read pathDepth from config file in ObjectStore's directory?
+
+export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDepth=4) {
     const objects = {}
 
     const itemStores = {}
 
+    function makeFullFilePath(aString) {
+        const fileName = sha256(aString) + ".jsonl"
+        let intermediateLevels = ""
+        for (let i = 0; i < pathDepth; i++) {
+            const subpath = fileName.substring(i * 2, i * 2 + 2) + "/"
+            intermediateLevels += subpath
+        }
+        const fullFilePath = directoryPath + intermediateLevels + fileName
+        return fullFilePath
+    }
+
     async function writeTriple(triple) {
         if (!twirlipServer || !directoryPath) return
-        const aString = canonicalize(triple.a)
-        const fileName = sha256(aString) + ".jsonl"
         const contentsToAppend = JSON.stringify(triple) + "\n"
-        // TODO: Make the path nested a few levels based on hash
-        // TODO: Ensure intermediate directory levels are created
-        const fullFilePath = directoryPath + fileName
-        // TODO: should use fileAppendLater or the item store
-        const apiResult = await twirlipServer.fileAppend(fullFilePath, contentsToAppend)
-        return apiResult
+        const aString = canonicalize(triple.a)
+        const fullFilePath = makeFullFilePath(aString)
+        const pathOnly = fullFilePath.substring(0, fullFilePath.lastIndexOf("/"))
+        const apiResultNewDirectory= await twirlipServer.fileNewDirectory(pathOnly)
+        if (apiResultNewDirectory) {
+            // TODO: should use fileAppendLater or the item store
+            const apiResult = await twirlipServer.fileAppend(fullFilePath, contentsToAppend)
+            return apiResult
+        } else {
+            return apiResultNewDirectory
+        }
     }
 
     // Copied from Triplestore
@@ -48,12 +64,8 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
 
     async function readTriples(aString) {
         if (!twirlipServer || !directoryPath) return
-        const fileName = sha256(aString) + ".jsonl"
-        // TODO: Make the path nested a few levels based on hash
-        // TODO: Ensure intermediate directory levels are created
-        const fullFilePath = directoryPath + fileName
-
         if (!itemStores[aString]) {
+            const fullFilePath = makeFullFilePath(aString)
             // Seems wasteful to create one of these per object file?
             const showError = error => console.log(error)
             const defaultLoadFailureCallback = () => console.log("loading items file failed for: " + aString)
