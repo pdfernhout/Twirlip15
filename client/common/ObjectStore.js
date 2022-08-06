@@ -12,7 +12,8 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath) {
 
     async function writeTriple(triple) {
         if (!twirlipServer || !directoryPath) return
-        const fileName = sha256(triple.a) + ".jsonl"
+        const aString = canonicalize(triple.a)
+        const fileName = sha256(aString) + ".jsonl"
         const contentsToAppend = JSON.stringify(triple) + "\n"
         // TODO: Make the path nested a few levels based on hash
         // TODO: Ensure intermediate directory levels are created
