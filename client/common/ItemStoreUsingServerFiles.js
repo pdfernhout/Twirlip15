@@ -5,7 +5,7 @@ import { io } from "/socket.io/socket.io.esm.min.js"
 // calls onAddItem on responder passed in for connect on new items
 // calls onLoaded on responder after all items initially in a file are added
 // call addItem on store to add a new item
-export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback, twirlipServer=null) {
+export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResponder, defaultFileName, defaultLoadFailureCallback, twirlipServer=null, createDirectories=false) {
 
     if (!twirlipServer) {
         twirlipServer = new Twirlip15ServerAPI(showError)
@@ -84,6 +84,20 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         }
 
         isLoaded = false
+
+        if (createDirectories) {
+            const pathOnly = fileName.substring(0, fileName.lastIndexOf("/"))
+            const apiResultNewDirectory = await twirlipServer.fileNewDirectory(pathOnly) 
+            if (!apiResultNewDirectory) {
+                console.log("Problem with directory setup")
+                if (failureCallback) {
+                    failureCallback()
+                } else if (defaultLoadFailureCallback) {
+                    defaultLoadFailureCallback()
+                }
+                return
+            }
+        }
 
         // Requesting fileContents after socket connected will automatically get fileChanged messages from server
         const chosenFileContents = await loadLargeFileContents(twirlipServer, fileName, progressObject)

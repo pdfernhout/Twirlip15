@@ -25,18 +25,10 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
 
     async function writeTriple(triple) {
         if (!twirlipServer || !directoryPath) return
-        const contentsToAppend = JSON.stringify(triple) + "\n"
         const aString = canonicalize(triple.a)
-        const fullFilePath = makeFullFilePath(aString)
-        const pathOnly = fullFilePath.substring(0, fullFilePath.lastIndexOf("/"))
-        const apiResultNewDirectory= await twirlipServer.fileNewDirectory(pathOnly)
-        if (apiResultNewDirectory) {
-            // TODO: should use fileAppendLater or the item store
-            const apiResult = await twirlipServer.fileAppend(fullFilePath, contentsToAppend)
-            return apiResult
-        } else {
-            return apiResultNewDirectory
-        }
+        // Call readTriples to create itemStore if needed
+        readTriples(aString)
+        itemStores[aString].addItem(triple)
     }
 
     // Copied from Triplestore
@@ -69,7 +61,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
             // Seems wasteful to create one of these per object file?
             const showError = error => console.log(error)
             const defaultLoadFailureCallback = () => console.log("loading items file failed for: " + aString)
-            itemStores[aString] = ItemStoreUsingServerFiles(showError, redrawCallback, objectStoreResponder, fullFilePath, defaultLoadFailureCallback, twirlipServer)
+            itemStores[aString] = ItemStoreUsingServerFiles(showError, redrawCallback, objectStoreResponder, fullFilePath, defaultLoadFailureCallback, twirlipServer, true)
         }
     }
 
