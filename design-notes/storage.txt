@@ -526,4 +526,24 @@ Decisions on module boundaries made based on: (?)
 * keeping data likely to change along with other similar data
 (so not potentially modifying unrelated data)
 
+====
 
+2022-08-06
+
+Possibilities for representing triples in jsonl files:
+
+{"__type":"triple","a":"test","b":"children","c":"","o":"clear"}
+
+{"_type":"triple","a":"test","b":"children","c":"","o":"clear"}
+
+{"a":"test","b":"children","c":"","o":"clear","type":"triple"}
+
+{"a":"test","b":"children","c":"","o":"clear"}
+
+{a:"test",b:"children",b:"",o:"clear"}
+
+{a:"test", b:"children", b:"", o:"clear"}
+
+{a:"test" b:"children" b:"" o:"clear"}
+
+["test", "children", "", "clear"]
