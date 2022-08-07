@@ -77,10 +77,11 @@ function getTextForBlock(blockUUID) {
 
 function viewBlock(blockUUID) {
     const text = getTextForBlock(blockUUID)
-    const conceptMatches = getConcepts().filter(concept => text.includes(concept))
+    const textLowercase = text.toLowerCase()
+    const conceptMatches = getConcepts().filter(concept => textLowercase.includes(concept.toLowerCase()))
     return m("div.mt2", 
         m("div", text),
-        m("div", conceptMatches.map(concept => m("i.mr2", concept)))
+        m("div", conceptMatches.map(concept => m("i.mr4", concept)))
     )
 }
 
