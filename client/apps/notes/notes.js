@@ -73,14 +73,22 @@ function getTextForBlock(blockUUID) {
     return o(blockUUID, "text") || ""
 }
 
+function splitIntoBlocks(blockText) {
+    const blockTexts = blockText.split("\n").filter(each => each.trim())
+    for (const blockText of blockTexts) {
+        // Should check if block with text already exists
+        addBlock(blockText)
+    }
+}
+
 //
 
 function viewBlock(blockUUID) {
     const text = getTextForBlock(blockUUID)
     const textLowercase = text.toLowerCase()
     const conceptMatches = getConcepts().filter(concept => textLowercase.includes(concept.toLowerCase()))
-    return m("div.mt2", 
-        m("div", text),
+    return m("div.mt2",
+        m("div", m("span.mr1", {title: blockUUID}, "▤"), text), // □ 🔗
         m("div", conceptMatches.map(concept => m("i.mr4", concept)))
     )
 }
@@ -93,7 +101,7 @@ const Notes = {
             m("br"),
 
             m("input", { value: newConcept, onchange: event => newConcept = event.target.value}),
-            m("button", { onclick: () => { addConcept(newConcept); newConcept = "" }}, "Add concept"),
+            m("button.ml1", { onclick: () => { addConcept(newConcept); newConcept = "" }}, "Add concept"),
             
             m("hr"),
 
@@ -102,7 +110,9 @@ const Notes = {
             m("br"),
 
             m("textarea", { value: newBlockText, onchange: event => newBlockText = event.target.value}),
-            m("button", { onclick: () => { addBlock(newBlockText); newBlockText = "" }}, "Add block")
+            m("br"),
+            m("button.mt1", { onclick: () => { addBlock(newBlockText); newBlockText = "" }}, "Add block"),
+            m("button.ml2", { onclick: () => { splitIntoBlocks(newBlockText); newBlockText = "" }}, "Split into blocks")
         )
     }
 }
