@@ -3,6 +3,25 @@
 // https://github.com/foambubble/foam
 // Successor to ideas app
 
+// Idea is to avoid putting explicit links if possible.
+// You identify concept sas words or phrases
+// (or maybe clusters of words and phrases with same sense)
+// and links are automatically generated at bottom of page for words on page.
+
+// You have text blocks that have a UUID and can have multiple versions.
+// Blocks are summarized by their first line (the initial text).
+// Should a separate summary line or title be possible for blocks?
+// A block is essentially a paragraph.
+
+// Blocks are assembled into structures.
+// The structures could be pages with a list of blocks (and non-text items like pictures).
+// Other structures could be outlines.
+// Other structures could be adhoc forms or Hypercard-like database entry cards.
+// Other structure could be 2D maps like Compendium.
+
+// Should support tools for splitting blocks, merging blocks, and copying blocks.
+// Also should support moving blocks or essentially replacing them with other blocks.0
+
 /* global m */
 import "../../vendor/mithril.js"
 
