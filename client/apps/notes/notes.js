@@ -47,7 +47,9 @@ let newBlockText = ""
 // Concepts
 
 function getConcepts() {
-    return o("concepts", "concept") || []
+    const concepts = o("concepts", "concept") || []
+    concepts.sort()
+    return concepts
 }
 
 function addConcept(conceptText) {
@@ -73,6 +75,15 @@ function getTextForBlock(blockUUID) {
 
 //
 
+function viewBlock(blockUUID) {
+    const text = getTextForBlock(blockUUID)
+    const conceptMatches = getConcepts().filter(concept => text.includes(concept))
+    return m("div.mt2", 
+        m("div", text),
+        m("div", conceptMatches.map(concept => m("i.mr2", concept)))
+    )
+}
+
 const Notes = {
     view: () => {
         return m("div.ma1.h-100.w-100",
@@ -85,7 +96,7 @@ const Notes = {
             
             m("hr"),
 
-            getBlocks().map(blockUUID => m("div", m("b", getTextForBlock(blockUUID)))),
+            getBlocks().map(blockUUID => viewBlock(blockUUID)),
 
             m("br"),
 
