@@ -27,7 +27,7 @@ import "../../vendor/mithril.js"
 
 import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
 // import { expander } from "../../common/menu.js"
-
+import { UUID } from "../../common/UUID.js"
 import { ObjectStore } from "../../common/ObjectStore.js"
 
 const twirlipServer = new Twirlip15ServerAPI(error => console.log(error))
@@ -42,13 +42,55 @@ function loadDirectory() {
 
 let newConcept = ""
 
+let newBlockText = ""
+
+// Concepts
+
+function getConcepts() {
+    return o("concepts", "concept") || []
+}
+
+function addConcept(conceptText) {
+    o("concepts", "concept", conceptText, "insert")
+}
+
+// Blocks
+
+function getBlocks() {
+    return o("blocks", "block") || []
+}
+
+function addBlock(blockText) {
+    const blockUuid = UUID.forType("block")
+    o(blockUuid, "text", blockText)
+    o(blockUuid, "created", new Date().toISOString())
+    o("blocks", "block", blockUuid, "insert")
+}
+
+function getTextForBlock(blockUUID) {
+    return o(blockUUID, "text") || ""
+}
+
+//
+
 const Notes = {
     view: () => {
-        return m("div.h-100.w-100",
-            (o("concepts", "concept") || []).map(concept => m("div", m("b", concept))),
+        return m("div.ma1.h-100.w-100",
+        
+            getConcepts().map(concept => m("div", m("b", concept))),
             m("br"),
-            m("input", { value: newConcept, oninput: event => newConcept = event.target.value}),
-            m("button", { onclick: () => { o("concepts", "concept", newConcept, "insert"); newConcept = "" }}, "Add concept")
+
+            m("input", { value: newConcept, onchange: event => newConcept = event.target.value}),
+            m("button", { onclick: () => { addConcept(newConcept); newConcept = "" }}, "Add concept"),
+            
+            m("hr"),
+
+            getBlocks().map(blockUUID => m("div", m("b", getTextForBlock(blockUUID)))),
+
+            m("br"),
+
+            m("textarea", { value: newBlockText, onchange: event => newBlockText = event.target.value}),
+            m("button", { onclick: () => { addBlock(newBlockText); newBlockText = "" }}, "Add block")
         )
     }
 }
