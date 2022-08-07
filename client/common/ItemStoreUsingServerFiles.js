@@ -116,13 +116,11 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
                 try {
                     return JSON.parse(item)
                 } catch {
-                    console.log("unable to parse item:", item)
+                    if (item) console.log("unable to parse item:", item)
                     return undefined
                 }
             })
             .filter(item => item !== undefined)
-        console.log("file responder", responder)
-        console.log("file items", items)
         for (let item of items) {
             responder.onAddItem(item, fileName)
         }

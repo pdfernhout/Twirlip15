@@ -5,6 +5,8 @@ import { debounce } from "./timeout.js"
 /* global sha256 */
 import "../vendor/sha256.js"
 
+const useDebugLogging = false
+
 // Perhaps could read pathDepth from config file in ObjectStore's directory?
 
 export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDepth=4) {
@@ -42,13 +44,13 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
 
     const objectStoreResponder = {
         onLoaded: fileName => {
-            console.log("loaded an object file:", fileName)
+            if (useDebugLogging) console.log("loaded an object file:", fileName)
             // isFileLoading = false
             // isFileLoaded = true
         },
 
         onAddItem: triple => {
-            console.log("onAddItem", triple)
+            if (useDebugLogging) console.log("onAddItem", triple)
             if (isTriple(triple)) o(triple.a, triple.b, triple.c, triple.o, false)
             if (redrawCallback) debounce(() => redrawCallback(), 500)
         }
@@ -66,7 +68,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
     }
 
     function o(a, b, c, operation="replace", write=true) {
-        console.log("---- o", a, b, c, operation, write)
+        if (useDebugLogging) console.log("---- o", a, b, c, operation, write)
 
         if (a !== undefined && b  !== undefined && c !== undefined) {
             // Set value
@@ -79,7 +81,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
             if (operation === "insert" || operation === "remove" || operation === "clear") {
                 isMulti = true
             }
-            console.log("operation multi", operation, isMulti)
+            if (useDebugLogging) console.log("operation multi", operation, isMulti)
             if (isMulti) {
                 if (operation === "insert") {
                     if (!objects[aString][bString]) objects[aString][bString] = []
@@ -91,7 +93,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
                     }
                 } else if (operation === "clear") {
                     if (objects[aString][bString]) {
-                        console.log("clearing")
+                        if (useDebugLogging) console.log("clearing")
                         delete objects[aString][bString]
                     }
                 } else {
@@ -119,7 +121,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
             const aString = canonicalize(a)
             readTriples(aString)
             const internalObject = objects[aString]
-            console.log("object for a", a, aString, objects[aString], JSON.parse(JSON.stringify(objects)))
+            if (useDebugLogging) console.log("object for a", a, aString, objects[aString], JSON.parse(JSON.stringify(objects)))
             if (!internalObject) return undefined
             const object = {}
             for (const bString in internalObject) {
