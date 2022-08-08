@@ -547,3 +547,51 @@ Possibilities for representing triples in jsonl files:
 {a:"test" b:"children" b:"" o:"clear"}
 
 ["test", "children", "", "clear"]
+
+====
+
+2022-08-08
+
+Thinking on pros and cons of ObjectStore just implemented.
+While in some sense easy to use, it has issues with:
+* Reliability -- as don't know when data is fully written to disk
+* Clutter -- as can't separate good data from experiments if all in one big repository
+* Performance -- given back and forth to server
+* Integrity -- as any adhoc indexing might get messes up by a failure
+
+Looking at Amazon comments on William Kent's Data and Reality 
+and seeing a reference to Object Role Modelling (ORM):
+https://en.wikipedia.org/wiki/Object-role_modeling
+"Also evolving from NIAM is "Fully Communication Oriented Information Modeling" FCO-IM (1992).
+It distinguishes itself from traditional ORM in that
+it takes a strict communication-oriented perspective.
+Rather than attempting to model the domain and its essential concepts,
+it models the communication in this domain (universe of discourse).
+Another important difference is that it does this on instance level,
+deriving type level and object/fact level during analysis."
+
+Makes me think in Professor Jim Beniger who studied communications.
+Would have been neat to connect his communications idea
+with data modelling and cognitive modelling.
+
+But maybe more oriented around communicated "facts"?
+
+As is explained in a review here on 
+"Conceptual Schema and Relational Database Design 2nd Edition" by Terry Halpin
+https://www.amazon.com/gp/customer-reviews/R2I3QSUL4M5AZO/
+"This book will teach you a method called "Object Role Modeling" (ORM)
+for gathering requirements and creating a design.
+In ORM, you concentrate on business facts
+(e.g. "Commission is allocated to Salesman based on Percentage")
+instead of database entities and attributes.
+This fact-based approach allows the designer to communicate with the user
+in a way that makes sense to the user. 
+A collection of business facts is called a "conceptual model".
+ORM provides an algorithm that automatically generates
+a properly normalized ER model from a conceptual fact based model."
+
+Storing "facts" seems a bit like re-inventing Prolog?
+Yet may still be a good idea.
+
+Continual tension in Twirlip/Pointrel design between storing raw materials
+versus storing processed/parsed versions of things as derived and indexed objects.
