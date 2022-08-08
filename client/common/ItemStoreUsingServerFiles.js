@@ -18,6 +18,11 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
     let isLoaded = false
     let isSetup = false
 
+    let isLoadedPromiseResolve
+    const isLoadedPromise = new Promise(resolve => {
+        isLoadedPromiseResolve = resolve
+    })
+
     function parseLine(line) {
         if (!line.trim()) return undefined
         try {
@@ -135,6 +140,8 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         if (responder.onLoaded) responder.onLoaded(fileName)
         
         if (redrawCallback) redrawCallback()
+
+        isLoadedPromiseResolve()
     }
 
     function addItem(item, fileName=defaultFileName) {
@@ -168,6 +175,7 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
 
     return {
         twirlipServer,
+        isLoadedPromise,
         connect,
         loadFile,
         addItem,

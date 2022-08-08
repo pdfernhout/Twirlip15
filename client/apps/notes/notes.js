@@ -77,7 +77,7 @@ function splitIntoBlocks(blockText) {
     const blockTexts = blockText.split("\n").filter(each => each.trim())
     for (const blockText of blockTexts) {
         // Should check if block with text already exists
-        addBlock(blockText)
+        addBlock(blockText.trim())
     }
 }
 

@@ -64,6 +64,7 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
             const showError = error => console.log(error)
             const defaultLoadFailureCallback = () => console.log("loading items file failed for: " + aString)
             itemStores[aString] = ItemStoreUsingServerFiles(showError, redrawCallback, objectStoreResponder, fullFilePath, defaultLoadFailureCallback, twirlipServer, true)
+            await itemStores[aString].isLoadedPromise
         }
     }
 
