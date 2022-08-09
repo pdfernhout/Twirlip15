@@ -272,3 +272,19 @@ Zim handles several types of markup, like headings, bullet lists and of course b
 ---- 2022-07-25 22:40:13 GMT−4 ----
 
 Finished watching video and adding above comments.
+
+=====
+
+2022-08-09 
+
+Reading: "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking"
+by Sönke Ahrens
+
+Recommended by Tiago Forte.
+https://fortelabs.co/blog/how-to-take-smart-notes/
+
+Emphasis on writing to think, read, learn, understand, and generate new ideas.
+Based on Luhmann's Zettelkasten ideas.
+
+Thinking on writing some kind of application for a smartphone to take notes
+including about picture taken of printed material.
