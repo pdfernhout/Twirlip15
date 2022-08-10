@@ -44,6 +44,8 @@ let newConcept = ""
 
 let newBlockText = ""
 
+let selectedConcept = ""
+
 // Concepts
 
 function getConcepts() {
@@ -86,6 +88,7 @@ function splitIntoBlocks(blockText) {
 function viewBlock(blockUUID) {
     const text = getTextForBlock(blockUUID)
     const textLowercase = text.toLowerCase()
+    if (selectedConcept && !blockMatchesConcept(blockUUID, selectedConcept)) return null
     const conceptMatches = getConcepts().filter(concept => textLowercase.includes(concept.toLowerCase()))
     return m("div.mt2",
         m("div", m("span.mr1", {title: blockUUID}, "▤"), text), // □ 🔗
@@ -93,11 +96,26 @@ function viewBlock(blockUUID) {
     )
 }
 
+function blockMatchesConcept(blockUUID, concept) {
+    const text = getTextForBlock(blockUUID)
+    const textLowercase = text.toLowerCase()
+   return textLowercase.includes(concept.toLowerCase())
+}
+
+function conceptUsers(concept) {
+    const matches = getBlocks().filter(blockUUID => blockMatchesConcept(blockUUID, concept))
+    return matches.length
+}
+
 const Notes = {
     view: () => {
         return m("div.ma1.h-100.w-100",
         
-            getConcepts().map(concept => m("div", m("b", concept))),
+            getConcepts().map(concept => m("div", m("b", concept, 
+                m("span.ml2", { onclick: () => selectedConcept = concept }, "(", conceptUsers(concept), ")")))
+            ),
+            m("br"),
+            selectedConcept ? m("div", selectedConcept, m("span.ml2", { onclick: () => selectedConcept = "" }, "X")) : "<no filter>",
             m("br"),
 
             m("input", { value: newConcept, onchange: event => newConcept = event.target.value}),
