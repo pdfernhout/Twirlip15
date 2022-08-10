@@ -76,7 +76,10 @@ export function ObjectStore(redrawCallback, twirlipServer, directoryPath, pathDe
             const aString = canonicalize(a)
             const bString = canonicalize(b)
             const cString = canonicalize(c)
-            if (write) writeTriple({a, b, c, o: operation})
+            if (write) {
+                writeTriple({a, b, c, o: operation})
+                return
+            }
             if (!objects[aString]) objects[aString] = {}
             let isMulti = false
             if (operation === "insert" || operation === "remove" || operation === "clear") {
