@@ -148,7 +148,8 @@ export function ItemStoreUsingServerFiles(showError, redrawCallback, defaultResp
         const stringToAppend = JSON.stringify(item)
         fileAppendLater(twirlipServer, fileName, stringToAppend, error => {
             if (!error) {
-                responder.onAddItem(item, fileName)
+                // Item will be processed later via socket.io message
+                // responder.onAddItem(item, fileName)
             } else {
                 console.log("addItem error", error)
             }
