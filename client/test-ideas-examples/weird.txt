@@ -1,0 +1,22 @@
+======== 78ebccdd-d1af-4824-a5c0-453a1d7725a7
+Inspired by a reference to a "weird file" by Lion Kimbro:
+https://users.speakeasy.net/~lion/nb/book.txt
+https://web.archive.org/web/20100719135412/https://speakeasy.org/~lion/weird.html
+
+Thinking: what if used plain text to keep all notes in one file?
+Like "clippings" file from Kindle, but manually maintained and improvable.
+
+What if you had a tool to start a note with a format template including a UUID?
+
+And what if you had another tool to display the file in interesting ways?
+
+Examples below.
+
+#design #LionKimbro #PlainText
+======== 136ba090-99fd-40da-a91a-d6d64362e02e
+Another note.
+
+Not much to see here. Move along. Move along. :-)
+======== ea0ff97e-bbc2-44c7-9030-e3dd47357c8a
+2022-08-12T03:01:39+0000
+Continuing to read "How to Take Smart Notes"
