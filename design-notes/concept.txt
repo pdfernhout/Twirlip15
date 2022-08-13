@@ -288,3 +288,19 @@ Based on Luhmann's Zettelkasten ideas.
 
 Thinking on writing some kind of application for a smartphone to take notes
 including about picture taken of printed material.
+
+=====
+
+2022-08-09 
+
+As continue to read "Smart Notes" book, thinking on tool that supports progress of processing:
+Raw External Content
+Fleeting notes
+Journal and Calendar Notes (my addition)
+Project Notes (including ToDo lists, drafts, and comments on drafts)
+Bibliographic Notes
+Permanent Notes
+Publications
+
+Would be nice it system could tell you how much time you had looked at various things
+and whether you had created derived items from them and felt you were done with them.
