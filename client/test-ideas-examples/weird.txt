@@ -40,11 +40,11 @@ Made shell script to generate separators:
     $ cat sep.sh 
     echo "======== note|"`uuid` `date -Isec -u`
 
-======== note|eb9b8bc0-1b68-11ed-8a13-c73042ea7ec9 2022-08-14T00:34:56+00:00
+======== note|eb9b8bc0-1b68-11ed-8a13-c73042ea7ec9 2022-08-14T00:34:56+00:00 pdfernhout@kurtz-fernhout.com #journal
 Reading "Interview with Lion Kimbro":
 https://gilest.org/lion-kimbro.html
 
-======== note|10d0470a-1b69-11ed-a13c-9fb67aba12f0 2022-08-14T00:35:58+00:00
+======== note|10d0470a-1b69-11ed-a13c-9fb67aba12f0 2022-08-14T00:35:58+00:00 pdfernhout@kurtz-fernhout.com #permanent
 Reading: "Knowledge synthesis: A conceptual model and practical guide" by Joel Chan
 https://oasislab.pubpub.org/pub/54t0y9mk/release/3
 
@@ -58,3 +58,7 @@ https://oasislab.pubpub.org/pub/54t0y9mk/release/3
 > Synthesis notes can also be composed into more complex structures (such as arguments or theories or models) through relations with other synthesis notes that vary in complexity from simple "relates to", to implication/explanation and support/opposition.
 
 Which all makes me think a bit on Dialogue Mapping with IBIS.
+
+======== note|0a49289e-4f69-4ba9-86da-ab0f254cdd61 2022-08-14T13:28:12Z pdfernhout@kurtz-fernhout.com #journal
+Looking at org-mode vs markdown.
+Also trying to extent separator line with email and tags.
