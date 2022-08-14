@@ -1,4 +1,4 @@
-======== 78ebccdd-d1af-4824-a5c0-453a1d7725a7
+======== note|078ebccdd-d1af-4824-a5c0-453a1d7725a7 2022-08-12T02:55:39Z
 Inspired by a reference to a "weird file" by Lion Kimbro:
 https://users.speakeasy.net/~lion/nb/book.txt
 https://web.archive.org/web/20100719135412/https://speakeasy.org/~lion/weird.html
@@ -13,10 +13,30 @@ And what if you had another tool to display the file in interesting ways?
 Examples below.
 
 #design #LionKimbro #PlainText
-======== 136ba090-99fd-40da-a91a-d6d64362e02e
+
+======== note|136ba090-99fd-40da-a91a-d6d64362e02e 2022-08-12T02:57:21Z
 Another note.
 
 Not much to see here. Move along. Move along. :-)
-======== ea0ff97e-bbc2-44c7-9030-e3dd47357c8a
-2022-08-12T03:01:39+0000
+
+======== note|ea0ff97e-bbc2-44c7-9030-e3dd47357c8a 2022-08-12T03:01:39Z
 Continuing to read "How to Take Smart Notes"
+
+======== note|fbe67236-1416-44ec-813e-d6ddd4e41010 2022-08-13T23:30:41.311Z
+Added Smart Notes examples to concept.txt
+
+A reference to a previous note can just be the uuid 
+or part of it, like so: note|ea0ff97e-bbc2-44c7-9030-e3dd47357c8a
+
+You could refer to a specific version of a note by using the sha256 hash of the content.
+
+======== note|136ba090-99fd-40da-a91a-d6d64362e02e 2022-08-13T23:34:50.069Z
+Another note (which has been updated, which you can tell because the UUID is the same).
+
+Not much to see here. Move along! Move along! :-)
+
+======== note|9f122c6e-1b63-11ed-97f7-5fcd51e8e8dd 2022-08-13T23:57:00+00:00
+Made shell script to generate separators:
+    $ cat sep.sh 
+    echo "======== note|"`uuid` `date -Isec -u`
+
