@@ -40,3 +40,21 @@ Made shell script to generate separators:
     $ cat sep.sh 
     echo "======== note|"`uuid` `date -Isec -u`
 
+======== note|eb9b8bc0-1b68-11ed-8a13-c73042ea7ec9 2022-08-14T00:34:56+00:00
+Reading "Interview with Lion Kimbro":
+https://gilest.org/lion-kimbro.html
+
+======== note|10d0470a-1b69-11ed-a13c-9fb67aba12f0 2022-08-14T00:35:58+00:00
+Reading: "Knowledge synthesis: A conceptual model and practical guide" by Joel Chan
+https://oasislab.pubpub.org/pub/54t0y9mk/release/3
+
+> In this model, we create and update four basic kinds of entities in the synthesis process:
+> * Question notes, which express an open research question,
+> * Synthesis notes, which express a single, generalized idea, such as a claim,
+> * Observation notes, which express a single, highly contextualized and specific observation that, together with other observation notes, can form the basis of a synthesis note, and
+> * Context snippet notes, which help to ground and contextualize observation notes.
+> ...
+> There is a hierarchical relationship between the artifacts: question and synthesis notes (at the top "layer") are supported/opposed/informed by one or more observation notes (at the middle "layer"), which are substantiated/contextualized by one or more context snippet notes (at the bottom "layer"). 
+> Synthesis notes can also be composed into more complex structures (such as arguments or theories or models) through relations with other synthesis notes that vary in complexity from simple "relates to", to implication/explanation and support/opposition.
+
+Which all makes me think a bit on Dialogue Mapping with IBIS.
