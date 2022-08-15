@@ -16,7 +16,7 @@ Examples below.
 
 @ uuid note|078ebccdd-d1af-4824-a5c0-453a1d7725a7
 @ timestamp 2022-08-12T02:55:39Z
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
 ================================================ 
 Another note.
 
@@ -24,13 +24,13 @@ Not much to see here. Move along. Move along. :-)
 
 @ uuid note|136ba090-99fd-40da-a91a-d6d64362e02e
 @ timestamp 2022-08-12T02:57:21Z
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
 ================================================
 Continuing to read "How to Take Smart Notes"
 
 @ uuid note|ea0ff97e-bbc2-44c7-9030-e3dd47357c8a
 @ timestamp 2022-08-12T03:01:39Z
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
 ================================================
 Added Smart Notes examples to concept.txt
 
@@ -42,7 +42,7 @@ You could refer to a specific version of a note by using the sha256 hash of the 
 
 @ uuid note|fbe67236-1416-44ec-813e-d6ddd4e41010
 @ timestamp 2022-08-13T23:30:41.311Z
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
 ================================================
 Another note (which has been updated, which you can tell because the UUID is the same).
 
@@ -50,7 +50,7 @@ Not much to see here. Move along! Move along! :-)
 
 @ uuid note|136ba090-99fd-40da-a91a-d6d64362e02e
 @ timestamp 2022-08-13T23:34:50.069Z
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
 ================================================
 Made shell script to generate separators:
     $ cat sep.sh 
@@ -58,4 +58,4 @@ Made shell script to generate separators:
 
 @ uuid note|9f122c6e-1b63-11ed-97f7-5fcd51e8e8dd
 @ timestamp 2022-08-13T23:57:00+00:00
-
+@ sha256 7bd4cbb175cb52d17efab2d819182647d4d1eafe39f87ac1cd36d1a07b26cc1c
