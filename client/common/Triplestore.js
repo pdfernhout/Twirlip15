@@ -155,7 +155,7 @@ export function Triplestore(showError) {
         return result
     }
 
-    function find(a, b, c, showIgnored=false) {
+    function find(a, b, c, showIgnored=false, alwaysReturnTriples=false) {
         if (a === "" || b === "") {
             return showError(new Error("triple a and b fields can't be empty strings; use null for query"))
         }
@@ -177,7 +177,7 @@ export function Triplestore(showError) {
             lastWildcard = "c"
         }
         const result = filterTriples({a, b, c}, showIgnored)
-        if (wildcardCount === 1) return result.map(triple => triple[lastWildcard])
+        if (!alwaysReturnTriples && wildcardCount === 1) return result.map(triple => triple[lastWildcard])
         return result
     }
     

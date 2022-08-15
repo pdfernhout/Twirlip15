@@ -25,26 +25,45 @@
 /* global m */
 import "../../vendor/mithril.js"
 
-import { Twirlip15ServerAPI } from "../../common/twirlip15-api.js"
-// import { expander } from "../../common/menu.js"
 import { UUID } from "../../common/UUID.js"
-import { ObjectStore } from "../../common/ObjectStore.js"
+import { Triplestore } from "../../common/Triplestore.js"
 
-const twirlipServer = new Twirlip15ServerAPI(error => console.log(error))
+let errorMessage = ""
 
-let directoryPath
-let o
-
-function loadDirectory() {
-    console.log("directoryPath", directoryPath)
-    o = ObjectStore(() => m.redraw(), twirlipServer, directoryPath)
+function showError(error) {
+    if (error.message) {
+        errorMessage = error.message
+        throw error
+    } else {
+        errorMessage = error
+    }
 }
+
+const t = Triplestore(showError)
 
 let newConcept = ""
 
 let newBlockText = ""
 
 let selectedConcept = ""
+
+function o(a, b, c, operation="replace") {
+    if (a !== undefined && b !== undefined && c !== undefined) {
+        return t.addTriple({a, b, c, o: operation})
+    }
+
+    if (a !== undefined && b !== undefined) {
+        const triples = t.find(a, b, undefined, false, true)
+        if (!triples.length) return undefined
+        const lastTriple = t.last(triples)
+        if (lastTriple.o !== "replace" && lastTriple.o) {
+            return triples.map(triple => triple.c)
+        }
+        return lastTriple.c
+    }
+
+    throw new Error("function parameters needed")
+}
 
 // Concepts
 
@@ -109,8 +128,14 @@ function conceptUsers(concept) {
 
 const Notes = {
     view: () => {
+        const loadingState = t.getLoadingState()
+
         return m("div.ma1.h-100.w-100",
-        
+            errorMessage && m("div.red.fixed.bg-light-gray.pa2.z-1", m("span", {onclick: () => errorMessage =""}, "✖ "), errorMessage),
+            loadingState.isFileLoading && m("div",
+                "Loading..."
+            ),
+
             getConcepts().map(concept => m("div", m("b", concept, 
                 m("span.ml2", { onclick: () => selectedConcept = concept }, "(", conceptUsers(concept), ")")))
             ),
@@ -136,8 +161,8 @@ const Notes = {
 }
 
 function startup() {
-    directoryPath =  decodeURI(window.location.pathname)
-    loadDirectory()
+    const filePathFromParams = decodeURI(window.location.pathname)
+    t.loadFileContents(filePathFromParams)
     m.mount(document.body, Notes)
 }
 
