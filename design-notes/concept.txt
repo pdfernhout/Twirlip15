@@ -305,3 +305,28 @@ As continue to read "Smart Notes" book, thinking on tool that supports progress 
 
 Would be nice it system could tell you how much time you had looked at various things
 and whether you had created derived items from them and felt you were done with them.
+
+=====
+
+LabelBeen looking at TiddlyWiki (which has inspired an earlier version of Pointrel/Twirlip):  
+https://tiddlywiki.com/
+
+After having seen it mentioned here:  
+https://oasislab.pubpub.org/pub/54t0y9mk/release/3
+> I believe this model and process can be (at least in principle) implemented with three things:
+> A PDF reader
+> A reference manager (to make it easier to capture and manage metadata)
+> A networked notebook, such as RoamResearch, Obsidian, Tiddlywiki, RemNote, Notion, or any tool that implements bi-directional linking (some other pointers here).
+
+Key point on atomic containerized knowledge nuggets from TiddlyWiki (from 2014)
+which syncs with "How to Take Smart Notes" and Zettelkasten:  
+"Philosophy of Tiddlers" on 19th September 2014 at 12:06pm in "Learning"
+https://tiddlywiki.com/#Philosophy%20of%20Tiddlers  
+> The purpose of recording and organising information is so that it can be used again. 
+> The value of recorded information is directly proportional to the ease with which it can be re-used.
+> The philosophy of tiddlers is that we maximise the possibilities for re-use 
+> by slicing information up into the smallest semantically meaningful units 
+> with rich modelling of relationships between them. 
+> Then we use aggregation and composition to weave the fragments together to present narrative stories.
+> TiddlyWiki aspires to provide an algebra for tiddlers, 
+> a concise way of expressing and exploring the relationships between items of information. 
