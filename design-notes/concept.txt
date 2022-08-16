@@ -372,3 +372,16 @@ as well as Zettelelkasten and taking Smart Notes.
 HyperCard pioneered (or at least popularized) the idea
 of visualizing one card of knowledge at a time.
 So that connected with the TiddlyWiki design aspiration.
+
+----
+
+Key point here on interplay between message-based discussion distilled into document-based wiki:  
+https://gilest.org/lion-kimbro.html  
+> Most of the Internet communication systems are message-based.
+> You can't easily cross-reference.
+> You can't replace an old ugly mess of back-and-forth,
+> and replace it with a summary of the key points.
+> Someone may say something wise, but that comment is quickly lost in the river of new comments. 
+> When you search the Internet's messages, you find bits and pieces of relevance, few and far between.
+> Wiki reverses that. When you touch a page in a wiki,
+> the page is connected to other related pages, relevance determined by humans.
