@@ -350,3 +350,25 @@ https://tiddlywiki.com/#TiddlyWiki
 > People love using TiddlyWiki. Because it can be used without any complicated server infrastructure,
 > and because it is open source, it has brought unprecedented freedom to everyone
 > to keep their precious information under their own control.
+
+Looking briefly at this example from the main TiddlyWiki site found looking in the source (from PhD thesis work):  
+http://tesis.tiddlyspot.com/  
+https://tiddlywiki.com/#%22A%20Thesis%20Notebook%22%20by%20Alberto%20Molina  
+> This TiddlyWiki has been customized to serve as a philosophy notebook
+> centered around authors, books and papers, concepts and theories, and personal notes.
+> I use it along with Zotero, which is a dedicated bibliography software.
+> Both are free, open source projects.
+
+Seeing 49 definitions on one page and thinking they should be one per page
+for "49 définitions du concept de fonction". But looking at the source there
+and seeing a reference to "list" and "filter" and "transclude", so it looks
+like the page is generated from other items (so, that is good design).
+That page then is essentially a map showing other atomic items.
+The heart of the filter may be this bit (though I don't follow the semantics of "+"):
+```[tag[Fonctions]] [tag[Téléologie]] +[tag[.définition]```
+
+Realizing that there is an indirect connection between HyperCard and TiddlyWiki
+as well as Zettelelkasten and taking Smart Notes.
+HyperCard pioneered (or at least popularized) the idea
+of visualizing one card of knowledge at a time.
+So that connected with the TiddlyWiki design aspiration.
