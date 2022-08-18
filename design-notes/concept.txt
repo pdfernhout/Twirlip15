@@ -395,3 +395,30 @@ between storage limits and retrieval limits in the human brain.
 Relating to Pointrel/Twirlip past implementations,
 That connects with ease of storing data in files with names from hashes,
 but the difficulty of finding files based on some fragment of content.
+
+====
+
+2022-08-17
+
+More thinking about TiddlyWiki:  
+https://github.com/Jermolene/TiddlyWiki5
+
+And also thinking of idea of improving on Pointrel triplestore
+by going back to original concept with abstractions, triples, and strings --
+but with some changes.
+Could add Lucene or such for string search.
+Could add a flag to the earlier ABC triple in C listening
+that the C value has been overridden (so it can be ignored on searches for BC and AC).
+Could more formally distinguish B fields that are multivalue
+either by adding such triples to a parallel store or some other notation
+(often thought of putting asterisk at end of B name).
+Like the idea of being able to cursor through results by pointing
+to a triple and following links to previous items.
+Each triple becomes a valid cursor position.
+But means giving up on other things perhaps like easy merging of two stores.
+
+Mostly though thinking, but along the line of "How to Take Smart Notes",
+of just using triples by hand in a dynamic way to make a directed graph.
+Your ideally improve your recall and understanding while reformatting info into triples
+as a form of "elaboration".
+Yet, still like the "card" ideal of text description of stuff.
