@@ -385,3 +385,13 @@ https://gilest.org/lion-kimbro.html
 > When you search the Internet's messages, you find bits and pieces of relevance, few and far between.
 > Wiki reverses that. When you touch a page in a wiki,
 > the page is connected to other related pages, relevance determined by humans.
+
+=====
+
+2022-08-16
+
+Interesting point form "How to Take Smart Notes" is the difference
+between storage limits and retrieval limits in the human brain.
+Relating to Pointrel/Twirlip past implementations,
+That connects with ease of storing data in files with names from hashes,
+but the difficulty of finding files based on some fragment of content.
