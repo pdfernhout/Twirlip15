@@ -388,7 +388,7 @@ https://gilest.org/lion-kimbro.html
 
 =====
 
-2022-08-16
+2022-08-17
 
 Interesting point form "How to Take Smart Notes" is the difference
 between storage limits and retrieval limits in the human brain.
@@ -398,7 +398,7 @@ but the difficulty of finding files based on some fragment of content.
 
 ====
 
-2022-08-17
+2022-08-18
 
 More thinking about TiddlyWiki:  
 https://github.com/Jermolene/TiddlyWiki5
@@ -422,3 +422,7 @@ of just using triples by hand in a dynamic way to make a directed graph.
 Your ideally improve your recall and understanding while reformatting info into triples
 as a form of "elaboration".
 Yet, still like the "card" ideal of text description of stuff.
+
+TiddlyWiki actually suffers from too many export options?
+Seems like big risk of losing all data.
+Maybe best to use IndexedDB for it but have backup/restore option which exports to file?
