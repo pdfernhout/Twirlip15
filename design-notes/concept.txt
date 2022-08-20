@@ -28,7 +28,7 @@ CODE:
 * Express: Turning your knowledge into creative output that has an impact on others
 ========
 
-How can Twirlip/Pointrel support Tiago Forte's CODE process? And Kadavy's/Zettelelkasten's similar one? 
+How can Twirlip/Pointrel support Tiago Forte's CODE process? And Kadavy's/Zettelkasten's similar one? 
 
 ----
 
@@ -368,7 +368,7 @@ The heart of the filter may be this bit (though I don't follow the semantics of 
 ```[tag[Fonctions]] [tag[Téléologie]] +[tag[.définition]```
 
 Realizing that there is an indirect connection between HyperCard and TiddlyWiki
-as well as Zettelelkasten and taking Smart Notes.
+as well as Zettelkasten and taking Smart Notes.
 HyperCard pioneered (or at least popularized) the idea
 of visualizing one card of knowledge at a time.
 So that connected with the TiddlyWiki design aspiration.
