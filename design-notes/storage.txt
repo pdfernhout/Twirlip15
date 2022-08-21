@@ -272,10 +272,10 @@ But get a sense this is all fun and interesting to think about but also kind of 
 Whatever way I choose, I will need to escape some characters -- at the least newlines
 if want one triple per line.
 Otherwise would need an end character or symbol which would need to be escaped
-or chosen everytime so does nor appear in the text.
+or chosen every time so does nor appear in the text.
 I did that before too.
 
-Right now thigns are in JSON, so the question is, what is the benefit of switching?
+Right now things are in JSON, so the question is, what is the benefit of switching?
 Less computer cycles to parse?
 Easier for humans to read?
 More expandable with (escaped) pipes to have hierarchy of namespaces (or none at all)?
@@ -407,7 +407,7 @@ where hae previously added relationships for larger ranges of time and you narro
 Thought about this a bunch when seeing what Apache Accumulo could do.
 
 Issue when want to find a match with two fields, like "has-type email" and "from X".
-The system can qive you a list of one or the other but you then need to filter them further
+The system can give you a list of one or the other but you then need to filter them further
 yourself. Or you need to look for the overlap of two sets of results.
 Previously had thought of tracking number of matches for triples so could pick
 the one of two or more with the least matches to get fewest results to further filter.
@@ -429,10 +429,10 @@ Time to abandon triples finally for PostgreSQL? Or some way triples are good eno
 But issue with RDBMS where can have only one common database layout,
 which makes it harder for applications to be independent modules.
 
-Possibilities: PostegreSQL, SQLite, Accumulo, Craigslist's clblob engine.
+Possibilities: PostgreSQL, SQLite, Accumulo, Craigslist's clblob engine.
 Others like IndexedDB, CouchDB, Neo4j, etc?  https://db-engines.com/en/ranking
 
-But I really like the idea of data stored in the filesystem in wway it can
+But I really like the idea of data stored in the filesystem in a way it can
 be easily and efficiently incrementally backed up by TimeMachine or rsync...
 
 But adding so many triples for matches for text would create some huge files.
