@@ -6,4 +6,4 @@ Maybe often best if "class" (or "type") is an annotation on a JSON object and th
 
 Opaqueness of state has pros and cons.
 
-Or maybe Smalltalk object inspector just better than Browser inspector?
+Or maybe the Smalltalk object inspector is just better than the Browser inspector?
