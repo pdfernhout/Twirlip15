@@ -16,7 +16,7 @@
 // Blocks are assembled into structures.
 // The structures could be pages with a list of blocks (and non-text items like pictures).
 // Other structures could be outlines.
-// Other structures could be adhoc forms or Hypercard-like database entry cards.
+// Other structures could be adhoc forms or HyperCard-like database entry cards.
 // Other structure could be 2D maps like Compendium.
 
 // Should support tools for splitting blocks, merging blocks, and copying blocks.
