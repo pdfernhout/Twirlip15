@@ -46,7 +46,7 @@ if (filePathFromParams) {
 }
 
 function updateTitleForFileName() {
-    document.title = chosenFileNameShort + " -- Twirlip7 Monitor"
+    document.title = chosenFileNameShort + " -- Twirlip15 Monitor"
 }
 
 function startup() {
