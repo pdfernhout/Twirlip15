@@ -8,7 +8,7 @@ const fs = require("fs")
 const path = require("path")
 const { log } = require("./log")
 
-// TODO: Retrieve the requested web resource -- very unsafe:
+// TODO: Retrieve the requested web resource -- very unsafe!
 // TODO: user should be authenticated and trusted or requests should be restricted to local ones
 function proxyRequest(request, response) {
     const url = request.body.url
