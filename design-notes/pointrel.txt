@@ -1,0 +1,35 @@
+2022-08-27 Thoughts on Pointrel
+
+Why not just user original design (from around 1982 or earlier)?
+
+* Having everything in one big file (or three) makes it hard to backup efficiently with rsync or TimeMachine.
+
+* Using binary data for pointers (not plain text) risks one bit flip messing up everything.
+
+* Hard to do distributed multi-user without UUIDs (versus local positions).
+
+* Hard to find objects if they require searching on multiple fields, like finding an object with type email from a specific sender.
+
+* Hard to search on ranges, like find every email sent in a date range.
+
+* In general, triple concept ignores idea of n-ary tuples (or objects) like shipment of X sent from Y to Z on date D by shipper S (unless you just use triples to build objects or records).
+
+* Can't do arbitrary full-text search.
+
+* Have to lookup abstractions to use as accessors.
+
+* Conflict between single value C fields and multiple value C fields.
+
+* How reliable will it be?
+
+* Limited search options in general compared to SQL or SPARQL or similar.
+
+* Don't like idea of modifying a file other than appending (if need to update index files).
+
+* Had conflict between using system as a library (like SQLite) versus using it as a server (like PostgreSQL).
+
+* Issue where search on BC and get triples matching that were overridden by later triples.
+
+* No way to delete data (you can at best only build application that ignore data marked in some way).
+
+Some of these have workarounds but not all of them.
