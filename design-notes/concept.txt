@@ -426,3 +426,12 @@ Yet, still like the "card" ideal of text description of stuff.
 TiddlyWiki actually suffers from too many export options?
 Seems like big risk of losing all data.
 Maybe best to use IndexedDB for it but have backup/restore option which exports to file?
+
+====
+
+2022-08-28
+
+Starting Twirlip17 based on NW.js (Node Webkit) as an experiment.
+Also thinking about ideas in "How to Take Smart Notes" and TiddlyWiki page.
+
+(Twirlip16 was a Lisp-in-C trying to emphasize simplicity.)
