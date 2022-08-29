@@ -435,3 +435,9 @@ Starting Twirlip17 based on NW.js (Node Webkit) as an experiment.
 Also thinking about ideas in "How to Take Smart Notes" and TiddlyWiki page.
 
 (Twirlip16 was a Lisp-in-C trying to emphasize simplicity.)
+
+====
+
+2022-08-29
+
+Thinking of giving up on trying to get in at least one commit a day.
