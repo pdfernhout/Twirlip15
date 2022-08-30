@@ -451,3 +451,14 @@ Whether to continue to develop this kind of software or just leverage what exist
 What is most practical to support "Second Brain" notetaking and writing?
 
 Versus/And what sparks the most joy versus is the most fun?
+
+----
+
+Some key ideas from Building a Second Brain.
+
+Four uses of a Second Brain:
+* To have visual representation of ideas that can be observed, compared, edited, juxtaposed, and built into larger structures
+* To reveal associations between ideas
+* To incubate ideas over time
+* To refine a unique personal perspective on things of interest
+
