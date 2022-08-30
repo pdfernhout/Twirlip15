@@ -441,3 +441,13 @@ Also thinking about ideas in "How to Take Smart Notes" and TiddlyWiki page.
 2022-08-29
 
 Thinking of giving up on trying to get in at least one commit a day.
+
+====
+
+2022-08-30
+
+Whether to continue to develop this kind of software or just leverage what exists?
+
+What is most practical to support "Second Brain" notetaking and writing?
+
+Versus/And what sparks the most joy versus is the most fun?
