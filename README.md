@@ -1,6 +1,6 @@
 # Twirlip15 Information Organizer
 
-Twirlip15 supports browsing and editing files on your local host -- like a simpler version of NextCloud. Another app is a step towards a personal knowledge management tool. Ideally more apps will be added over time -- including perhaps apps ported from Twirlip7.
+Twirlip15 supports browsing and editing files on your local host with various apps -- like a simpler version of NextCloud. It supports personal knowledge management.
 
 Twirlip15 uses Node.js+Express for the server and Mithril+Tachyons for the UI.
 
