@@ -1,10 +1,8 @@
 # Twirlip15 Information Organizer
 
-Twirlip15 supports browsing and editing files on your local host with various apps -- like a simpler version of NextCloud. It supports personal knowledge management.
+Twirlip15 supports browsing and editing files on your local computer or a server using various apps. It is somewhat like a simpler version of NextCloud. It supports personal knowledge management.
 
-Twirlip15 uses Node.js+Express for the server and Mithril+Tachyons for the UI.
-
-Twirlip15 makes it easy to develop applications in Mithril which operate on local files. 
+Twirlip15 uses Node.js+Express for the server and Mithril+Tachyons for the UI. Twirlip15 makes it easy to develop applications in Mithril which operate on local files. 
 
 A Twirlip15 server is intended to be used locally by a single user or a small trusted group. 
 Twirlip15 uses the approach of a trusted client which uses the equivalent of fs.write and directory-related file commands sent from the UI across the network to a server. 
