@@ -17,7 +17,7 @@
     "cytoscape": "3.15.1",
     "dexie": "3.2.2",
     "emailjs-mime-parser": "2.0.7",
-    "express": "4.17.1",
+    "express": "4.17.3",
     "express-basic-auth": "1.2.0",
     "express-force-ssl": "0.3.2",
     "filenamify": "4.1.0",
