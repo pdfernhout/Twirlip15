@@ -50,6 +50,16 @@ let messagesByUUID = {}
 let entryAreaPosition = preferences.get("chat-entryAreaPosition", "bottom")
 const entryAreaPositionChoices = ["none", "right", "bottom", "top", "left"]
 
+let isPrinting = false
+window.addEventListener("beforeprint", (event) => {
+    isPrinting = true
+    m.redraw()
+})
+window.addEventListener("afterprint", (event) => {
+    isPrinting = false
+    m.redraw()
+})
+
 function userIDChange(event) {
     userID = event.target.value
     preferences.set("userID", userID)
@@ -441,14 +451,14 @@ const TwirlipChat = {
                 viewEntryAreaTools(),
                 viewEntryArea()
             ),
-            m("div.pa2.overflow-hidden.flex.flex-column.h-100.w-100", [
+            m("div.pa2" + (isPrinting ? "" : ".overflow-hidden") + ".flex.flex-column.h-100.w-100", [
                 Toast.viewToast(),
                 m("div.mb3",
                     viewNavigation()
                 ),
-                (entryAreaPosition === "top") && viewEntryAreaTools(),                  
-                (entryAreaPosition === "top") && viewEntryArea(),
-                m("div.overflow-auto.flex-auto",
+                !isPrinting && (entryAreaPosition === "top") && viewEntryAreaTools(),                  
+                !isPrinting && (entryAreaPosition === "top") && viewEntryArea(),
+                m("div" + (isPrinting ? "" : ".overflow-auto") + ".flex-auto",
                     {
                         oncreate: (vnode) => {
                             messagesDiv = (vnode.dom)
@@ -456,9 +466,9 @@ const TwirlipChat = {
                     },
                     viewMessages(),
                 ),
-                (entryAreaPosition === "none") && viewEntryLine(),
-                (entryAreaPosition === "bottom") && viewEntryAreaTools(),                  
-                (entryAreaPosition === "bottom") && viewEntryArea()
+                !isPrinting && (entryAreaPosition === "none") && viewEntryLine(),
+                !isPrinting && (entryAreaPosition === "bottom") && viewEntryAreaTools(),                  
+                !isPrinting && (entryAreaPosition === "bottom") && viewEntryArea()
             ]),
             (entryAreaPosition === "right") && m("div.ma2",
                 viewEntryAreaTools(),
