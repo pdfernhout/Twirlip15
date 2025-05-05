@@ -254,7 +254,7 @@ function uploadDocumentClicked() {
                 return
             }
         }
-    
+
         let uploadResult
         try {
             uploadResult = await FileUploader.uploadFileFromBase64Contents(backend.twirlipServer, base64Contents, uploadDirectoryPath, fileName)
@@ -502,22 +502,20 @@ const chatRoomResponder = {
             if (item.uuid !== undefined) messagesByUUID[item.uuid] = item
             messages.push(item)
         } else {
-            if (previousVersion !== undefined) {
-                for (let version = previousVersion; version; version = version.previousVersion) {
-                    if (version.timestamp === item.timestamp) {
-                        // ignore repeat of existing message
-                        return
-                    }
+            for (let version = previousVersion; version; version = version.previousVersion) {
+                if (version.timestamp === item.timestamp && version.editedTimestamp === item.editedTimestamp) {
+                    // ignore repeat of existing message
+                    return
                 }
-                // console.log("message is edited", item, messagesByUUID[item.uuid])
-                item.editedTimestamp = item.timestamp
-                item.timestamp = previousVersion.timestamp
-                messagesByUUID[item.uuid] = item
-                const index = messages.indexOf(previousVersion)
-                messages[index] = item
-                edited = true
-                item.previousVersion = previousVersion
             }
+            // console.log("message is edited", item, messagesByUUID[item.uuid])
+            item.editedTimestamp = item.timestamp
+            item.timestamp = previousVersion.timestamp
+            messagesByUUID[item.uuid] = item
+            const index = messages.indexOf(previousVersion)
+            messages[index] = item
+            edited = true
+            item.previousVersion = previousVersion
         }
         const itemIsNotFiltered = hasFilterText(item)
         if (!localChange && isLoaded) {
