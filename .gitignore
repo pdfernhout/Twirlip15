@@ -7,3 +7,4 @@ server-data
 proxyKey.txt
 .vscode
 client/test-local
+client/apps/twirlip/*.js

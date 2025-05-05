@@ -1,22 +1,21 @@
-/* global m, Push */
-/* eslint-disable no-console */
-
-"use strict"
-
+// @ts-ignore
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
+// @ts-ignore
 import { Toast } from "../../common/Toast.js"
+// @ts-ignore
 import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
 
 // defines Push
 import "../../vendor/push.js"
 
 // defines m
+declare const m: any
 import "../../vendor/mithril.js"
 
 let chosenFileName = ""
 let chosenFileNameShort = ""
 
-function showError(error) {
+function showError(error: string) {
     Toast.toast(error)
 }
 
@@ -24,9 +23,16 @@ const preferences = new Twirlip15Preferences()
 
 let userID = preferences.get("userID", "anonymous")
 
-const messages = []
+type Message = {
+    uuid: string
+    type: string
+    user: string
+    timestamp: string
+}
 
-let messagesByUUID = {}
+const messages: Message[] = []
+
+let messagesByUUID: { [uuid: string]: Message } = {}
 
 let isPrinting = false
 window.addEventListener("beforeprint", (event) => {
@@ -64,7 +70,7 @@ const twirlipStreamResponder = {
         isLoaded = true
     },
 
-    onAddItem: (item, localChange) => {
+    onAddItem: (item: Message) => {
         // ignore duplicate messages or improperly-formed ones
         if (item.uuid !== undefined) {
             messagesByUUID[item.uuid] = item
@@ -77,7 +83,7 @@ const filePathFromParams = decodeURI(window.location.pathname)
 
 if (filePathFromParams) {
     chosenFileName = filePathFromParams
-    chosenFileNameShort = filePathFromParams.split("/").pop()
+    chosenFileNameShort = filePathFromParams.split("/").pop() || "Twirlip"
 }
 
 const backend = ItemStoreUsingServerFiles(showError, m.redraw, twirlipStreamResponder, chosenFileName, () => Toast.toast("loading twirlip file failed"))
