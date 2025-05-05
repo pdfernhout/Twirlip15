@@ -51,7 +51,7 @@ function showError(error) {
 
 const filePathFromParams = decodeURI(window.location.pathname)
 console.log("about to setup link to server", new Date().toISOString())
-const itemStore = ItemStoreUsingServerFiles(showError, m.redraw, null, filePathFromParams, () => Toast.toast("loading chat file failed"))
+const itemStore = ItemStoreUsingServerFiles(showError, m.redraw, null, filePathFromParams, () => Toast.toast("loading notebook file failed"))
 const NotebookUsingServer = NotebookBackend(itemStore, function () {
     // assuming callback will always be done before get here to go to initialKeyToGoTo
     if (launchItem) {
