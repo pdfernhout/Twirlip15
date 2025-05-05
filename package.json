@@ -41,6 +41,7 @@
   "devDependencies": {
     "eslint": "7.32.0",
     "fs-extra": "10.1.0",
-    "pino-pretty": "7.6.1"
+    "pino-pretty": "7.6.1",
+    "typescript": "^5.8.3"
   }
 }
