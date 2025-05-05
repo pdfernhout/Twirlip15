@@ -6,3 +6,4 @@ server-logs/*.log
 server-data
 proxyKey.txt
 .vscode
+client/test-local
