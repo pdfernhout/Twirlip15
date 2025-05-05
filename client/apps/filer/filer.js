@@ -497,8 +497,8 @@ function sortByTime(a, b) {
     if (!a.stats && !b.stats) return 0
     if (!a.stats) return -1
     if (!b.stats) return 1
-    if (a.stats.mtime < b.stats.mtime) return -1
-    if (a.stats.mtime > b.stats.mtime) return 1
+    if (a.stats.mtimeMs < b.stats.mtimeMs) return -1
+    if (a.stats.mtimeMs > b.stats.mtimeMs) return 1
     return 0
 }
 
@@ -664,7 +664,7 @@ function viewFileEntry(fileInfo) { // selectedFiles
                 )
             ),
             m("td.pl2.tr", fileInfo.stats && formatSize(fileInfo.stats.size)),
-            m("td.pl2", fileInfo.stats && formatTime(fileInfo.stats.mtime)),
+            m("td.pl2", fileInfo.stats && formatTime(fileInfo.stats.mtimeMs)),
             // m("td", fileInfo.stats && fileInfo.stats.uid),
             // m("td", "MENU")
         )
