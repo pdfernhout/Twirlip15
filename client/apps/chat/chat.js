@@ -95,6 +95,7 @@ function sendChatMessage() {
 function sendMessage(message) {
     // Call addItem after a delay to give socket.io a chance to reconnect
     // as socket.io will timeout if a prompt (or alert?) is up for very long
+    chatRoomResponder.onAddItem(message, true)
     setTimeout(() => backend.addItem(message), 10)
 }
 
@@ -254,7 +255,6 @@ function uploadDocumentClicked() {
             }
         }
     
-
         let uploadResult
         try {
             uploadResult = await FileUploader.uploadFileFromBase64Contents(backend.twirlipServer, base64Contents, uploadDirectoryPath, fileName)
@@ -494,7 +494,7 @@ const chatRoomResponder = {
         isLoaded = true
     },
 
-    onAddItem: (item) => {
+    onAddItem: (item, localChange) => {
         let edited = false
         // Complexity needed to support editing
         const previousVersion = messagesByUUID[item.uuid]
@@ -520,7 +520,7 @@ const chatRoomResponder = {
             }
         }
         const itemIsNotFiltered = hasFilterText(item)
-        if (isLoaded) {
+        if (!localChange && isLoaded) {
             // Only scroll if scroll is already near bottom and not filtering or editing to avoid messing up editing or browsing previous items
             if (itemIsNotFiltered && !edited && messagesDiv && (item.userID === userID || messagesDiv.scrollTop >= (messagesDiv.scrollHeight - messagesDiv.clientHeight - 300))) {
                 setTimeout(() => {
