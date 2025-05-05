@@ -17,7 +17,8 @@ export const applicationList = [
     "sketcher",
     "tables",
     "triples",
-    "view-md"
+    "twirlip",
+    "view-md",
 ]
 
 export const extensionForApplication = {
@@ -29,5 +30,6 @@ export const extensionForApplication = {
     outliner: ".twirlip-outliner.jsonl",
     sketcher: ".twirlip-sketcher.jsonl",
     tables: ".twirlip-tables.jsonl",
-    triples: ".twirlip-triples.jsonl"
+    triples: ".twirlip-triples.jsonl",
+    twirlip: ".twirlip.jsonl",
 }

@@ -626,6 +626,9 @@ function isInLocalDownloadsDirectory(urlFilePath) {
 function viewerForURL(url) {
     const lowercaseURL = String(url.toLowerCase())
     for (let appName of applicationList) {
+        if (lowercaseURL.endsWith(".twirlip.jsonl")) {
+            return url + "?twirlip=twirlip"
+        }
         if (lowercaseURL.endsWith(".twirlip-" + appName + ".jsonl")) {
             return url + "?twirlip=" + appName
         }
