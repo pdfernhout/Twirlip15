@@ -81,6 +81,7 @@ app.use(pinoHTTP)
 app.use(cookieParser())
 
 app.use(session({
+    name: "twirlip15-session",
     secret: "more tools of abundance",
     resave: false,
     saveUninitialized: false
@@ -605,18 +606,35 @@ app.get("/favicon.ico", (req, res) => {
     res.sendFile(process.cwd() + "/client/favicon/favicon.ico")
 })
 
-app.post("/twirlip15/authenticate", passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/twirlip15/login.html"
-}))
+app.post("/twirlip15/login", passport.authenticate("local", {keepSessionInfo: true}), async function(req, res) {
+    if (!req.user) { return res.redirect("/twirlip15/login.html#login-failed") }
+    const returnTo = req.session.returnTo
+    delete req.session.returnTo
+    return res.redirect(returnTo || "/")
+})
+
+app.post("/twirlip15/logout", function(req, res, next){
+    req.logout(function(err) {
+        if (err) { return next(err) }
+        res.redirect("/twirlip15/login.html")
+    })
+})
+
+app.get("/twirlip15/logout.html", function(req, res, next) {
+    if (req.user) {
+        return res.sendFile(process.cwd() + "/server/logout.html")
+    }
+    return res.redirect("/twirlip15/login.html")
+})
 
 app.use("/twirlip15/login.html", (req, res, next) => {
     res.sendFile(process.cwd() + "/server/login.html")
 })
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     if (!req.user && requireAuthentication) {
         logger.info("User not authenticated; redirecting to login")
+        if (!req.session.returnTo) { req.session.returnTo = req.originalUrl || req.url}
         res.redirect("/twirlip15/login.html")
         return
     }
