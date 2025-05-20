@@ -28,6 +28,7 @@ type Message = {
     type: string
     user: string
     timestamp: string
+    previous: string
 }
 
 const messages: Message[] = []
