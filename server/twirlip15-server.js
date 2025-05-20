@@ -13,7 +13,10 @@ const http = require("http")
 const https = require("https")
 const pem = require("pem")
 const expressForceSSL = require("express-force-ssl")
-const expressBasicAuth = require("express-basic-auth")
+const passport = require("passport")
+const LocalStrategy = require("passport-local").Strategy
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
 const bcrypt  = require("bcrypt")
 
 const pino = require("pino")
@@ -70,10 +73,32 @@ const host = getPreference("host", "127.0.0.1")
 const httpPort = getPreference("httpPort", 8015)
 const httpsPort = getPreference("httpsPort", 8016)
 const redirectHttpToHttps = getPreference("redirectHttpToHttps", host !== "127.0.0.1")
-const requireAuthentication = getPreference("requireAuthentication", redirectHttpToHttps)
+const requireAuthenticationPref = getPreference("requireAuthentication", redirectHttpToHttps)
+const requireAuthentication = requireAuthenticationPref !== "false" && requireAuthenticationPref !== false
 
 const app = express()
 app.use(pinoHTTP)
+app.use(cookieParser())
+
+app.use(session({
+    secret: "more tools of abundance",
+    resave: false,
+    saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(passport.authenticate("session"))
+
+// Users are represented as:
+// {userIdentifier: "name"}
+
+passport.serializeUser(function(user, done) {
+    done(null, user.userIdentifier);
+});
+
+passport.deserializeUser(function(id, done) {
+    done(null, {userIdentifier: id});
+});
 
 const maxDataForResult = getPreference("maxDataForResult", 2000000)
 
@@ -97,14 +122,14 @@ try {
         // Require users.json file if http-only
         users = JSON.parse(fs.readFileSync(usersFileName))
 
-        app.use(expressBasicAuth({
-            unauthorizedResponse: getUnauthorizedResponse,
-            challenge: true,
-            realm: "twirlip15",
-                authorizeAsync: true,
-                authorizer: checkHashedPasswordForUserAuthorizer
+        passport.use(new LocalStrategy(function verify(username, password, cb) {
+            return checkHashedPasswordForUserAuthorizer(username, password, function(err, isValid) {
+                if (err) { return cb(err) }
+                // Maybe use instead: getUnauthorizedResponse
+                if (!isValid) { return cb(null, false, { message: "Incorrect username or password." } ) }
+                return cb(null, { userIdentifier: username })
             })
-        )
+        }))
 
         fs.watch(usersFileName, (event, filename) => {
             if (filename) {
@@ -578,6 +603,24 @@ async function requestFileNewDirectory(request, response) {
 
 app.get("/favicon.ico", (req, res) => {
     res.sendFile(process.cwd() + "/client/favicon/favicon.ico")
+})
+
+app.post("/twirlip15/authenticate", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/twirlip15/login.html"
+}))
+
+app.use("/twirlip15/login.html", (req, res, next) => {
+    res.sendFile(process.cwd() + "/server/login.html")
+})
+
+app.use((req, res, next) => {
+    if (!req.user && requireAuthentication) {
+        logger.info("User not authenticated; redirecting to login")
+        res.redirect("/twirlip15/login.html")
+        return
+    }
+    next()
 })
 
 app.use("/twirlip15", express.static(process.cwd() + "/client"))
