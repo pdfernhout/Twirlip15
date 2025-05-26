@@ -1,92 +1,144 @@
 // @ts-ignore
 import { Twirlip15Preferences } from "../../common/Twirlip15Preferences.js"
-// @ts-ignore
-import { Toast } from "../../common/Toast.js"
-// @ts-ignore
-import { ItemStoreUsingServerFiles } from "../../common/ItemStoreUsingServerFiles.js"
-
-// defines Push
-import "../../vendor/push.js"
 
 // defines m
 declare const m: any
 import "../../vendor/mithril.js"
 
-let chosenFileName = ""
-let chosenFileNameShort = ""
-
-function showError(error: string) {
-    Toast.toast(error)
-}
-
 const preferences = new Twirlip15Preferences()
-
 let userID = preferences.get("userID", "anonymous")
 
-type Message = {
-    uuid: string
-    type: string
-    user: string
+type UUID = string
+
+type Triple = {
+    uuid: UUID
     timestamp: string
-    previous: string
+    author: string
+    entity: string
+    attribute: string
+    value: string
+    valueContentType?: string
+    valueContentEncoding?: string
+    previous: UUID
 }
 
-const messages: Message[] = []
+const triples: Triple[] = []
+const triplesByUUID: { [uuid: string]: Triple } = {}
 
-let messagesByUUID: { [uuid: string]: Message } = {}
+function lastUUID(): UUID {
+    return triples.length > 0 ? triples[triples.length - 1].uuid : ""
+}
 
-let isPrinting = false
-window.addEventListener("beforeprint", (event) => {
-    isPrinting = true
-    m.redraw()
-})
-window.addEventListener("afterprint", (event) => {
-    isPrinting = false
-    m.redraw()
-})
+let entityFromInput: string = ""
+let attributeFromInput: string = ""
+let valueFromInput: string = ""
+let valueContentTypeFromInput: string = ""
+let valueContentEncodingFromInput: string = ""
 
-// function sendMessage(message) {
-//     // Call addItem after a delay to give socket.io a chance to reconnect
-//     // as socket.io will timeout if a prompt (or alert?) is up for very long
-//     twirlipStreamResponder.onAddItem(message, true)
-//     setTimeout(() => backend.addItem(message), 10)
-// }
+let searchResults = [] as Triple[]
 
 const TwirlipApp = {
     view: function () {
         return m("div.flex.flex-row.h-100.w-100",
-            m("div.pa2" + (isPrinting ? "" : ".overflow-hidden") + ".flex.flex-column.h-100.w-100",
-                Toast.viewToast(),
-                m("div", "Work in progress")
+            m("div.pa2.flex.flex-column.h-100.w-100",
+                m("div", "author: " + userID),
+                m("div", "Last uuid: " + lastUUID()),
+                m("input", {
+                    type: "text",
+                    placeholder: "entity",
+                    value: entityFromInput,
+                    oninput: (e: any) => {
+                        entityFromInput = e.target.value
+                    }
+                }),
+                m("input", {
+                    type: "text",
+                    placeholder: "attribute",
+                    value: attributeFromInput,
+                    oninput: (e: any) => {
+                        attributeFromInput = e.target.value
+                    }
+                }),
+                m("input", {
+                    type: "text",
+                    placeholder: "value",
+                    value: valueFromInput,
+                    oninput: (e: any) => {
+                        valueFromInput = e.target.value
+                    }
+                }),
+                m("input", {
+                    type: "text",
+                    placeholder: "valueContentType",
+                    value: valueContentTypeFromInput,
+                    oninput: (e: any) => {
+                        valueContentTypeFromInput = e.target.value
+                    }
+                }),
+                m("input", {
+                    type: "text",
+                    placeholder: "valueContentEncoding",
+                    value: valueContentEncodingFromInput,
+                    oninput: (e: any) => {
+                        valueContentEncodingFromInput = e.target.value
+                    }
+                }),
+                m("button", {
+                    onclick: () => {
+                        searchResults = []
+                        const lastTriple = triples[triples.length - 1]
+                        if (!lastTriple) {
+                            alert("No triples available to search.")
+                            return
+                        }
+                        const searchEntity = entityFromInput.trim().toLowerCase()
+                        const searchAttribute = attributeFromInput.trim().toLowerCase()
+                        const searchValue = valueFromInput.trim().toLowerCase()
+                        let triple = lastTriple
+                        while (triple) {
+                            // TODO: Add code to prevent endless loop
+                            if ((!searchEntity || triple.entity.toLowerCase().includes(searchEntity)) &&
+                                (!searchAttribute || triple.attribute.toLowerCase().includes(searchAttribute)) &&
+                                (!searchValue || triple.value.toLowerCase().includes(searchValue))
+                            ) {
+                                searchResults.push(triple)
+                            }
+                            triple = triplesByUUID[triple.previous]
+                        }
+                    }
+                }, "Search Triple"),
+                m("button", {
+                    onclick: () => {
+                        const newTriple: Triple = {
+                            uuid: crypto.randomUUID(),
+                            timestamp: new Date().toISOString(),
+                            author: userID,
+                            entity: entityFromInput,
+                            attribute: attributeFromInput,
+                            value: valueFromInput,
+                            valueContentType: valueContentTypeFromInput ? valueContentTypeFromInput : undefined,
+                            valueContentEncoding: valueContentEncodingFromInput ? valueContentTypeFromInput : undefined,
+                            previous: lastUUID()
+                        }
+                        triples.push(newTriple)
+                        triplesByUUID[newTriple.uuid] = newTriple
+                        entityFromInput = ""
+                        attributeFromInput = ""
+                        valueFromInput = ""
+                        valueContentTypeFromInput = ""
+                    }
+                }, "Add Triple"),
+                m("div.mt2", "Triples:", searchResults.length ? "[Found]" : "[All]"),
+                m("ul",
+                    ((searchResults.length && searchResults) || triples).slice().reverse().map((triple: Triple) =>
+                        m("li", { key: triple.uuid },
+                            JSON.stringify(triple, null, 2)
+                        )
+                    )
+                )
             )
         )
     }
 }
-
-let isLoaded = false
-
-const twirlipStreamResponder = {
-
-    onLoaded: () => {
-        isLoaded = true
-    },
-
-    onAddItem: (item: Message) => {
-        // ignore duplicate messages or improperly-formed ones
-        if (item.uuid !== undefined) {
-            messagesByUUID[item.uuid] = item
-            messages.push(item)
-        }
-    }
-}
-
-const filePathFromParams = decodeURI(window.location.pathname)
-
-if (filePathFromParams) {
-    chosenFileName = filePathFromParams
-    chosenFileNameShort = filePathFromParams.split("/").pop() || "Twirlip"
-}
-
-const backend = ItemStoreUsingServerFiles(showError, m.redraw, twirlipStreamResponder, chosenFileName, () => Toast.toast("loading twirlip file failed"))
 
 m.mount(document.body, TwirlipApp)
