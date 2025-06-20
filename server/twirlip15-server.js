@@ -680,13 +680,14 @@ function readOrCreateSSLCertificateKeys() {
         }
         keysPromise = new Promise((resolve, reject) => {
             pem.createCertificate({ days: 365, selfSigned: true }, function(err, keys) {
-                if (err) {
+                if (err || !keys) {
                     logger.info(err, "Problem creating https certificate")
                     reject("Problem creating https certificate")
-                } 
-                fs.writeFileSync(sslDirName + sslKeyFileName, keys.serviceKey)
-                fs.writeFileSync(sslDirName + sslCertFileName, keys.certificate)
-                resolve({serviceKey: keys.serviceKey, certificate: keys.certificate})
+                } else {
+                    fs.writeFileSync(sslDirName + sslKeyFileName, keys.serviceKey)
+                    fs.writeFileSync(sslDirName + sslCertFileName, keys.certificate)
+                    resolve({serviceKey: keys.serviceKey, certificate: keys.certificate})
+                }
             })
         })
     }
@@ -713,6 +714,9 @@ function startHttpsServer() {
             const port = httpsServer.address().port
             logStartupInfo("Twirlip server listening at https://" + host + ":" + port)
         })
+    }).catch(reason => {
+        console.log("Problem starting server:", reason)
+        process.exit(-1)
     })
 }
 
