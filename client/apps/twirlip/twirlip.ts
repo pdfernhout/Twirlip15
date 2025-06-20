@@ -18,7 +18,7 @@ type Triple = {
     attribute: string
     value: string
     valueContentType?: string
-    valueContentEncoding?: string
+    valueContentTransferEncoding?: string
     previous: UUID
 }
 
@@ -33,7 +33,7 @@ let entityFromInput: string = ""
 let attributeFromInput: string = ""
 let valueFromInput: string = ""
 let valueContentTypeFromInput: string = ""
-let valueContentEncodingFromInput: string = ""
+let valueContentTransferEncodingFromInput: string = ""
 
 let searchResults = [] as Triple[]
 
@@ -77,10 +77,10 @@ const TwirlipApp = {
                 }),
                 m("input", {
                     type: "text",
-                    placeholder: "valueContentEncoding",
-                    value: valueContentEncodingFromInput,
+                    placeholder: "valueContentTransferEncoding",
+                    value: valueContentTransferEncodingFromInput,
                     oninput: (e: any) => {
-                        valueContentEncodingFromInput = e.target.value
+                        valueContentTransferEncodingFromInput = e.target.value
                     }
                 }),
                 m("button", {
@@ -117,7 +117,7 @@ const TwirlipApp = {
                             attribute: attributeFromInput,
                             value: valueFromInput,
                             valueContentType: valueContentTypeFromInput ? valueContentTypeFromInput : undefined,
-                            valueContentEncoding: valueContentEncodingFromInput ? valueContentTypeFromInput : undefined,
+                            valueContentTransferEncoding: valueContentTransferEncodingFromInput ? valueContentTypeFromInput : undefined,
                             previous: lastUUID()
                         }
                         triples.push(newTriple)
