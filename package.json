@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "ace-builds": "1.6.0",
-    "bcrypt": "5.0.1",
+    "bcrypt": "6.0.0",
     "body-parser": "^1.20.3",
     "canonicalize": "1.0.1",
     "cookie-parser": "^1.4.7",
